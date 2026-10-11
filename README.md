@@ -4,10 +4,10 @@
 
 ## Git으로 받아서 실행
 
-Git과 Docker/Compose를 설치한 뒤 아래 URL을 실제 원격 저장소 주소로 바꿔 실행합니다.
+저장소는 [hytric/music-source-separation](https://github.com/hytric/music-source-separation)이며 비공개입니다. GitHub 계정에 저장소 읽기 권한이 있어야 합니다. Git과 Docker/Compose를 설치한 뒤 실행합니다.
 
 ```bash
-git clone https://github.com/YOUR_ACCOUNT/music-source-separation.git
+git clone https://github.com/hytric/music-source-separation.git
 cd music-source-separation
 docker compose up -d --build
 ```
