@@ -123,7 +123,7 @@ python scripts/prepare_musdb_sample.py
 
 스크립트는 musdb 라이브러리의 샘플 다운로드와 믹스/보컬 export를 수행합니다. FFmpeg와 인터넷이 필요하며, 외부에서 제공하는 샘플 내용·곡 수가 바뀔 수 있으므로 위 로컬 144곡과 완전히 동일한 구성을 보장하지는 않습니다. 정식 평가에는 데이터의 이용 조건을 확인해 전체 데이터셋과 split을 별도로 확보하고 평가 코드를 추가해야 합니다.
 
-## 로컬 Git 준비 검증 기록
+## Git 준비·업로드 검증 기록
 
 2026-10-11 검증 결과입니다.
 
@@ -133,4 +133,5 @@ python scripts/prepare_musdb_sample.py
 - 새 clone에 데이터·모델·가상환경이 포함되지 않으며, 데이터 없이 웹 UI 21개 컴포넌트가 생성됨을 확인했습니다.
 - 새 clone에서 만든 배포 ZIP의 파일 목록이 Git 추적 목록과 일치하고 ZIP 무결성 검사도 통과했습니다.
 - 테스트와 ZIP 생성 이후에도 Git 작업 트리가 깨끗한 것을 확인했습니다.
-- `origin`이 비공개 저장소 `hytric/music-source-separation`을 가리키는 것을 확인했습니다. 실제 실행 서버 배포는 별도 단계입니다.
+- 비공개 저장소 `hytric/music-source-separation`을 생성하고 `origin/main`에 업로드했습니다. 원격 main과 로컬 커밋의 일치, GitHub 파일 26개와 배포 허용 목록의 일치, 비공개 설정을 확인했습니다.
+- README와 이 문서의 clone 명령은 실제 저장소 주소를 사용합니다. 실제 실행 서버 배포는 별도 단계입니다.
