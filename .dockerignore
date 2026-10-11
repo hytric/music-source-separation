@@ -1,0 +1,7 @@
+# Allowlist: no local data, credentials, caches or generated output in images.
+**
+!Dockerfile
+!requirements.txt
+!requirements-base.txt
+!inference/
+!inference/*.py

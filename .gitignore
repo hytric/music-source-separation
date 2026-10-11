@@ -1,0 +1,60 @@
+# Data & artifacts (대용량 - 커밋 금지)
+data/
+checkpoints/
+results/
+*.wav
+*.flac
+*.mp4
+*.onnx
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.mp3
+*.ogg
+*.m4a
+*.aac
+*.aif
+*.aiff
+*.opus
+*.wma
+*.webm
+*.mkv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+
+# Tooling
+.vscode/
+.idea/
+.DS_Store
+*.log
+wandb/
+
+# Local credentials and runtime state
+.env
+.env.*
+!.env.example
+.gradio/
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+.venv-gpu/
+.venv-*/
+
+# Archived local research plans (excluded from the deployment repository)
+docs/00-goals-and-timeline.md
+docs/01-design-spec.md

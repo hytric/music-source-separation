@@ -1,0 +1,9 @@
+# Direct dependencies pinned to the verified deployment environment.
+gradio==6.27.0
+librosa==0.11.0
+matplotlib==3.11.2
+numpy==2.4.6
+Pillow==12.3.0
+soundfile==0.14.0
+torch==2.14.0
+torchvision==0.29.1

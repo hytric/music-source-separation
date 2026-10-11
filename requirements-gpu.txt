@@ -1,0 +1,3 @@
+# Use a separate virtual environment; do not mix CPU/GPU ONNX distributions.
+-r requirements-base.txt
+audio-separator[gpu]==0.47.0

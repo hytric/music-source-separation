@@ -1,0 +1,3 @@
+# Optional dataset tools, separate from runtime dependencies.
+-r requirements.txt
+musdb==0.4.3

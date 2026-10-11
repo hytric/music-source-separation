@@ -1,0 +1,21 @@
+services:
+  mss:
+    build: .
+    ports:
+      - "127.0.0.1:${MSS_PORT:-7860}:7860"
+    environment:
+      MSS_USE_GPU: "0"
+      MSS_SHARE: "0"
+      MSS_AUTH: "${MSS_AUTH:-}"
+      MSS_MAX_UPLOAD_MB: "${MSS_MAX_UPLOAD_MB:-100}"
+      MSS_MAX_AUDIO_SECONDS: "${MSS_MAX_AUDIO_SECONDS:-600}"
+      MSS_RETENTION_SECONDS: "${MSS_RETENTION_SECONDS:-3600}"
+    volumes:
+      - model-cache:/app/checkpoints
+    tmpfs:
+      - /app/.cache:uid=10001,gid=10001,mode=0700,size=2g
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  model-cache:

@@ -1,0 +1,2 @@
+# Keep source/configuration line endings consistent on Windows, Linux and macOS.
+* text=auto eol=lf
