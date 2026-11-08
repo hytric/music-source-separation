@@ -17,12 +17,13 @@ def paired_summary(deltas: np.ndarray, *, seed: int=20261108, bootstrap: int=100
     except ValueError: p=1.0
     return {"track_median_delta_db":statistic,"track_bootstrap_95_ci":[float(np.quantile(boots,.025)),float(np.quantile(boots,.975))],"wilcoxon_p":p,"tracks":len(per_track)}
 
-def seal_selection(selection: dict, *, runtime_dir: str|Path, manifest_hash: str, rir_manifest_hash: str,
-                   model_hashes: list[str], code_hash: str, lock_hash: str, config_hash: str) -> dict:
-    if selection.get("sar_policy_status")!="confirmed": raise ValueError("selection seal blocked: SAR policy requires owner confirmation")
-    if not selection.get("selected"): raise ValueError("selection seal requires a selected development candidate")
-    seal={"schema_version":1,"selection":selection,"manifest_hash":manifest_hash,"rir_manifest_hash":rir_manifest_hash,
-          "model_hashes":sorted(model_hashes),"code_hash":code_hash,"lock_hash":lock_hash,"config_hash":config_hash,"split":"dev","sealed":True}
+def seal_selection(selection: dict, *, policy: dict, develop_sha256: str, binding: dict, model_hashes: list[str],
+                   baseline_model_sha256: str) -> dict:
+    """Bind a `select_candidate` result to the dev results and every input hash it depends on."""
+    if policy.get("sar_policy_status")!="confirmed": raise ValueError("selection seal blocked: SAR policy requires owner confirmation")
+    if not selection.get("selected") or not selection.get("reason"): raise ValueError("selection seal requires a select_candidate result")
+    seal={"schema_version":2,"policy":policy,"selection":selection,"develop_sha256":develop_sha256,**binding,
+          "model_hashes":sorted(model_hashes),"baseline_model_sha256":baseline_model_sha256,"split":"dev","sealed":True}
     seal["sha256"]=hashlib.sha256(canonical_json(seal)).hexdigest()
     return seal
 
@@ -51,7 +52,7 @@ def select_candidate(results: list[dict], *, sar_policy_status: str, sar_floor_d
         summary=row["summary"]
         sar=row.get("stem_median_delta_sar",{})
         passes=(summary["track_median_delta_db"]>=minimum_sdr_gain_db and summary["track_bootstrap_95_ci"][0]>0
-                and all(float(sar.get(stem,float("-inf")))>=sar_floor_db for stem in ("vocals","drums","bass","other")))
+                and all(sar.get(stem) is not None and float(sar[stem])>=sar_floor_db for stem in ("vocals","drums","bass","other")))
         enriched={**row,"holm_adjusted_p":adjusted[row["name"]],"eligible":passes}
         if passes: eligible.append(enriched)
     if not eligible: return {"selected":"identity","reason":"no-practical-candidate-passed-preregistered-gates","holm_adjusted_p":adjusted}
@@ -68,3 +69,39 @@ def training_cost_record(*, training_data_bytes: int|None=None, optimizer: str|N
             "gradient_bytes":gradient_bytes,"measured_backward_seconds":measured_backward_seconds}
     return {"status":"measured" if all(v is not None for v in fields.values()) else "unmeasured",
             "inference_smoke_is_training_evidence":False,"fields":fields}
+
+CLAIM_RETRY_RULE=("A claim stays `started` until results are written. A `started` claim for the same seal may be retried: "
+                  "an interrupted run (OOM, corrupt cache, crash) persisted no holdout metrics, so it is not a look at results. "
+                  "If results for that seal were already written, the retry only finalizes the claim and never recomputes. "
+                  "A `completed` claim, or any claim bound to a different seal, is refused.")
+
+def _write_claim(path: Path, claim: dict) -> None:
+    fd,tmp=tempfile.mkstemp(prefix=f".{path.name}.",dir=path.parent); os.close(fd)
+    try:
+        Path(tmp).write_text(json.dumps(claim,sort_keys=True,indent=2)+"\n",encoding="utf-8"); os.replace(tmp,path)
+    finally: Path(tmp).unlink(missing_ok=True)
+
+def claim_start(path: str|Path, *, seal_sha256: str, results_path: str|Path, now: str) -> dict:
+    """Create or resume the single holdout claim; returns the claim with `action` run or finalize."""
+    path=Path(path); path.parent.mkdir(parents=True,exist_ok=True)
+    claim={"seal_sha256":seal_sha256,"status":"started","attempt":1,"history":[{"attempt":1,"started_at":now}],"retry_rule":CLAIM_RETRY_RULE}
+    try: fd=os.open(path,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
+    except FileExistsError:
+        claim=json.loads(path.read_text(encoding="utf-8"))
+        if claim.get("seal_sha256")!=seal_sha256: raise RuntimeError("holdout already claimed by a different seal; refusing")
+        if claim.get("status")=="completed": raise RuntimeError("evaluation seal already completed; refusing duplicate holdout run")
+        if claim.get("status")!="started": raise RuntimeError(f"unknown claim status {claim.get('status')!r}; refusing")
+        results=Path(results_path)
+        finalize=results.is_file() and json.loads(results.read_text(encoding="utf-8")).get("seal_sha256")==seal_sha256
+        claim["attempt"]+=1; claim["history"].append({"attempt":claim["attempt"],"started_at":now,"action":"finalize" if finalize else "retry"})
+        _write_claim(path,claim)
+        return {**claim,"action":"finalize" if finalize else "run"}
+    with os.fdopen(fd,"w",encoding="utf-8") as stream: stream.write(json.dumps(claim,sort_keys=True,indent=2)+"\n")
+    return {**claim,"action":"run"}
+
+def claim_complete(path: str|Path, *, seal_sha256: str, results_sha256: str, now: str) -> dict:
+    path=Path(path); claim=json.loads(path.read_text(encoding="utf-8"))
+    if claim.get("seal_sha256")!=seal_sha256 or claim.get("status")!="started": raise RuntimeError("claim is not an open claim for this seal")
+    claim.update(status="completed",completed_at=now,results_sha256=results_sha256)
+    _write_claim(path,claim)
+    return claim

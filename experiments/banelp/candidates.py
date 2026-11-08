@@ -99,3 +99,33 @@ def donor_reseparation(x, estimates, separator, *, donors=("other",), strength=.
         delta=strength*separated[2]
         out[2]+=delta; out[donor_index]-=delta
     return out
+
+def norbert_available() -> bool:
+    try: import norbert  # noqa: F401
+    except ImportError: return False
+    return True
+
+def candidate_registry(separator_getter=None) -> dict[str,dict]:
+    """The single name -> adapter table used by develop and evaluate.
+
+    `separator_getter` is called lazily, only by re-separation candidates. `requires` names the
+    dependency a candidate needs; `additional_inference_calls` is the selection tie breaker."""
+    def donor(names):
+        def run(x,e):
+            if separator_getter is None: raise RuntimeError("re-separation candidate needs a separator")
+            return donor_reseparation(x,e,separator_getter(),donors=names,strength=.5)
+        return run
+    table={
+        "identity":(lambda x,e:identity(x,e),0,None,{}),
+        "T1-uniform":(lambda x,e:t1(x,e),0,None,{"weights":"uniform"}),
+        "T2-alpha1":(lambda x,e:t2(x,e,1),0,None,{"alpha":1}),
+        "T2-alpha2":(lambda x,e:t2(x,e,2),0,None,{"alpha":2}),
+        "T5-alpha1-lambda025":(lambda x,e:t5(x,e,1,.25),0,None,{"alpha":1,"blend":.25}),
+        "C2-iter1":(lambda x,e:consistency_iteration(x,e,1),0,None,{"iterations":1}),
+        "C2-iter2":(lambda x,e:consistency_iteration(x,e,2),0,None,{"iterations":2}),
+        **{f"C1-norbert-{n}":(lambda x,e,n=n:norbert_wiener(e,x,n),0,"norbert",{"iterations":n}) for n in (0,1,2)},
+        "C-donor-other-lambda05":(donor(("other",)),1,"separator",{"donors":["other"],"strength":.5}),
+        "C-donor-drums-lambda05":(donor(("drums",)),1,"separator",{"donors":["drums"],"strength":.5}),
+    }
+    return {name:{"fn":fn,"additional_inference_calls":calls,"requires":requires,"params":params}
+            for name,(fn,calls,requires,params) in table.items()}

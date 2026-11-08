@@ -11,5 +11,5 @@
   "stft": {"nperseg": 4096, "hop": 1024, "window": "hann-periodic", "boundary": "zeros", "padded": true, "scaling": "spectrum"},
   "metrics": {"center": false, "pinv_rcond": 1e-10, "energy_epsilon": 1e-12, "db_cap": 120},
   "separator": {"name": "htdemucs", "device": "cuda", "fp32": true, "batch_size": 1, "shifts": 0, "split": true, "segment_seconds": 7.0, "overlap": 0.25},
-  "selection": {"sar_policy_status": "pending-owner-confirmation"}
+  "selection": {"sar_policy_status": "pending-owner-confirmation", "sar_floor_db": null, "minimum_sdr_gain_db": 0.2}
 }

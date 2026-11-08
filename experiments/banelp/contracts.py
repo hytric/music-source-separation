@@ -13,7 +13,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "crop_seconds": 30, "stft": {"nperseg": 4096, "hop": 1024, "window": "hann-periodic", "boundary": "zeros", "padded": True},
     "metrics": {"center": False, "pinv_rcond": 1e-10, "energy_epsilon": 1e-12, "db_cap": 120.0},
     "separator": {"name": "htdemucs", "device": "cuda", "fp32": True, "batch_size": 1, "shifts": 0, "split": True, "segment": 7.0, "overlap": 0.25},
-    "selection": {"sar_policy_status": "pending-owner-confirmation"}}
+    "selection": {"sar_policy_status": "pending-owner-confirmation", "sar_floor_db": None, "minimum_sdr_gain_db": 0.2}}
 
 def canonical_json(value: Any) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
@@ -54,5 +54,10 @@ def validate_practical_config(config: dict[str, Any]) -> None:
     if forbidden: raise ValueError(f"practical config cannot contain oracle fields: {sorted(forbidden)}")
     if config.get("schema_version") != CONFIG_SCHEMA: raise ValueError("unsupported config schema")
     if tuple(config.get("sources", ())) != SOURCES: raise ValueError("invalid source order")
+    if config.get("sample_rate") != SAMPLE_RATE or config.get("channels") != 2: raise ValueError("config must be 44.1 kHz stereo")
+    samples = config.get("samples")
+    if not isinstance(samples, int) or isinstance(samples, bool) or samples <= 0: raise ValueError("config samples must be a positive integer")
+    if "selected" in config.get("selection", {}):
+        raise ValueError("config.selection.selected is not allowed; the seal derives the candidate from results/develop.json")
 
 def config_copy() -> dict[str, Any]: return json.loads(json.dumps(DEFAULT_CONFIG))

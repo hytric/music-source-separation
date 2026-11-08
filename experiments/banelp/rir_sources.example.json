@@ -1,0 +1,26 @@
+{
+  "_comment": "Schema example only. URLs, sha256, license and member names are placeholders that the host-run must verify (OpenAIR terms) before use; an entry without a URL or license fails with a recorded reason and the next candidate or the synthetic fallback is used.",
+  "rooms": [
+    {
+      "room": "R1",
+      "target_rt60_seconds": 0.26,
+      "candidates": [
+        {
+          "kind": "openair",
+          "space": "<OpenAIR space name>",
+          "url": "<verified https URL of the full-band archive>",
+          "sha256": "<provider or first-download checksum>",
+          "bytes": null,
+          "license": "<license identifier recorded from the OpenAIR page>",
+          "archive": true,
+          "positions": {
+            "P1": {"member": "<archive member path>", "channel": 0, "channel_note": "B-format W channel"},
+            "P2": {"member": "<archive member path>", "channel": 0, "channel_note": "B-format W channel"},
+            "P3": {"member": "<archive member path>", "channel": 0, "channel_note": "B-format W channel"},
+            "P4": {"member": "<archive member path>", "channel": 0, "channel_note": "B-format W channel"}
+          }
+        }
+      ]
+    }
+  ]
+}

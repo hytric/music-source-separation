@@ -15,9 +15,11 @@ def project_metrics(target: np.ndarray, estimate: np.ndarray, targets: np.ndarra
     norm2 = float(s@s)
     if norm2 <= 1e-24: return {"state":"silent-target", "si_sdr":None,"si_sir":None,"si_sar":None,"sd_sdr":None,"target_gain":None,"rank":int(np.linalg.matrix_rank(matrix))}
     gain = float(z@s/norm2); t = gain*s
-    p = matrix @ (np.linalg.pinv(matrix, rcond=rcond) @ z)
-    singular = np.linalg.svd(matrix, compute_uv=False)
-    rank = int(np.sum(singular > rcond*singular[0])) if singular.size else 0
+    # One thin SVD gives both the pinv(rcond) projection onto span(targets) and the rank.
+    u, singular, _ = np.linalg.svd(matrix, full_matrices=False)
+    keep = singular > rcond*singular[0] if singular.size else np.zeros(0, dtype=bool)
+    rank = int(keep.sum()); basis = u[:, keep]
+    p = basis @ (basis.T @ z)
     return {"state":"ok", "si_sdr":_db_ratio(float(t@t),float((z-t)@(z-t))),
             "si_sir":_db_ratio(float(t@t),float((p-t)@(p-t))), "si_sar":_db_ratio(float(p@p),float((z-p)@(z-p))),
             "sd_sdr":_db_ratio(float(t@t),float((z-s)@(z-s))), "target_gain":gain,"rank":rank}

@@ -38,7 +38,7 @@ class ContractTests(unittest.TestCase):
         wet,info=apply_rir(dry,np.array([1.,.2]))
         with self.assertRaises(ValueError): apply_rir(dry,np.ones((4,4)))
         apply_rir(dry,np.ones((4,4)),rir_channel=0)
-        self.assertTrue(np.allclose(wet[:,0],wet[:,1]))
+        self.assertEqual(wet.shape,(2,100)); self.assertTrue(np.allclose(wet[0],wet[1]))
         self.assertAlmostEqual(info['wet_rms_after_gain'],info['dry_rms'],places=5)
         converted,provenance=prepare_rir(np.r_[1.,np.zeros(100)],44100)
         self.assertEqual(provenance['sample_rate'],44100); self.assertEqual(len(converted),101)
