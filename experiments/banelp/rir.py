@@ -7,7 +7,7 @@ checksums and licenses must be verified by the host-run before they are filled i
 with no URL fails with a recorded reason instead of guessing an endpoint.
 """
 from __future__ import annotations
-import hashlib, importlib, inspect, json, os, shutil, stat, tarfile, tempfile, urllib.parse, urllib.request, zipfile
+import hashlib, importlib, importlib.util, inspect, json, os, shutil, stat, tarfile, tempfile, urllib.parse, urllib.request, zipfile
 from pathlib import Path, PurePosixPath
 import numpy as np
 import soundfile as sf
@@ -182,18 +182,27 @@ def load_geometry(path: str | Path) -> dict:
     return {"spec": spec, "path": str(path), "sha256": sha256_file(path)}
 
 def load_gpurir(simulator=None) -> tuple:
-    """Import gpuRIR (or accept an injected simulator), require the whole API, and record the binary hashes."""
+    """Import gpuRIR (or accept an injected simulator), require the whole API, and record the binary hashes.
+
+    pip installs the CUDA extension as the top-level module `gpuRIR_bind` (next to, not inside, the `gpuRIR` package),
+    so it is located through its import spec; a real module without a found extension is refused."""
     sim = simulator if simulator is not None else importlib.import_module("gpuRIR")
     missing = [n for n in GPURIR_REQUIRED_API if not callable(getattr(sim, n, None))]
     if missing: raise RuntimeError(f"gpuRIR API incomplete: missing {missing}")
     if simulator is not None: return sim, {"module_file": None, "fake": True}
     module_file = Path(inspect.getfile(sim)).resolve()
-    return sim, {"module_file": str(module_file), "simulate_signature": str(inspect.signature(sim.simulateRIR)),
-                 "extension_sha256": {p.name: sha256_file(p) for p in sorted(module_file.parent.glob("*.so"))}}
+    spec = importlib.util.find_spec("gpuRIR_bind"); origin = getattr(spec, "origin", None)
+    extension = Path(origin).resolve() if origin and origin not in ("built-in", "frozen") and Path(origin).is_file() else None
+    if extension is None: raise RuntimeError("gpuRIR extension module `gpuRIR_bind` not found (importlib.util.find_spec gave no file); the build is incomplete")
+    return sim, {"module_file": str(module_file), "extension_file": str(extension), "simulate_signature": str(inspect.signature(sim.simulateRIR)),
+                 "extension_sha256": {extension.name: sha256_file(extension)}, "module_sha256": {module_file.name: sha256_file(module_file)}}
 
-# gpuRIR uses a fractional-delay (windowed sinc) direct path, so the peak sits within a few samples of distance/c.
-# A larger gap means a coordinate-order or unit error in the geometry and fails the generation.
-PEAK_DELAY_TOLERANCE_SAMPLES = 8
+# gpuRIR's direct path is a fractional-delay (windowed sinc) pulse. With source and microphone at the same height the floor and
+# ceiling reflections arrive together and their sum can exceed the direct sound, so the loudest sample is not the arrival time;
+# the onset (first sample >= ONSET_THRESHOLD_FRACTION of the maximum) is. An onset further than ONSET_TOLERANCE_SAMPLES from
+# distance/c means a coordinate-order or unit error in the geometry and fails the generation.
+ONSET_TOLERANCE_SAMPLES = 8
+ONSET_THRESHOLD_FRACTION = 0.1
 
 def _gpurir_room(runtime: Path, room: str, geometry: dict, sim) -> dict:
     spec = geometry["spec"]; room_sz = [float(v) for v in spec["room_sz_m"]]; rcv = np.asarray(spec["receiver"]["pos_m"], dtype=np.float64)
@@ -210,12 +219,14 @@ def _gpurir_room(runtime: Path, room: str, geometry: dict, sim) -> dict:
         if not np.isfinite(out).all() or not np.any(out): raise RuntimeError(f"{room}/{position}: gpuRIR output is nonfinite or all zero")
         converted, info = prepare_rir(out[0, 0].astype(np.float64), SAMPLE_RATE)
         distance = float(np.linalg.norm(src - rcv))
-        direct_delay = int(round(distance / ref["c_m_s"] * SAMPLE_RATE)); peak_index = int(np.argmax(np.abs(converted)))
-        if abs(peak_index - direct_delay) > PEAK_DELAY_TOLERANCE_SAMPLES:
-            raise RuntimeError(f"{room}/{position}: RIR peak at sample {peak_index} but the direct path arrives at {direct_delay} (tolerance {PEAK_DELAY_TOLERANCE_SAMPLES}); check the geometry coordinate order and units")
+        direct_delay = int(round(distance / ref["c_m_s"] * SAMPLE_RATE)); magnitude = np.abs(converted); peak_index = int(np.argmax(magnitude))
+        onset_index = int(np.flatnonzero(magnitude >= ONSET_THRESHOLD_FRACTION * magnitude[peak_index])[0])
+        if abs(onset_index - direct_delay) > ONSET_TOLERANCE_SAMPLES:
+            raise RuntimeError(f"{room}/{position}: RIR onset (first |h| >= {ONSET_THRESHOLD_FRACTION} of max) at sample {onset_index} but the direct path arrives at {direct_delay} (tolerance {ONSET_TOLERANCE_SAMPLES}); check the geometry coordinate order and units")
         path, digest = _write_rir(runtime, room, position, converted)
         records[position] = {"path": path, "sha256": digest, "source_pos_m": src.tolist(), "receiver_pos_m": rcv.tolist(), "distance_m": distance,
-                             "direct_delay_samples": direct_delay, "peak_index": peak_index, "peak_delay_tolerance_samples": PEAK_DELAY_TOLERANCE_SAMPLES,
+                             "direct_delay_samples": direct_delay, "onset_index": onset_index, "onset_threshold_fraction": ONSET_THRESHOLD_FRACTION,
+                             "onset_tolerance_samples": ONSET_TOLERANCE_SAMPLES, "peak_index": peak_index,
                              "length_samples": int(len(converted)), "resample_method": "none", "onset_offset": 0, **_measured(info)}
     return {"kind": "gpurir", "space": "fixed layout 7.5x6.0x3.0 m (interim report image6)", "url": None,
             "license": "generated (gpuRIR AGPL-3.0 tool, not redistributed)", "full_band": True,

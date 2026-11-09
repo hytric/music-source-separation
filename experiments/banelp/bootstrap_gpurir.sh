@@ -61,29 +61,34 @@ if ! "$P" -m pip install --no-deps --force-reinstall "$SRC" >"$LOGS/pip-build.lo
   site=$("$P" -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
   mkdir -p "$site/gpuRIR"; cp "$SRC/gpuRIR/__init__.py" "$site/gpuRIR/"
   so=$(find "$SRC/build" -name 'gpuRIR_bind*.so' | head -n1); [[ -n $so ]] || { echo "no gpuRIR_bind*.so produced" >&2; exit 1; }
-  cp "$so" "$site/gpuRIR/"
+  cp "$so" "$site/"   # top-level module, as pip installs it (gpuRIR/__init__.py does `from gpuRIR_bind import gpuRIR_bind`)
 fi
 
 step verify
-modfile=$("$P" - <<'PY'
+# pip installs the extension as the top-level module site-packages/gpuRIR_bind.<abi>.so, not inside site-packages/gpuRIR/.
+ext=$("$P" - <<'PY'
 import importlib.util
-print(importlib.util.find_spec("gpuRIR").origin)
+spec = importlib.util.find_spec("gpuRIR_bind")
+print(spec.origin if spec and spec.origin else "")
 PY
 )
-moddir=$(dirname "$modfile")
-for so in "$moddir"/*.so; do patchelf --set-rpath "$TC/lib" "$so"; done
+[[ -n $ext && -f $ext ]] || { echo "gpuRIR_bind extension not found by importlib (is the build installed?)" >&2; exit 1; }
+patchelf --set-rpath "$TC/lib" "$ext"
 env -u LD_LIBRARY_PATH "$P" - >"$LOGS/import.log" 2>&1 <<'PY' || { echo "import gpuRIR failed; see $LOGS/import.log" >&2; cat "$LOGS/import.log" >&2; exit 1; }
 import inspect, gpuRIR
 print(inspect.signature(gpuRIR.simulateRIR))
 for name in ("activateMixedPrecision", "activateLUT", "beta_SabineEstimation", "att2t_SabineEstimator", "t2n", "simulateRIR"):
     assert callable(getattr(gpuRIR, name)), name
 PY
-for so in "$moddir"/*.so; do ldd "$so" >>"$LOGS/ldd.log" 2>&1 || true; done
+: >"$LOGS/ldd.log"; ldd "$ext" >>"$LOGS/ldd.log" 2>&1 || true
 ! grep -q 'not found' "$LOGS/ldd.log" || { echo "unresolved shared libraries; see $LOGS/ldd.log" >&2; exit 1; }
+# the toolchain has no cuobjdump: the embedded cubin targets are the `.target sm_NN` strings of the extension
+sm_targets=$(strings "$ext" | grep -o '\.target sm_[0-9]*' | sort -u | sed 's/^\.target //' | paste -sd, -) || true
+[[ ",$sm_targets," == *",sm_$arch,"* ]] || { echo "extension has no sm_$arch target (found: ${sm_targets:-none}): $ext" >&2; exit 1; }
 
 step record
-BUILD_PATH=$build_path COMMIT=$commit MM_SHA=$mm_sha ARCH=$arch CUDA=$cuda TC=$TC MODDIR=$moddir PATCH=$LOGS/cmake-arch.patch "$P" - "$TC/build-record.json" "$A/evidence/gpurir-build-record.json" <<'PY'
-import hashlib, json, os, subprocess, sys, datetime, glob
+BUILD_PATH=$build_path COMMIT=$commit MM_SHA=$mm_sha ARCH=$arch CUDA=$cuda TC=$TC EXT=$ext SM_TARGETS=$sm_targets PATCH=$LOGS/cmake-arch.patch "$P" - "$TC/build-record.json" "$A/evidence/gpurir-build-record.json" <<'PY'
+import hashlib, json, os, subprocess, sys, datetime
 def out(*cmd): return subprocess.run(cmd, capture_output=True, text=True, check=True).stdout.strip().splitlines()[0]
 tc = os.environ["TC"]
 record = {"gpurir_commit": os.environ["COMMIT"], "gpurir_license": "AGPL-3.0", "source_url": "https://github.com/DavidDiazGuerra/gpuRIR",
@@ -92,12 +97,15 @@ record = {"gpurir_commit": os.environ["COMMIT"], "gpurir_license": "AGPL-3.0", "
           "nvcc_version": [l for l in subprocess.run([f"{tc}/bin/nvcc", "--version"], capture_output=True, text=True, check=True).stdout.splitlines() if "release" in l][0].strip(),
           "gxx_version": out(f"{tc}/bin/x86_64-conda-linux-gnu-g++", "--version"), "cmake_version": out(f"{tc}/bin/cmake", "--version"),
           "cuda_version": os.environ["CUDA"], "micromamba_sha256": os.environ["MM_SHA"],
-          "extension_sha256": {os.path.basename(p): hashlib.sha256(open(p, "rb").read()).hexdigest() for p in sorted(glob.glob(os.environ["MODDIR"] + "/*.so"))},
+          "extension_file": os.environ["EXT"], "extension_sha256": {os.path.basename(os.environ["EXT"]): hashlib.sha256(open(os.environ["EXT"], "rb").read()).hexdigest()},
+          "sm_targets": [t for t in os.environ["SM_TARGETS"].split(",") if t], "sm_target_required": "sm_" + os.environ["ARCH"],
           "python": sys.version.split()[0], "torch_cuda": __import__("torch").version.cuda,
           "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")}
 for path in sys.argv[1:]:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f: json.dump(record, f, ensure_ascii=False, indent=2, sort_keys=True)
+assert record["extension_sha256"] and all(record["extension_sha256"].values()), "extension_sha256 is empty"
+assert record["sm_target_required"] in record["sm_targets"], record["sm_targets"]
 print(json.dumps(record, indent=2, sort_keys=True))
 PY
 echo "gpuRIR $commit ready ($build_path); build record: $A/evidence/gpurir-build-record.json"

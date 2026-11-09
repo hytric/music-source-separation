@@ -4,6 +4,7 @@ import inspect
 import json
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 import numpy as np
 from experiments.banelp import rir
@@ -45,6 +46,20 @@ class FakeGpuRIR:
         return out[None, None, :].astype(np.float32)
 
 
+class ShiftedGpuRIR(FakeGpuRIR):
+    """Direct pulse `offset` samples from distance/c, optionally followed by a louder reflection `reflection_lag` samples later."""
+    def __init__(self, offset=0, reflection_gain=0.0, reflection_lag=0):
+        super().__init__(); self.offset, self.gain, self.lag = offset, reflection_gain, reflection_lag
+
+    def simulateRIR(self, room_sz, beta, pos_src, pos_rcv, nb_img, Tmax, fs, Tdiff=None, spkr_pattern="omni", mic_pattern="omni", orV_src=None, orV_rcv=None, c=343.0):
+        n = int(np.ceil(Tmax * fs)); out = np.zeros(n); t = np.arange(n) / fs
+        out += 1e-3 * np.random.default_rng(1).standard_normal(n) * np.exp(-3 * np.log(10) * t / Tmax)
+        delay = int(round(float(np.linalg.norm(np.asarray(pos_src) - np.asarray(pos_rcv))) / c * fs)) + self.offset
+        out[:delay] = 0; out[delay] = 1.0
+        if self.gain: out[delay + self.lag] = self.gain
+        return out[None, None, :].astype(np.float32)
+
+
 def _old_t30(rir_, fs=FS):
     """The estimator this replaces: whole-file Schroeder curve, first -5/-35 dB crossings."""
     decay = np.cumsum((rir_ ** 2)[::-1])[::-1]; edc = 10 * np.log10(np.maximum(decay / decay[0], 1e-30))
@@ -82,7 +97,8 @@ class GpuRirGenerationTests(unittest.TestCase):
             self.assertEqual(record["simulation"]["T60_target_s"], rir.TARGET_RT60[room]); self.assertEqual(record["simulation"]["att_diff_db"], 25.0)
             for position, entry in record["positions"].items():
                 self.assertTrue(np.isfinite(loaded[room][position]).all()); self.assertEqual(entry["length_samples"], len(loaded[room][position]))
-                self.assertEqual(entry["peak_index"], entry["direct_delay_samples"]); self.assertEqual(entry["rt_method"], RT_METHOD)
+                self.assertEqual(entry["peak_index"], entry["direct_delay_samples"]); self.assertEqual(entry["onset_index"], entry["direct_delay_samples"])
+                self.assertEqual(entry["onset_tolerance_samples"], rir.ONSET_TOLERANCE_SAMPLES); self.assertEqual(entry["rt_method"], RT_METHOD)
                 for key in ("measured_edt_seconds", "measured_t20_seconds", "measured_t30_seconds", "noise_floor_db", "distance_m"): self.assertIn(key, entry)
 
     def test_simulator_receives_reference_settings(self):
@@ -124,14 +140,31 @@ class GpuRirGenerationTests(unittest.TestCase):
         with self.assertRaises(ValueError): rir.acquire_rirs(self.runtime, sources=None, synthetic_fallback=True, gpurir_geometry=self.geometry, simulator=self.fake)
         with self.assertRaises(ValueError): rir.acquire_rirs(self.runtime, sources=None, synthetic_fallback=False, gpurir_geometry=self.geometry)
 
-    def test_peak_far_from_direct_delay_is_refused(self):
+    def test_onset_far_from_direct_delay_is_refused(self):
         n = int(np.ceil(1.96 * FS)); out = np.zeros((1, 1, n), np.float32); out[0, 0, 400] = 1.0; out[0, 0, 401:] = 1e-3
         self.fake = FakeGpuRIR(output=out)
-        with self.assertRaisesRegex(RuntimeError, "direct path arrives"): self.generate()
+        with self.assertRaisesRegex(RuntimeError, "onset.*direct path arrives.*geometry coordinate order and units"): self.generate()
         near = FakeGpuRIR(); manifest = rir.acquire_rirs(self.runtime, sources=None, synthetic_fallback=False, gpurir_geometry=self.geometry, simulator=near, gpurir_build_record={"gpurir_commit": "0" * 40})
         for room in manifest["rooms"].values():
             for entry in room["positions"].values():
-                self.assertLessEqual(abs(entry["peak_index"] - entry["direct_delay_samples"]), rir.PEAK_DELAY_TOLERANCE_SAMPLES)
+                self.assertLessEqual(abs(entry["onset_index"] - entry["direct_delay_samples"]), rir.ONSET_TOLERANCE_SAMPLES)
+
+    def test_onset_tolerance_edges(self):
+        for offset, ok in ((rir.ONSET_TOLERANCE_SAMPLES, True), (-rir.ONSET_TOLERANCE_SAMPLES, True), (rir.ONSET_TOLERANCE_SAMPLES + 1, False), (-rir.ONSET_TOLERANCE_SAMPLES - 1, False)):
+            self.fake = ShiftedGpuRIR(offset=offset)
+            if ok: self.generate(gpurir_build_record={"gpurir_commit": "0" * 40})
+            else:
+                with self.assertRaisesRegex(RuntimeError, "onset"): self.generate(gpurir_build_record={"gpurir_commit": "0" * 40})
+
+    def test_coherent_reflection_pair_louder_than_direct_passes(self):
+        """Source and microphone at the same height: floor+ceiling reflections coincide and out-peak the direct path (owner probe: peak 642/979/626 vs direct 513/489/493)."""
+        self.fake = ShiftedGpuRIR(offset=-4, reflection_gain=2.5, reflection_lag=129)
+        manifest = self.generate(gpurir_build_record={"gpurir_commit": "0" * 40})
+        for room in manifest["rooms"].values():
+            for entry in room["positions"].values():
+                self.assertGreater(entry["peak_index"] - entry["direct_delay_samples"], rir.ONSET_TOLERANCE_SAMPLES)
+                self.assertEqual(entry["onset_index"] - entry["direct_delay_samples"], -4)
+                self.assertEqual(entry["onset_threshold_fraction"], 0.1)
 
     def test_bad_simulator_output_is_refused(self):
         for output in (np.full((1, 1, 100), np.nan), np.zeros((1, 1, 100)), np.ones((1, 100)), np.ones((1, 1, 0))):
@@ -180,6 +213,46 @@ class DecayTimesTests(unittest.TestCase):
         r = decay_times(_noisy_decay(0.5, 3.0, -30.0))
         self.assertIsNone(r["measured_t30_seconds"]); self.assertEqual(r["t30_failure"], "insufficient dynamic range above noise floor")
         self.assertIsNone(r["measured_t20_seconds"])
+
+
+
+
+class LoadGpuRirTests(unittest.TestCase):
+    """load_gpurir hashes the top-level `gpuRIR_bind` extension that pip installs next to the package (not inside it)."""
+    API = "".join(f"def {n}(*a, **k): return None\n" for n in rir.GPURIR_REQUIRED_API)
+
+    def layout(self, root, extension=True):
+        pkg = Path(root) / "gpuRIR"; pkg.mkdir(); (pkg / "__init__.py").write_text(self.API)
+        if extension: (Path(root) / "gpuRIR_bind.cpython-312-x86_64-linux-gnu.so").write_bytes(b"\x7fELFfake-extension")
+
+    def load(self, root):
+        import sys
+        saved = {k: sys.modules.pop(k) for k in [m for m in sys.modules if m.split(".")[0] in ("gpuRIR", "gpuRIR_bind")]}
+        # only the temp layout and the standard library are importable: a real gpuRIR_bind in site-packages must not leak in
+        isolated = [str(root)] + [p for p in sys.path if "site-packages" not in p and "dist-packages" not in p]
+        try:
+            with mock.patch.object(sys, "path", isolated): return rir.load_gpurir()
+        finally:
+            for m in [m for m in sys.modules if m.split(".")[0] in ("gpuRIR", "gpuRIR_bind")]: del sys.modules[m]
+            sys.modules.update(saved)
+
+    def test_extension_next_to_the_package_is_hashed(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve(); self.layout(root)
+            _, info = self.load(root)
+            ext = root / "gpuRIR_bind.cpython-312-x86_64-linux-gnu.so"
+            self.assertEqual(info["extension_sha256"], {ext.name: hashlib.sha256(ext.read_bytes()).hexdigest()})
+            self.assertEqual(info["extension_file"], str(ext)); self.assertEqual(list(info["module_sha256"]), ["__init__.py"])
+            self.assertEqual(info["module_sha256"]["__init__.py"], hashlib.sha256((root / "gpuRIR/__init__.py").read_bytes()).hexdigest())
+
+    def test_missing_extension_is_refused_for_a_real_module(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve(); self.layout(root, extension=False)
+            with self.assertRaisesRegex(RuntimeError, "gpuRIR_bind"): self.load(root)
+
+    def test_injected_simulator_needs_no_extension(self):
+        _, info = rir.load_gpurir(FakeGpuRIR()); self.assertEqual(info, {"module_file": None, "fake": True})
 
 
 if __name__ == "__main__":
