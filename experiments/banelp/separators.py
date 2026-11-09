@@ -127,7 +127,7 @@ def match_registered_members(registered: dict, expected: dict) -> list[Path]:
         ordered.append(Path(member["path"]))
     return ordered
 
-def load_registered_demucs(registered: dict, model_name: str, *, remote_root: str|Path|None=None, load_model=None, bag_cls=None):
+def load_registered_demucs(registered: dict, model_name: str, *, remote_root: str|Path|None=None, load_model=None, bag_cls=None, torch_load=None):
     """Hash-verify, match against the resolved member set, then load from exactly those local files (no name resolution)."""
     if registered.get("model_id")!=model_name: raise ValueError("registered model record does not match requested model")
     verify_model_record(registered)
@@ -135,7 +135,11 @@ def load_registered_demucs(registered: dict, model_name: str, *, remote_root: st
     paths=match_registered_members(registered,expected)
     if load_model is None:
         from demucs.states import load_model
-    models=[load_model(path) for path in paths]
+    if torch_load is None:
+        import torch
+        torch_load=torch.load
+    # weights_only=False equals the official path (demucs/repo.py:65 torch.hub.load_state_dict_from_url -> load_model(package_dict)); it is applied only to files whose sha256 was verified above
+    models=[load_model(torch_load(path, map_location="cpu", weights_only=False)) for path in paths]
     if expected["bag"]:
         if bag_cls is None:
             from demucs.apply import BagOfModels as bag_cls

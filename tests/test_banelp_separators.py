@@ -11,6 +11,7 @@ import tempfile
 import types
 import unittest
 import warnings
+from unittest import mock
 from pathlib import Path
 import numpy as np
 from experiments.banelp import cli, separators
@@ -25,6 +26,10 @@ except ImportError:  # pragma: no cover
 
 ROOT = Path(__file__).parents[1]
 NATIVE = ["drums", "bass", "other", "vocals"]
+
+
+class _Evaluable(list):
+    def eval(self): return self
 
 
 def _run(*argv):
@@ -135,8 +140,26 @@ class RegisteredFileMatchingTests(unittest.TestCase):
             def __init__(self, models, weights, segment): self.models, self.weights, self.segment = models, weights, segment
             def eval(self): self.evaluated = True; return self
         model = separators.load_registered_demucs(self.record(list(reversed([f for _, f, _ in self.files]))), "bagname", remote_root=self.remote,
-                                                  load_model=lambda path: loaded.append(Path(path).name) or Path(path).name, bag_cls=Bag)
+                                                  load_model=lambda pkg: loaded.append(pkg["name"]) or pkg["name"], bag_cls=Bag,
+                                                  torch_load=lambda path, **kw: {"name": Path(path).name})
         self.assertEqual(loaded, [f for _, f, _ in self.files]); self.assertEqual(model.models, loaded); self.assertTrue(model.evaluated)
+
+    def test_verified_load_uses_weights_only_false_cpu_and_passes_the_dict(self):
+        calls, handed = [], []
+        def spy_load(path, *args, **kwargs): calls.append((Path(path).name, args, kwargs)); return {"package": Path(path).name}
+        separators.load_registered_demucs(self.record(), "bagname", remote_root=self.remote, load_model=lambda pkg: handed.append(pkg) or pkg, bag_cls=lambda m, w, s: _Evaluable(m),
+                                          torch_load=spy_load)
+        self.assertEqual([c[0] for c in calls], [f for _, f, _ in self.files])
+        for _, args, kwargs in calls: self.assertEqual((args, kwargs), ((), {"map_location": "cpu", "weights_only": False}))
+        self.assertTrue(handed and all(isinstance(h, dict) for h in handed))
+        # default path: torch.load itself is the spy, and an unverified (hash-mismatched) file is never loaded
+        with mock.patch("torch.load", side_effect=lambda path, **kw: {"package": str(path)}) as tl:
+            separators.load_registered_demucs(self.record(), "bagname", remote_root=self.remote, load_model=lambda pkg: pkg, bag_cls=lambda m, w, s: _Evaluable(m))
+            self.assertEqual(tl.call_count, 2); self.assertTrue(all(c.kwargs == {"map_location": "cpu", "weights_only": False} for c in tl.call_args_list))
+        record = self.record(); record["members"][0]["sha256"] = "0" * 64
+        with mock.patch("torch.load") as tl, self.assertRaises(ValueError):
+            separators.load_registered_demucs(record, "bagname", remote_root=self.remote, load_model=lambda pkg: pkg, bag_cls=list)
+        tl.assert_not_called()
 
     def test_unrelated_file_with_the_right_hash_is_refused(self):
         # hub holds unrelated.th (hash registered correctly) while get_model would resolve the two real members.
@@ -152,6 +175,43 @@ class RegisteredFileMatchingTests(unittest.TestCase):
         (self.hub / self.files[0][1]).write_bytes(b"swapped"); record = self.record()
         with self.assertRaisesRegex(ValueError, "hash prefix"): separators.load_registered_demucs(record, "bagname", remote_root=self.remote, load_model=lambda p: p)
         with self.assertRaisesRegex(ValueError, "does not match"): separators.load_registered_demucs(self.record(model_id="other"), "bagname", remote_root=self.remote)
+
+
+def _htdemucs_file():
+    """The downloaded official htdemucs checkpoint under the runtime's torch hub cache, or None."""
+    candidates = [Path(p) / "cache/torch/hub/checkpoints/955717e8-8726e21a.th" for p in (os.environ.get("BANELP_RUNTIME_DIR"),) if p]
+    try:
+        common = subprocess.run(["git", "rev-parse", "--git-common-dir"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+        candidates.append((ROOT / common).resolve().parent / ".agent_runtime/banelp-v1/cache/torch/hub/checkpoints/955717e8-8726e21a.th")
+    except (OSError, subprocess.CalledProcessError): pass
+    return next((c for c in candidates if c.is_file()), None)
+
+
+HTDEMUCS_FILE = _htdemucs_file()
+
+
+@unittest.skipUnless(HAVE_TORCH and HTDEMUCS_FILE, "torch/demucs or the downloaded htdemucs file ($R/cache/torch/hub/checkpoints/955717e8-8726e21a.th) is absent")
+class RealHTDemucsLoadTests(unittest.TestCase):
+    """The verified load on the real pickled htdemucs package (CPU only): torch 2.6's weights_only default would refuse it."""
+    @classmethod
+    def setUpClass(cls):
+        cls.threads = torch.get_num_threads(); torch.set_num_threads(2)
+        cls.record = {"model_id": "htdemucs", "members": [{"path": str(HTDEMUCS_FILE), "sha256": sha256_file(HTDEMUCS_FILE)}]}
+    @classmethod
+    def tearDownClass(cls): torch.set_num_threads(cls.threads)
+
+    def test_load_registered_demucs_loads_the_real_package(self):
+        model = separators.load_registered_demucs(self.record, "htdemucs")
+        # get_model('htdemucs') is a one-member BagOfModels around the pickled HTDemucs
+        self.assertEqual((type(model).__name__, [type(m).__name__ for m in model.models], list(model.sources), model.samplerate), ("BagOfModels", ["HTDemucs"], NATIVE, 44100)); self.assertFalse(model.training)
+        self.assertEqual(sum(p.numel() for p in model.parameters()), 41984456)
+
+    def test_register_model_introspect_cli_on_the_real_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp).resolve(); common = ["--runtime-dir", base / "runtime", "--artifact-dir", base / "artifacts", "--config", ROOT / "experiments/banelp/config.json"]
+            record = _run("register-model", *common, "--model-id", "htdemucs", "--checkpoint", HTDEMUCS_FILE, "--train-data-status", "unknown", "--introspect")["model"]
+        self.assertEqual((record["native_source_order"], record["samplerate"], record["introspected"]), (NATIVE, 44100, True))
+        self.assertEqual(record["members"][0]["sha256"], self.record["members"][0]["sha256"])
 
 
 class AttrDict(dict):
