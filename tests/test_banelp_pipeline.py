@@ -133,13 +133,18 @@ class PipelineTests(unittest.TestCase):
     TRAIN_DATA_STATUS = "verified-excluded"
     EVIDENCE = ["test-evidence"]
     SELECTION_EXTRA = {}
+    WEIGHTS = b"stub-weights"
+
+    @classmethod
+    def selection_extra(cls):
+        return dict(cls.SELECTION_EXTRA)
 
     @classmethod
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory(); cls.addClassCleanup(cls.tmp.cleanup)
         base = Path(cls.tmp.name).resolve(); cls.runtime, cls.artifact = base / "runtime", base / "artifacts"
         config = json.loads((ROOT / "experiments/banelp/config.json").read_text())
-        config["samples"] = SAMPLES; config["selection"] = {"sar_policy_status": "confirmed", "sar_floor_db": -100.0, "minimum_sdr_gain_db": .1, **cls.SELECTION_EXTRA}
+        config["samples"] = SAMPLES; config["selection"] = {"sar_policy_status": "confirmed", "sar_floor_db": -100.0, "minimum_sdr_gain_db": .1, **cls.selection_extra()}
         cls.config = base / "config.json"; cls.config.write_text(json.dumps(config))
         cls.common = ["--runtime-dir", cls.runtime, "--artifact-dir", cls.artifact, "--config", cls.config]
         rng = np.random.default_rng(5); tracks = cls.runtime / "data/test"
@@ -152,7 +157,7 @@ class PipelineTests(unittest.TestCase):
         _run("rirs", *cls.common, "--offline-synthetic")
         summary = _run("build-wet", *cls.common)
         assert (summary["written"], summary["tracks"]) == (200, 50), summary
-        ckpt = cls.runtime / "weights.th"; ckpt.write_bytes(b"stub-weights")
+        ckpt = cls.runtime / "weights.th"; ckpt.write_bytes(cls.WEIGHTS)
         _run("register-model", *cls.common, "--model-id", "htdemucs", "--checkpoint", ckpt, "--native-source-order", "drums,bass,other,vocals",
              "--samplerate", "44100", "--train-data-status", cls.TRAIN_DATA_STATUS, *[a for e in cls.EVIDENCE for a in ("--evidence", e)])
         cls.models_bytes = (cls.runtime / "manifests/models.json").read_bytes()
@@ -166,10 +171,13 @@ class PipelineTests(unittest.TestCase):
                 x, targets, _ = load_wet(cls.runtime, split=entry["split"], track=entry["name"], room=room, cache_key=wet_key, samples=SAMPLES)
                 StubSeparator.lookup[x.tobytes()] = targets
         patcher = mock.patch.object(cli, "SEPARATOR_FACTORY", StubSeparator); patcher.start(); cls.addClassCleanup(patcher.stop)
+        cls.lock = _run("lock-policy", *cls.common)
+        cls.lock_bytes = (cls.runtime / "manifests/selection-policy.json").read_bytes()
         cls.develop = _run("develop", *cls.common)
 
     def setUp(self):
         (self.runtime / "manifests/models.json").write_bytes(self.models_bytes)
+        (self.runtime / "manifests/selection-policy.json").write_bytes(self.lock_bytes)
         shutil.rmtree(self.runtime / "claims", ignore_errors=True)
         (self.runtime / "results/evaluation.json").unlink(missing_ok=True)
         (self.artifact / "selection-seal.json").unlink(missing_ok=True)
@@ -221,34 +229,173 @@ class PipelineTests(unittest.TestCase):
         edited = self.config.with_name("edited.json"); edited.write_text(json.dumps(config))
         with self.assertRaises(ValueError): _run("develop", "--runtime-dir", self.runtime, "--artifact-dir", self.artifact, "--config", edited)
 
-    def test_seal_refuses_stale_develop_results(self):
-        ckpt = self.runtime / "weights2.th"; ckpt.write_bytes(b"other-weights")
-        _run("register-model", *self.common, "--model-id", "other-model", "--checkpoint", ckpt, "--native-source-order", "drums,bass,other,vocals",
-             "--samplerate", "44100", "--train-data-status", "unknown")
-        with self.assertRaises(ValueError): _run("seal", *self.common)
+    # ---- P2-1: develop.json detail ---------------------------------------------------------------------------------
+    def test_develop_json_keeps_per_observation_scores_and_candidate_detail(self):
+        results = json.loads((self.runtime / "results/develop.json").read_text())
+        self.assertEqual((results["schema_version"], results["metrics_config"]), (3, json.loads(self.config.read_text())["metrics"]))
+        base = results["baseline"]["observations"]; self.assertEqual(len(base), 160)
+        self.assertEqual({(o["track"], o["room"], o["stem"]) for o in base}, {(t, r, s) for t in results["tracks"] for r in ROOMS for s in SOURCES})
+        for o in base: self.assertTrue({"si_sdr", "si_sir", "si_sar", "target_gain", "state", "metric_states"} <= set(o))
+        if "track-00" in results["tracks"]:  # the fixture's silent `other` stem keeps its reason instead of vanishing
+            silent = [o for o in base if o["track"] == "track-00" and o["stem"] == "other"]
+            self.assertEqual({o["state"] for o in silent}, {"silent-target"}); self.assertTrue(all(o["si_sdr"] is None and o["metric_states"]["si_sir"] == "silent-target" for o in silent))
+        self.assertTrue(any(o["si_sdr"] is not None and o["si_sir"] is not None and o["si_sar"] is not None for o in base))
+        self.assertEqual(set(results["baseline"]["summary"]), {"si_sdr", "si_sir", "si_sar"}); self.assertEqual(set(results["baseline"]["summary"]["si_sir"]["stem_median"]), set(SOURCES))
+        self.assertEqual(set(results["candidate_observations"]), {r["name"] for r in results["candidates"] if r["status"] == "ok"})
+        self.assertEqual(len(results["candidate_observations"]["T1-uniform"]), 160)
+        oracle = results["oracle_diagnostics"]; self.assertEqual(len(oracle), 160); self.assertTrue(all({"si_sdr", "si_sir", "si_sar", "target_gain", "metric_states"} <= set(o) for o in oracle))
+        row = [r for r in results["candidates"] if r["name"] == "T1-uniform"][0]
+        self.assertEqual(set(row["delta_detail"]["stem_median"]), {"si_sdr", "si_sir", "si_sar"}); self.assertEqual(set(row["delta_detail"]["improvement_ratio"]["si_sdr"]), {"improved", "defined", "ratio"})
+        self.assertLessEqual(row["delta_detail"]["improvement_ratio"]["si_sdr"]["defined"], 160); self.assertIn("undefined_by_reason", row["delta_detail"])
+        self.assertEqual(row["sample_median_delta_db"], row["summary"]["sample_median_delta_db"]); self.assertIn("track_median_delta_db", row["summary"])
+
+    # ---- P2-4: practical outputs do not depend on the targets --------------------------------------------------------
+    def test_practical_outputs_are_identical_when_only_the_targets_differ(self):
+        def digests(perturb):
+            seen = []; real_run, real_load = cli.run_candidate, cli.load_wet
+            def spy(spec, x, estimates, by_model=None):
+                out = real_run(spec, x, estimates, by_model); seen.append(hashlib.sha256(np.ascontiguousarray(out).tobytes()).hexdigest()); return out
+            def load(*a, **k):
+                x, targets, record = real_load(*a, **k); return x, perturb(targets), record
+            with mock.patch.object(cli, "run_candidate", spy), mock.patch.object(cli, "load_wet", load), mock.patch.object(cli, "atomic_json"):
+                _run("develop", *self.common)
+            return seen
+        rng = np.random.default_rng(99)
+        same = digests(lambda t: t); different = digests(lambda t: (.3 * t + rng.normal(0, .05, t.shape)).astype(np.float32))
+        self.assertGreater(len(same), 100); self.assertEqual(same, different)
+
+    # ---- helpers -------------------------------------------------------------------------------------------------
+    def _config_with(self, name, **selection):
+        config = json.loads(self.config.read_text()); config["selection"] = {**config["selection"], **selection}
+        path = self.config.with_name(name); path.write_text(json.dumps(config)); return ["--runtime-dir", self.runtime, "--artifact-dir", self.artifact, "--config", path]
+
+    def _register(self, model_id, payload, status, *evidence, extra=()):
+        ckpt = self.runtime / f"{model_id}.th"; ckpt.write_bytes(payload)
+        _run("register-model", *self.common, "--model-id", model_id, "--checkpoint", ckpt, "--native-source-order", "drums,bass,other,vocals", "--samplerate", "44100",
+             "--train-data-status", status, *[a for e in evidence for a in ("--evidence", e)], *extra)
+
+    # ---- P1-2: pre-registered lock ---------------------------------------------------------------------------------
+    def test_lock_content_and_develop_record(self):
+        results = json.loads((self.runtime / "results/develop.json").read_text()); lock = json.loads((self.runtime / "manifests/selection-policy.json").read_text())
+        self.assertEqual(results["policy_lock_sha256"], lock["sha256"]); self.assertEqual(self.lock["sha256"], lock["sha256"])
+        content = lock["content"]
+        self.assertEqual(content["adoption"]["sar_floor_db"], -100.0); self.assertEqual(content["statistics"]["seed"], 20261108); self.assertEqual(content["statistics"]["bootstrap"], 10000)
+        self.assertIn("median over dev track x room samples", content["statistics"]["effect_estimand"]); self.assertIn("track-cluster bootstrap", content["statistics"]["ci"])
+        self.assertIn("per-stem median over dev track x room samples", content["statistics"]["sar_estimand"])
+        self.assertEqual(content["baseline"]["model_id"], "htdemucs"); self.assertIn("T1-uniform", [c["name"] for c in content["candidates"]])
+        self.assertTrue(all(set(c) >= {"name", "params", "config_hash", "models"} for c in content["candidates"]))
+        self.assertTrue((self.artifact / "evidence/manifests/selection-policy.json").is_file())
+        self.assertEqual(_run("lock-policy", *self.common)["sha256"], lock["sha256"])  # identical content is idempotent
+
+    def test_develop_without_lock_is_refused(self):
+        lock = self.runtime / "manifests/selection-policy.json"; lock.unlink()
+        with self.assertRaisesRegex(FileNotFoundError, "lock-policy"): _run("develop", *self.common)
+
+    def test_develop_refuses_unconfirmed_policy_and_edited_lock(self):
+        with self.assertRaisesRegex(ValueError, "confirms SAR policy"): _run("develop", *self._config_with("pending.json", sar_policy_status="pending-owner-confirmation"))
+        lock = self.runtime / "manifests/selection-policy.json"; edited = json.loads(lock.read_text()); edited["content"]["adoption"]["sar_floor_db"] = -3.0; lock.write_text(json.dumps(edited))
+        with self.assertRaisesRegex(ValueError, "hash mismatch"): _run("develop", *self.common)
+
+    def test_lock_overwrite_with_different_content_is_refused(self):
+        before = (self.runtime / "manifests/selection-policy.json").read_bytes()
+        with self.assertRaisesRegex(ValueError, "refusing to overwrite"): _run("lock-policy", *self._config_with("other-floor.json", minimum_sdr_gain_db=.05))
+        self.assertEqual((self.runtime / "manifests/selection-policy.json").read_bytes(), before)
+
+    def test_threshold_changes_after_develop_refuse_seal_and_develop(self):
+        # project-verify counterexample: a +0.1 dB / SAR -2 dB candidate must not seal under a post-hoc minimum=.05, sar_floor=-3.
+        for name, edits in (("posthoc.json", {"minimum_sdr_gain_db": .05, "sar_floor_db": -3.0}), ("floor.json", {"sar_floor_db": -3.0}), ("minimum.json", {"minimum_sdr_gain_db": .05})):
+            common = self._config_with(name, **edits)
+            with self.assertRaisesRegex(ValueError, "pre-registered lock"): _run("seal", *common)
+            with self.assertRaisesRegex(ValueError, "pre-registered lock"): _run("develop", *common)
+            self.assertFalse((self.artifact / "selection-seal.json").exists())
+
+    def test_candidate_set_change_refuses_develop_and_seal(self):
+        self._register("other-model", b"other-weights", "verified-excluded", "evidence-doc")
+        common = self._config_with("candidates.json", model_candidates=["replace:other-model"])
+        with self.assertRaisesRegex(ValueError, "pre-registered lock"): _run("develop", *common)
+        with self.assertRaisesRegex(ValueError, "pre-registered lock"): _run("seal", *common)
+
+    def test_seal_requires_develop_made_under_the_same_lock(self):
+        develop = self.runtime / "results/develop.json"; held = develop.read_bytes(); data = json.loads(held); data["policy_lock_sha256"] = "0" * 64
+        develop.write_text(json.dumps(data))
+        try:
+            with self.assertRaisesRegex(ValueError, "different policy lock"): _run("seal", *self.common)
+        finally: develop.write_bytes(held)
+
+    def test_seal_embeds_lock_and_states_the_estimand(self):
+        _run("seal", *self.common); sealed = json.loads((self.artifact / "selection-seal.json").read_text()); lock = json.loads((self.runtime / "manifests/selection-policy.json").read_text())
+        self.assertEqual((sealed["policy_lock_sha256"], sealed["policy_lock"]), (lock["sha256"], lock["content"]))
+        self.assertIn("median over dev track x room samples of the 4-stem mean dSI-SDR", sealed["statistic"]["effect_estimand"])
+        self.assertIn("seed=20261108", sealed["statistic"]["ci"])
+        if sealed["selection"]["selected"] != "identity": self.assertIn("gates", sealed["selection"]["candidate"])
+
+    def test_evaluate_refuses_a_seal_with_a_different_lock(self):
+        _run("seal", *self.common); seal_path = self.artifact / "selection-seal.json"; seal = json.loads(seal_path.read_text())
+        seal["policy_lock_sha256"] = "1" * 64; seal["sha256"] = hashlib.sha256(canonical_json({k: v for k, v in seal.items() if k != "sha256"})).hexdigest()
+        forged = self.artifact / "forged-lock-seal.json"; forged.write_text(json.dumps(seal))
+        with self.assertRaisesRegex(ValueError, "policy lock differs"): _run("evaluate", *self.common, "--seal", forged)
+        self.assertFalse((self.runtime / "claims/evaluation-40.claim").exists())
+
+    # ---- P1-3: eligibility per actual dependency -----------------------------------------------------------------
+    def test_unrelated_model_changes_neither_seal_nor_evaluate_acceptance(self):
+        first = _run("seal", *self.common); seal_path = self.artifact / "selection-seal.json"
+        self._register("unrelated-clean", b"unrelated", "verified-excluded", "evidence-doc")
+        again = _run("seal", *self.common)
+        self.assertEqual((first["sha256"], first["selected"]), (again["sha256"], again["selected"]))
+        with mock.patch.object(cli, "project_metrics", side_effect=RuntimeError("reached-holdout-computation")):  # every gate and the preflight passed
+            with self.assertRaisesRegex(RuntimeError, "reached-holdout-computation"): _run("evaluate", *self.common, "--seal", seal_path)
+        (self.runtime / "manifests/models.json").write_bytes(self.models_bytes)
+        shutil.rmtree(self.runtime / "claims", ignore_errors=True)
+        with mock.patch.object(cli, "project_metrics", side_effect=RuntimeError("reached-holdout-computation")):
+            with self.assertRaisesRegex(RuntimeError, "reached-holdout-computation"): _run("evaluate", *self.common, "--seal", seal_path)
+
+    def test_seal_model_hashes_list_the_depended_on_models_with_status(self):
+        _run("seal", *self.common); sealed = json.loads((self.artifact / "selection-seal.json").read_text())
+        ids = [m["model_id"] for m in sealed["model_hashes"]]; self.assertEqual(ids, ["htdemucs"])
+        entry = sealed["model_hashes"][0]; self.assertEqual(entry["train_data_status"], self.TRAIN_DATA_STATUS); self.assertIn("route", entry)
+
+    def test_verified_included_baseline_is_always_refused(self):
+        self._register("htdemucs", self.WEIGHTS, "verified-included", "contaminated-doc")
+        with self.assertRaisesRegex(ValueError, "verified-included"): _run("seal", *self.common)
 
 
 class UnknownBaselinePipelineTests(PipelineTests):
-    """The same round trip with a baseline whose training data is unverified: allowed only with the disclosure."""
+    """The same round trip with a baseline whose training data is unverified: allowed only with the disclosure and a bound user decision."""
     TRAIN_DATA_STATUS = "unknown"
     EVIDENCE = []
     SELECTION_EXTRA = {"baseline_train_data_policy": "allow-unknown-with-disclosure"}
+
+    @classmethod
+    def decision(cls, sha=None):
+        return {"model_id": "htdemucs", "sha256": sha or hashlib.sha256(cls.WEIGHTS).hexdigest(), "decision": "use-with-disclosure (training data unverified)", "decided_by": "user", "date": "2026-11-09"}
+
+    @classmethod
+    def selection_extra(cls):
+        return {**cls.SELECTION_EXTRA, "baseline_decisions": [cls.decision()]}
 
     def test_seal_and_evaluation_carry_the_disclosure(self):
         _run("seal", *self.common); seal_path = self.artifact / "selection-seal.json"; sealed = json.loads(seal_path.read_text())
         disclosure = sealed["baseline_disclosure"]
         self.assertEqual((disclosure["clean_winner_claim"], disclosure["clean_winner_eligible"], disclosure["baseline_train_data_status"]), ("not-eligible", False, "unknown"))
-        self.assertIn("학습 데이터는 미확인", disclosure["disclosure_ko"]); self.assertIn("unverified", disclosure["disclosure_en"])
-        self.assertEqual(sealed["schema_version"], 3); self.assertEqual(sealed["model_hashes"], [])
+        self.assertIn("clean winner가 아니다", disclosure["disclosure_ko"]); self.assertIn("not a clean winner", disclosure["disclosure_en"])
+        self.assertIn("800", disclosure["disclosure_ko"]); self.assertIn("800 extra songs were not audited per song", disclosure["disclosure_en"])
+        self.assertEqual(disclosure["decision"], self.decision())
+        self.assertEqual(sealed["schema_version"], 4); self.assertEqual([(m["model_id"], m["route"]) for m in sealed["model_hashes"]], [("htdemucs", "user-decision")])
+        self.assertEqual(json.loads((self.runtime / "results/develop.json").read_text())["baseline_disclosure"], disclosure)
         result = _run("evaluate", *self.common, "--seal", seal_path)
         self.assertEqual(result["baseline_disclosure"], disclosure)
         self.assertEqual(json.loads((self.runtime / "results/evaluation.json").read_text())["baseline_disclosure"], disclosure)
 
     def test_seal_refuses_unknown_baseline_without_policy_flag(self):
-        config = json.loads(self.config.read_text()); del config["selection"]["baseline_train_data_policy"]
-        plain = self.config.with_name("plain.json"); plain.write_text(json.dumps(config))
         with self.assertRaisesRegex(ValueError, "baseline_train_data_policy"):
-            _run("seal", "--runtime-dir", self.runtime, "--artifact-dir", self.artifact, "--config", plain)
+            _run("seal", *self._config_with("plain.json", baseline_train_data_policy="refuse"))
+
+    def test_unknown_baseline_without_matching_decision_is_refused_even_with_an_unrelated_clean_model(self):
+        self._register("unrelated-clean", b"unrelated", "verified-excluded", "evidence-doc")
+        for name, decisions in (("none.json", []), ("other-sha.json", [self.decision("f" * 64)]), ("other-id.json", [{**self.decision(), "model_id": "unrelated-clean"}]),
+                                ("not-user.json", [{**self.decision(), "decided_by": "agent"}]), ("signature.json", [{**self.decision(), "demucs_signature": "deadbeef"}])):
+            with self.assertRaisesRegex(ValueError, "decision"): _run("seal", *self._config_with(name, baseline_decisions=decisions))
+        self.assertFalse((self.artifact / "selection-seal.json").exists())
 
     def test_tampered_disclosure_is_refused_before_the_claim(self):
         _run("seal", *self.common); seal_path = self.artifact / "selection-seal.json"; seal = json.loads(seal_path.read_text())
@@ -272,22 +419,20 @@ class SelectionAndRowTests(unittest.TestCase):
         empty = np.full(shape, np.nan)
         self.assertEqual(cli._candidate_row("c", spec, empty, empty, empty, empty)["status"], "track-without-observations")
 
-    def test_select_candidate_uses_develop_schema_and_gates(self):
-        good = {"name": "A", "status": "ok", "summary": {"track_median_delta_db": 1.0, "track_bootstrap_95_ci": [.5, 1.5]}, "wilcoxon_p": .01,
-                "stem_median_delta_sar": {s: 0.0 for s in SOURCES}, "additional_inference_calls": 0}
-        weak = {**good, "name": "B", "summary": {"track_median_delta_db": .05, "track_bootstrap_95_ci": [-.1, .2]}}
-        low_sar = {**good, "name": "C", "stem_median_delta_sar": {**{s: 0.0 for s in SOURCES}, "bass": -3.0}}
-        self.assertEqual(select_candidate([good, weak, low_sar], sar_policy_status="confirmed", sar_floor_db=-1.0)["selected"], "A")
-        self.assertEqual(select_candidate([weak, low_sar], sar_policy_status="confirmed", sar_floor_db=-1.0)["selected"], "identity")
-
     def test_baseline_disclosure_rules(self):
-        base = {"model_id": "htdemucs", "sha256": "a" * 64}; allow = {"baseline_train_data_policy": "allow-unknown-with-disclosure"}
+        base = {"model_id": "htdemucs", "sha256": "a" * 64, "members": []}; allow = {"baseline_train_data_policy": "allow-unknown-with-disclosure"}
+        decision = {"model_id": "htdemucs", "sha256": "a" * 64, "decision": "use-with-disclosure", "decided_by": "user", "date": "2026-11-09"}
         with self.assertRaises(ValueError): cli._baseline_disclosure({**base, "train_data_status": "verified-included", "clean_winner_eligible": False}, allow)
-        with self.assertRaises(ValueError): cli._baseline_disclosure({**base, "train_data_status": "unknown", "clean_winner_eligible": False}, {})
-        unknown = cli._baseline_disclosure({**base, "train_data_status": "unknown", "clean_winner_eligible": False}, allow)
+        with self.assertRaises(ValueError): cli._baseline_disclosure({**base, "train_data_status": "unknown", "clean_winner_eligible": False}, {"baseline_decisions": [decision]})
+        with self.assertRaisesRegex(ValueError, "decision"): cli._baseline_disclosure({**base, "train_data_status": "unknown", "clean_winner_eligible": False}, allow)
+        unknown = cli._baseline_disclosure({**base, "train_data_status": "unknown", "clean_winner_eligible": False}, {**allow, "baseline_decisions": [decision]})
         self.assertEqual(unknown["clean_winner_claim"], "not-eligible"); self.assertIn("htdemucs", unknown["disclosure_ko"])
-        verified = cli._baseline_disclosure({**base, "train_data_status": "verified-excluded", "clean_winner_eligible": True}, {})
+        evidence = {"training_data_evidence": ["doc"]}
+        verified = cli._baseline_disclosure({**base, "train_data_status": "verified-excluded", "clean_winner_eligible": True, **evidence}, {})
         self.assertEqual((verified["clean_winner_claim"], verified["disclosure_ko"]), ("eligible", None))
+        # review finding 3: the stored flag must agree with status + evidence
+        with self.assertRaisesRegex(ValueError, "disagrees"): cli._baseline_disclosure({**base, "train_data_status": "verified-excluded", "clean_winner_eligible": True}, {})
+        with self.assertRaisesRegex(ValueError, "disagrees"): cli._baseline_disclosure({**base, "train_data_status": "unknown", "clean_winner_eligible": True}, {**allow, "baseline_decisions": [decision]})
 
     def test_claim_state_machine(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -191,6 +191,10 @@ def load_gpurir(simulator=None) -> tuple:
     return sim, {"module_file": str(module_file), "simulate_signature": str(inspect.signature(sim.simulateRIR)),
                  "extension_sha256": {p.name: sha256_file(p) for p in sorted(module_file.parent.glob("*.so"))}}
 
+# gpuRIR uses a fractional-delay (windowed sinc) direct path, so the peak sits within a few samples of distance/c.
+# A larger gap means a coordinate-order or unit error in the geometry and fails the generation.
+PEAK_DELAY_TOLERANCE_SAMPLES = 8
+
 def _gpurir_room(runtime: Path, room: str, geometry: dict, sim) -> dict:
     spec = geometry["spec"]; room_sz = [float(v) for v in spec["room_sz_m"]]; rcv = np.asarray(spec["receiver"]["pos_m"], dtype=np.float64)
     ref = GPURIR_REFERENCE; t60 = TARGET_RT60[room]
@@ -205,10 +209,13 @@ def _gpurir_room(runtime: Path, room: str, geometry: dict, sim) -> dict:
         if out.ndim != 3 or out.shape[:2] != (1, 1) or out.shape[2] <= 0: raise RuntimeError(f"{room}/{position}: gpuRIR returned shape {out.shape}, expected (1, 1, n>0)")
         if not np.isfinite(out).all() or not np.any(out): raise RuntimeError(f"{room}/{position}: gpuRIR output is nonfinite or all zero")
         converted, info = prepare_rir(out[0, 0].astype(np.float64), SAMPLE_RATE)
-        path, digest = _write_rir(runtime, room, position, converted)
         distance = float(np.linalg.norm(src - rcv))
+        direct_delay = int(round(distance / ref["c_m_s"] * SAMPLE_RATE)); peak_index = int(np.argmax(np.abs(converted)))
+        if abs(peak_index - direct_delay) > PEAK_DELAY_TOLERANCE_SAMPLES:
+            raise RuntimeError(f"{room}/{position}: RIR peak at sample {peak_index} but the direct path arrives at {direct_delay} (tolerance {PEAK_DELAY_TOLERANCE_SAMPLES}); check the geometry coordinate order and units")
+        path, digest = _write_rir(runtime, room, position, converted)
         records[position] = {"path": path, "sha256": digest, "source_pos_m": src.tolist(), "receiver_pos_m": rcv.tolist(), "distance_m": distance,
-                             "direct_delay_samples": int(round(distance / ref["c_m_s"] * SAMPLE_RATE)), "peak_index": int(np.argmax(np.abs(converted))),
+                             "direct_delay_samples": direct_delay, "peak_index": peak_index, "peak_delay_tolerance_samples": PEAK_DELAY_TOLERANCE_SAMPLES,
                              "length_samples": int(len(converted)), "resample_method": "none", "onset_offset": 0, **_measured(info)}
     return {"kind": "gpurir", "space": "fixed layout 7.5x6.0x3.0 m (interim report image6)", "url": None,
             "license": "generated (gpuRIR AGPL-3.0 tool, not redistributed)", "full_band": True,

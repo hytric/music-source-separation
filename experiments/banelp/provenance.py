@@ -37,7 +37,9 @@ def current_binding(runtime: Path, config_path: str | Path, *, require=("dataset
     return {"code_hash": code_hash(), "lock_hash": lock_hash(), "config_hash": experiment_config_hash(config_path),
             "manifest_hash": maybe("dataset"), "rir_manifest_hash": maybe("rirs"), "models_manifest_hash": maybe("models")}
 
-BOUND_KEYS = ("code_hash", "lock_hash", "config_hash", "manifest_hash", "rir_manifest_hash", "models_manifest_hash")
+# `models_manifest_hash` is recorded for provenance only: an unrelated registered model must not change a result's validity.
+# The checkpoints a result depends on are verified individually (policy.pipeline_dependencies).
+BOUND_KEYS = ("code_hash", "lock_hash", "config_hash", "manifest_hash", "rir_manifest_hash")
 
 def verify_binding(recorded: dict, current: dict, *, what: str, keys=BOUND_KEYS) -> None:
     """One comparison used by seal (against develop.json) and evaluate (against the seal)."""

@@ -7,13 +7,16 @@ import numpy as np
 
 SOURCES = ("vocals", "drums", "bass", "other")
 SAMPLE_RATE, SAMPLES, CONFIG_SCHEMA = 44_100, 1_323_000, 1
+# The only STFT the candidate adapters implement (candidates.py derives NFFT/HOP from it); a config that differs is rejected.
+STFT_CONTRACT: dict[str, Any] = {"nperseg": 4096, "hop": 1024, "window": "hann-periodic", "boundary": "zeros", "padded": True, "scaling": "spectrum"}
 DEFAULT_CONFIG: dict[str, Any] = {
     "schema_version": CONFIG_SCHEMA, "sample_rate": SAMPLE_RATE, "channels": 2, "samples": SAMPLES,
     "sources": list(SOURCES), "split_salt": "banelp-v1", "dev_tracks": 10, "evaluation_tracks": 40,
-    "crop_seconds": 30, "stft": {"nperseg": 4096, "hop": 1024, "window": "hann-periodic", "boundary": "zeros", "padded": True},
+    "crop_seconds": 30, "stft": dict(STFT_CONTRACT),
     "metrics": {"center": False, "pinv_rcond": 1e-10, "energy_epsilon": 1e-12, "db_cap": 120.0},
     "separator": {"name": "htdemucs", "device": "cuda", "fp32": True, "batch_size": 1, "shifts": 0, "split": True, "segment": 7.0, "overlap": 0.25},
-    "selection": {"sar_policy_status": "confirmed", "sar_floor_db": -0.5, "minimum_sdr_gain_db": 0.2, "baseline_train_data_policy": "allow-unknown-with-disclosure"}}
+    "selection": {"sar_policy_status": "confirmed", "sar_floor_db": -0.5, "minimum_sdr_gain_db": 0.2, "baseline_train_data_policy": "allow-unknown-with-disclosure",
+                  "baseline_decisions": [], "model_candidates": []}}
 
 def canonical_json(value: Any) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
@@ -57,6 +60,13 @@ def validate_practical_config(config: dict[str, Any]) -> None:
     if config.get("sample_rate") != SAMPLE_RATE or config.get("channels") != 2: raise ValueError("config must be 44.1 kHz stereo")
     samples = config.get("samples")
     if not isinstance(samples, int) or isinstance(samples, bool) or samples <= 0: raise ValueError("config samples must be a positive integer")
+    if config.get("stft") != STFT_CONTRACT: raise ValueError(f"config.stft must equal the fixed STFT contract {STFT_CONTRACT}")
+    metrics = config.get("metrics")
+    if not isinstance(metrics, dict) or set(metrics) != {"center", "pinv_rcond", "energy_epsilon", "db_cap"}: raise ValueError("config.metrics must define exactly center, pinv_rcond, energy_epsilon, db_cap")
+    if metrics["center"] is not False: raise ValueError("config.metrics.center must be false (mean-removal is not part of the contract)")
+    for key in ("pinv_rcond", "energy_epsilon", "db_cap"):
+        if isinstance(metrics[key], bool) or not isinstance(metrics[key], (int, float)) or not np.isfinite(metrics[key]) or metrics[key] <= 0: raise ValueError(f"config.metrics.{key} must be a positive finite number")
+    if metrics["pinv_rcond"] >= 1 or metrics["energy_epsilon"] >= 1: raise ValueError("config.metrics pinv_rcond and energy_epsilon must be below 1")
     if "selected" in config.get("selection", {}):
         raise ValueError("config.selection.selected is not allowed; the seal derives the candidate from results/develop.json")
 

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "recorded": "2026-11-09",
+  "source": "MSST docs/pretrained_models.md section 'Multi-stem models (MUSDB18HQ)' (declares MUSDB18-HQ train 100 songs only); .agent_reports/notes/2026-11-09_supplementary-survey/04_checkpoint_provenance.md",
+  "policy": "A checkpoint may be registered as documented-train-only only if it is listed under `allowed` (same file name and release). Its status is not verified-excluded: the table's declaration is not a per-song audit.",
+  "label_ko": "문서상 train-only, 곡별 감사 미확인",
+  "allowed": [
+    {"file": "model_bs_roformer_ep_17_sdr_9.6568.ckpt", "release": "v1.0.12", "family": "msst", "model_type": "bs_roformer", "stems": 4},
+    {"file": "scnet_checkpoint_musdb18.ckpt", "release": "v1.0.6", "family": "msst", "model_type": "scnet", "stems": 4},
+    {"file": "SCNet-large_starrytong_fixed.ckpt", "release": "v1.0.9", "family": "msst", "model_type": "scnet", "stems": 4},
+    {"file": "model_scnet_sdr_9.3244.ckpt", "release": null, "family": "msst", "model_type": "scnet", "stems": 4, "note": "release tag to be recorded from the distribution table by the registering host-run"},
+    {"file": "model_scnet_ep_54_sdr_9.8051.ckpt", "release": null, "family": "msst", "model_type": "scnet", "stems": 4, "note": "release tag to be recorded from the distribution table by the registering host-run"}
+  ],
+  "excluded": [
+    {"model_id": "mdx_extra", "reason": "demucs README: trained including the MUSDB18 test set"},
+    {"file": "model_bs_roformer_ep_317_sdr_12.9755.ckpt", "reason": "viperx BS-RoFormer: outside the train-only section, training list unconfirmed, vocal model"},
+    {"file": "model_mel_band_roformer_ep_3005_sdr_11.4360.ckpt", "reason": "viperx Mel-RoFormer: outside the train-only section, training list unconfirmed, vocal model"},
+    {"file": "MelBandRoformer.ckpt", "reason": "Kimberley Jensen MelBandRoformer: uses extra data with no published list, vocal-only"}
+  ]
+}

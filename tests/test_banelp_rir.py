@@ -124,6 +124,15 @@ class GpuRirGenerationTests(unittest.TestCase):
         with self.assertRaises(ValueError): rir.acquire_rirs(self.runtime, sources=None, synthetic_fallback=True, gpurir_geometry=self.geometry, simulator=self.fake)
         with self.assertRaises(ValueError): rir.acquire_rirs(self.runtime, sources=None, synthetic_fallback=False, gpurir_geometry=self.geometry)
 
+    def test_peak_far_from_direct_delay_is_refused(self):
+        n = int(np.ceil(1.96 * FS)); out = np.zeros((1, 1, n), np.float32); out[0, 0, 400] = 1.0; out[0, 0, 401:] = 1e-3
+        self.fake = FakeGpuRIR(output=out)
+        with self.assertRaisesRegex(RuntimeError, "direct path arrives"): self.generate()
+        near = FakeGpuRIR(); manifest = rir.acquire_rirs(self.runtime, sources=None, synthetic_fallback=False, gpurir_geometry=self.geometry, simulator=near, gpurir_build_record={"gpurir_commit": "0" * 40})
+        for room in manifest["rooms"].values():
+            for entry in room["positions"].values():
+                self.assertLessEqual(abs(entry["peak_index"] - entry["direct_delay_samples"]), rir.PEAK_DELAY_TOLERANCE_SAMPLES)
+
     def test_bad_simulator_output_is_refused(self):
         for output in (np.full((1, 1, 100), np.nan), np.zeros((1, 1, 100)), np.ones((1, 100)), np.ones((1, 1, 0))):
             self.fake = FakeGpuRIR(output=output)
@@ -154,6 +163,18 @@ class DecayTimesTests(unittest.TestCase):
             for key in ("edt", "t20", "t30"): self.assertIsNone(r[f"measured_{key}_seconds"]); self.assertEqual(r[f"{key}_failure"], "rir too short or silent")
         self.assertIsNone(prepare_rir(np.r_[1., np.zeros(100)], FS)[1]["rt"]["measured_t30_seconds"])
         with self.assertRaises(ValueError): decay_times(np.array([np.nan, 1.]))
+
+    def test_crosspoint_below_50_ms_gives_none_with_reason(self):
+        r = decay_times(_noisy_decay(0.08, 1.0, -33.0))
+        self.assertLess(r["crosspoint_seconds"], 0.05); self.assertEqual(r["compensation"], "extrapolated-tail")
+        for key in ("t20", "t30"):
+            self.assertIsNone(r[f"measured_{key}_seconds"]); self.assertEqual(r[f"{key}_failure"], "insufficient dynamic range above noise floor")
+        self.assertIsNone(r["edt_failure"]); self.assertLess(abs(r["measured_edt_seconds"] / 0.08 - 1), .15)
+
+    def test_missing_crosspoint_is_not_replaced_by_a_noisy_fit(self):
+        r = decay_times(_noisy_decay(0.06, 0.6, -36.0))  # decay too short for the 10 ms envelope: no crosspoint, old path fitted noise (t20 = 3.7 s)
+        for key in ("edt", "t20", "t30"):
+            self.assertIsNone(r[f"measured_{key}_seconds"]); self.assertIn("crosspoint not found", r[f"{key}_failure"])
 
     def test_shallow_dynamic_range_is_not_guessed(self):
         r = decay_times(_noisy_decay(0.5, 3.0, -30.0))

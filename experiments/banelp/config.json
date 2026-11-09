@@ -11,5 +11,8 @@
   "stft": {"nperseg": 4096, "hop": 1024, "window": "hann-periodic", "boundary": "zeros", "padded": true, "scaling": "spectrum"},
   "metrics": {"center": false, "pinv_rcond": 1e-10, "energy_epsilon": 1e-12, "db_cap": 120},
   "separator": {"name": "htdemucs", "device": "cuda", "fp32": true, "batch_size": 1, "shifts": 0, "split": true, "segment_seconds": 7.0, "overlap": 0.25},
-  "selection": {"sar_policy_status": "confirmed", "sar_floor_db": -0.5, "minimum_sdr_gain_db": 0.2, "baseline_train_data_policy": "allow-unknown-with-disclosure"}
+  "selection": {"sar_policy_status": "confirmed", "sar_floor_db": -0.5, "minimum_sdr_gain_db": 0.2, "baseline_train_data_policy": "allow-unknown-with-disclosure",
+    "baseline_decisions": [{"model_id": "htdemucs", "sha256": "8726e21a993978c7ba086d3872e7608d7d5bfca646ca4aca459ffda844faa8b4", "demucs_signature": "955717e8",
+                            "decision": "use-with-disclosure (training data unverified)", "decided_by": "user", "date": "2026-11-09"}],
+    "model_candidates": []}
 }

@@ -147,6 +147,7 @@ def decay_times(rir: np.ndarray, sample_rate: int=SAMPLE_RATE) -> dict:
     edc=np.cumsum(cut[::-1])[::-1]+compensation; edc_db=_env_db(edc/edc[0]); t=np.arange(cross)/sample_rate
     out["edc_dynamic_range_db"]=float(-edc_db.min())
     for name,hi,lo,floor in _RT_FITS:
+        if slope is None and noise_db>-60: out[f"{name}_failure"]="noise-floor crosspoint not found (decay too short for the 10 ms envelope)"; continue
         if noise_db>floor: out[f"{name}_failure"]="insufficient dynamic range above noise floor"; continue
         sel=np.flatnonzero((edc_db<=hi)&(edc_db>=lo))
         if sel.size<10 or edc_db.min()>lo: out[f"{name}_failure"]=f"decay did not reach {lo:g} dB"; continue

@@ -2,8 +2,8 @@
 from __future__ import annotations
 import numpy as np
 from scipy.signal import get_window, istft, stft
-from .contracts import validate_tensors
-NFFT,HOP=4096,1024
+from .contracts import STFT_CONTRACT, validate_tensors
+NFFT,HOP=STFT_CONTRACT["nperseg"],STFT_CONTRACT["hop"]
 
 def _stft(audio: np.ndarray) -> np.ndarray:
     audio=np.asarray(audio)
@@ -105,27 +105,62 @@ def norbert_available() -> bool:
     except ImportError: return False
     return True
 
-def candidate_registry(separator_getter=None) -> dict[str,dict]:
+DONOR_EVIDENCE_STATUS = ("exploratory — no direct precedent for 4-stem frozen music separators "
+                         "(closest: speech OR-PIT, trained recursive models)")
+
+def parse_model_candidate(name: str) -> tuple[str, list[str]]:
+    """`replace:<model_id>` or `average:<id>+<id>[+...]` (ids sorted, unique, so one name = one candidate)."""
+    kind, _, rest = str(name).partition(":")
+    ids = rest.split("+") if rest else []
+    if kind not in ("replace", "average") or not ids or any(not i for i in ids): raise ValueError(f"model candidate must be replace:<id> or average:<id>+<id>: {name!r}")
+    if kind == "replace" and len(ids) != 1: raise ValueError("replace takes exactly one model id")
+    if kind == "average" and len(ids) < 2: raise ValueError("average needs at least two model ids")
+    if ids != sorted(set(ids)): raise ValueError(f"model ids in {name!r} must be unique and sorted")
+    return kind, ids
+
+def model_estimates_candidate(kind: str, ids: list[str]):
+    """Equal-weight waveform average, or a plain replacement, of registered models' (4,2,N) estimates; mixture-only inputs."""
+    def run(x, estimates, by_model):
+        missing = [i for i in ids if i not in by_model]
+        if missing: raise ValueError(f"model estimates missing for {missing}")
+        stack = [np.asarray(by_model[i], dtype=np.float32) for i in ids]
+        for e in stack: validate_tensors(x, e)
+        out = stack[0].copy() if kind == "replace" else (np.mean(np.stack(stack).astype(np.float64), axis=0)).astype(np.float32)
+        validate_tensors(x, out); return out
+    return run
+
+def run_candidate(spec: dict, x, estimates, by_model: dict | None = None):
+    """Single dispatch point for develop/evaluate: model-estimate candidates also receive the other models' estimates."""
+    if spec.get("requires") == "model-estimates": return spec["fn"](x, estimates, by_model or {})
+    return spec["fn"](x, estimates)
+
+def candidate_registry(separator_getter=None, *, model_candidates=(), baseline_id: str | None = None) -> dict[str,dict]:
     """The single name -> adapter table used by develop and evaluate.
 
-    `separator_getter` is called lazily, only by re-separation candidates. `requires` names the
-    dependency a candidate needs; `additional_inference_calls` is the selection tie breaker."""
+    `separator_getter` is called lazily, only by re-separation candidates. `requires` names the dependency a candidate
+    needs; `models` lists the registered checkpoints it depends on; `additional_inference_calls` is the selection tie breaker."""
     def donor(names):
         def run(x,e):
             if separator_getter is None: raise RuntimeError("re-separation candidate needs a separator")
             return donor_reseparation(x,e,separator_getter(),donors=names,strength=.5)
         return run
+    base_models = [baseline_id] if baseline_id else []
     table={
-        "identity":(lambda x,e:identity(x,e),0,None,{}),
-        "T1-uniform":(lambda x,e:t1(x,e),0,None,{"weights":"uniform"}),
-        "T2-alpha1":(lambda x,e:t2(x,e,1),0,None,{"alpha":1}),
-        "T2-alpha2":(lambda x,e:t2(x,e,2),0,None,{"alpha":2}),
-        "T5-alpha1-lambda025":(lambda x,e:t5(x,e,1,.25),0,None,{"alpha":1,"blend":.25}),
-        "C2-iter1":(lambda x,e:consistency_iteration(x,e,1),0,None,{"iterations":1}),
-        "C2-iter2":(lambda x,e:consistency_iteration(x,e,2),0,None,{"iterations":2}),
-        **{f"C1-norbert-{n}":(lambda x,e,n=n:norbert_wiener(e,x,n),0,"norbert",{"iterations":n}) for n in (0,1,2)},
-        "C-donor-other-lambda05":(donor(("other",)),1,"separator",{"donors":["other"],"strength":.5}),
-        "C-donor-drums-lambda05":(donor(("drums",)),1,"separator",{"donors":["drums"],"strength":.5}),
+        "identity":(lambda x,e:identity(x,e),0,None,{},[]),
+        "T1-uniform":(lambda x,e:t1(x,e),0,None,{"weights":"uniform"},[]),
+        "T2-alpha1":(lambda x,e:t2(x,e,1),0,None,{"alpha":1},[]),
+        "T2-alpha2":(lambda x,e:t2(x,e,2),0,None,{"alpha":2},[]),
+        "T5-alpha1-lambda025":(lambda x,e:t5(x,e,1,.25),0,None,{"alpha":1,"blend":.25},[]),
+        "C2-iter1":(lambda x,e:consistency_iteration(x,e,1),0,None,{"iterations":1},[]),
+        "C2-iter2":(lambda x,e:consistency_iteration(x,e,2),0,None,{"iterations":2},[]),
+        **{f"C1-norbert-{n}":(lambda x,e,n=n:norbert_wiener(e,x,n),0,"norbert",{"iterations":n},[]) for n in (0,1,2)},
+        "C-donor-other-lambda05":(donor(("other",)),1,"separator",{"donors":["other"],"strength":.5,"evidence_status":DONOR_EVIDENCE_STATUS},base_models),
+        "C-donor-drums-lambda05":(donor(("drums",)),1,"separator",{"donors":["drums"],"strength":.5,"evidence_status":DONOR_EVIDENCE_STATUS},base_models),
     }
-    return {name:{"fn":fn,"additional_inference_calls":calls,"requires":requires,"params":params}
-            for name,(fn,calls,requires,params) in table.items()}
+    for name in model_candidates:
+        kind, ids = parse_model_candidate(name)
+        if kind == "replace" and baseline_id and ids[0] == baseline_id: raise ValueError("replace:<baseline> equals identity; not a candidate")
+        if name in table: raise ValueError(f"duplicate candidate {name}")
+        table[name]=(model_estimates_candidate(kind,ids),len(ids),"model-estimates",{"kind":kind,"models":ids,"weights":"equal"},ids)
+    return {name:{"fn":fn,"additional_inference_calls":calls,"requires":requires,"params":params,"models":list(models)}
+            for name,(fn,calls,requires,params,models) in table.items()}

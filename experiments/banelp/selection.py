@@ -6,24 +6,50 @@ import numpy as np
 from scipy.stats import wilcoxon
 from .contracts import canonical_json
 
-def paired_summary(deltas: np.ndarray, *, seed: int=20261108, bootstrap: int=10000) -> dict:
-    """Rows are tracks; columns are fixed space/stem observations."""
-    a=np.asarray(deltas,dtype=np.float64)
-    if a.ndim!=2 or not np.isfinite(a).all(): raise ValueError("deltas must be a finite track-by-condition matrix")
-    per_track=a.mean(axis=1); statistic=float(np.median(per_track))
-    rng=np.random.default_rng(seed); boots=np.empty(bootstrap)
-    for i in range(bootstrap): boots[i]=np.median(per_track[rng.integers(0,len(per_track),len(per_track))])
+SEED, BOOTSTRAP, CI_LEVEL = 20261108, 10000, 0.95
+STATISTIC_WORDS = {
+    "effect_estimand": "median over dev track x room samples of the 4-stem mean dSI-SDR",
+    "ci": f"{int(CI_LEVEL*100)}% percentile track-cluster bootstrap of the same statistic, B={BOOTSTRAP}, seed={SEED}",
+    "sar_estimand": "per-stem median over dev track x room samples of dSI-SAR",
+    "wilcoxon": "per-track mean of the sample values; two-sided, zero_method=wilcox, method=approx, correction=False; all-zero -> p=1",
+    "holm_family": "practical candidates in the lock versus baseline; identity and oracle excluded",
+    "non_gating_fields": "track_median_delta_db and track_bootstrap_95_ci (median of per-track means) are reported only",
+}
+
+def _median(values: np.ndarray) -> float:
+    finite = values[np.isfinite(values)]
+    return float(np.median(finite)) if finite.size else float("nan")
+
+def paired_summary(samples: np.ndarray, *, seed: int=SEED, bootstrap: int=BOOTSTRAP) -> dict:
+    """`samples`: (tracks, rooms) per-sample 4-stem-mean delta; NaN marks a dropped sample.
+
+    Gating statistic = median over all finite samples. The CI resamples whole tracks (all their rooms) with replacement and
+    recomputes that same median. The per-track-mean median (`track_*`) is a non-gating report field."""
+    a=np.asarray(samples,dtype=np.float64)
+    if a.ndim!=2 or np.isinf(a).any(): raise ValueError("samples must be a (tracks, rooms) matrix without infinities")
+    if not np.isfinite(a).any(axis=1).all(): raise ValueError("every track needs at least one defined sample")
+    tracks=a.shape[0]; counts=np.isfinite(a).sum(axis=1)
+    per_track=np.where(np.isfinite(a),a,0.0).sum(axis=1)/counts
+    rng=np.random.default_rng(seed); idx=rng.integers(0,tracks,(bootstrap,tracks))
+    drawn=a[idx].reshape(bootstrap,-1)
+    with np.errstate(all="ignore"):
+        boots=np.nanmedian(drawn,axis=1); track_boots=np.median(per_track[idx],axis=1)
+    lo,hi=(1-CI_LEVEL)/2,1-(1-CI_LEVEL)/2
     try: p=float(wilcoxon(per_track,zero_method="wilcox",alternative="two-sided",method="approx",correction=False).pvalue) if np.any(per_track) else 1.0
     except ValueError: p=1.0
-    return {"track_median_delta_db":statistic,"track_bootstrap_95_ci":[float(np.quantile(boots,.025)),float(np.quantile(boots,.975))],"wilcoxon_p":p,"tracks":len(per_track)}
+    return {"sample_median_delta_db":_median(a.reshape(-1)),"sample_bootstrap_95_ci":[float(np.quantile(boots,lo)),float(np.quantile(boots,hi))],
+            "track_median_delta_db":float(np.median(per_track)),"track_bootstrap_95_ci":[float(np.quantile(track_boots,lo)),float(np.quantile(track_boots,hi))],
+            "wilcoxon_p":p,"tracks":tracks,"samples":int(np.isfinite(a).sum()),"statistic_words":STATISTIC_WORDS}
 
-def seal_selection(selection: dict, *, policy: dict, develop_sha256: str, binding: dict, model_hashes: list[str],
+def seal_selection(selection: dict, *, policy: dict, policy_lock: dict, develop_sha256: str, binding: dict, model_hashes: list[dict],
                    baseline_model_sha256: str, baseline_disclosure: dict) -> dict:
-    """Bind a `select_candidate` result to the dev results and every input hash it depends on."""
+    """Bind a `select_candidate` result to the dev results, the pre-registered lock and every input hash it depends on."""
     if policy.get("sar_policy_status")!="confirmed": raise ValueError("selection seal blocked: SAR policy requires owner confirmation")
     if not selection.get("selected") or not selection.get("reason"): raise ValueError("selection seal requires a select_candidate result")
-    seal={"schema_version":3,"policy":policy,"selection":selection,"develop_sha256":develop_sha256,**binding,
-          "model_hashes":sorted(model_hashes),"baseline_model_sha256":baseline_model_sha256,"baseline_disclosure":baseline_disclosure,"split":"dev","sealed":True}
+    seal={"schema_version":4,"policy":policy,"policy_lock":policy_lock["content"],"policy_lock_sha256":policy_lock["sha256"],
+          "statistic":STATISTIC_WORDS,"selection":selection,"develop_sha256":develop_sha256,**binding,
+          "model_hashes":sorted(model_hashes,key=lambda m:m["model_id"]),"baseline_model_sha256":baseline_model_sha256,
+          "baseline_disclosure":baseline_disclosure,"split":"dev","sealed":True}
     seal["sha256"]=hashlib.sha256(canonical_json(seal)).hexdigest()
     return seal
 
@@ -42,7 +68,8 @@ def holm_adjust(p_values: dict[str,float]) -> dict[str,float]:
 
 def select_candidate(results: list[dict], *, sar_policy_status: str, sar_floor_db: float|None,
                      minimum_sdr_gain_db: float=.2) -> dict:
-    """Apply the preregistered dev rule and deterministic tie breakers."""
+    """Apply the pre-registered dev rule: sample-median gain >= minimum, sample-median CI lower bound > 0 and every
+    stem's median dSI-SAR >= floor (an undefined stem fails). Rank by -sample median, extra inference calls, config hash."""
     if sar_policy_status!="confirmed" or sar_floor_db is None:
         raise ValueError("candidate selection blocked until owner confirms per-stem SAR policy")
     practical=[r for r in results if not r.get("oracle",False) and r.get("name")!="identity"]
@@ -51,12 +78,13 @@ def select_candidate(results: list[dict], *, sar_policy_status: str, sar_floor_d
     for row in practical:
         summary=row["summary"]
         sar=row.get("stem_median_delta_sar",{})
-        passes=(summary["track_median_delta_db"]>=minimum_sdr_gain_db and summary["track_bootstrap_95_ci"][0]>0
-                and all(sar.get(stem) is not None and float(sar[stem])>=sar_floor_db for stem in ("vocals","drums","bass","other")))
-        enriched={**row,"holm_adjusted_p":adjusted[row["name"]],"eligible":passes}
-        if passes: eligible.append(enriched)
+        gain_ok=summary["sample_median_delta_db"] is not None and summary["sample_median_delta_db"]>=minimum_sdr_gain_db
+        ci_ok=summary["sample_bootstrap_95_ci"][0]>0
+        sar_ok=all(sar.get(stem) is not None and float(sar[stem])>=sar_floor_db for stem in ("vocals","drums","bass","other"))
+        enriched={**row,"holm_adjusted_p":adjusted[row["name"]],"eligible":gain_ok and ci_ok and sar_ok,"gates":{"sample_median_gain":gain_ok,"sample_ci_lower_gt_0":ci_ok,"stem_sar_floor":sar_ok}}
+        if enriched["eligible"]: eligible.append(enriched)
     if not eligible: return {"selected":"identity","reason":"no-practical-candidate-passed-preregistered-gates","holm_adjusted_p":adjusted}
-    eligible.sort(key=lambda r:(-float(r["summary"]["track_median_delta_db"]),int(r.get("additional_inference_calls",0)),str(r.get("config_hash",""))))
+    eligible.sort(key=lambda r:(-float(r["summary"]["sample_median_delta_db"]),int(r.get("additional_inference_calls",0)),str(r.get("config_hash",""))))
     return {"selected":eligible[0]["name"],"reason":"maximum-development-improvement-after-gates","candidate":eligible[0],"holm_adjusted_p":adjusted}
 
 def training_cost_record(*, training_data_bytes: int|None=None, optimizer: str|None=None,
