@@ -106,8 +106,57 @@ def validate_acquired_dataset(track_root: str|Path, runtime_dir: str|Path, manif
     atomic_json(manifest_path,manifest)
     return manifest
 
+RT_METHOD="schroeder-lundeby-v1 (10 ms envelope, iterative crosspoint, extrapolated-tail compensation, ISO 3382-1 regression)"
+# (name, EDC upper dB, EDC lower dB, highest tolerated noise floor dB re envelope peak)
+_RT_FITS=(("edt",0.,-10.,-20.),("t20",-5.,-25.,-35.),("t30",-5.,-35.,-45.))
+
+def _env_db(power): return 10*np.log10(np.maximum(power,1e-30))
+
+def decay_times(rir: np.ndarray, sample_rate: int=SAMPLE_RATE) -> dict:
+    """EDT/T20/T30 from a Schroeder curve cut at the noise-floor crosspoint (simplified Lundeby).
+
+    Values that cannot be measured are None with a stated reason; nothing is invented."""
+    out={"rt_method":RT_METHOD,"noise_floor_db":None,"crosspoint_seconds":None,"edc_dynamic_range_db":None,"onset_sample":None,"compensation":"none"}
+    for name,*_ in _RT_FITS: out[f"measured_{name}_seconds"]=None; out[f"{name}_failure"]=None
+    def fail(reason):
+        for name,*_ in _RT_FITS: out[f"{name}_failure"]=reason
+        return out
+    x=np.asarray(rir,dtype=np.float64)
+    if x.ndim!=1 or not np.isfinite(x).all(): raise ValueError("decay_times needs a finite mono RIR")
+    e=x**2
+    if not e.size or e.max()<=0: return fail("rir too short or silent")
+    start=int(np.argmax(e)); e=e[start:]; out["onset_sample"]=start
+    win=max(1,int(round(0.010*sample_rate))); n=len(e)//win
+    if n<2: return fail("rir too short or silent")
+    env=e[:n*win].reshape(n,win).mean(axis=1); peak=float(env.max()); env_db=_env_db(env/peak); t_env=(np.arange(n)+.5)*win/sample_rate
+    noise_db=float(_env_db(env[min(int(.9*n),n-1):].mean()/peak)); cross=len(e); slope=intercept=None
+    for _ in range(5):
+        sel=np.flatnonzero((env_db<=-5)&(env_db>=noise_db+10))
+        if sel.size<3: break
+        k,b=np.polyfit(t_env[sel],env_db[sel],1)
+        if k>=0: break
+        slope,intercept=float(k),float(b)
+        cross=int(min(len(e),max(win,(noise_db-b)/k*sample_rate)))
+        tail=e[min(len(e)-win,int(cross+.1*sample_rate)):]
+        if tail.size>=win: noise_db=float(_env_db(tail.mean()/peak))
+    out["noise_floor_db"]=noise_db; out["crosspoint_seconds"]=cross/sample_rate
+    cut=e[:cross]; compensation=0.0
+    if slope is not None and cross<len(e):
+        lam=slope*np.log(10)/10  # per second, on power
+        compensation=float(sample_rate*peak*10**(intercept/10)*np.exp(lam*cross/sample_rate)/-lam); out["compensation"]="extrapolated-tail"
+    edc=np.cumsum(cut[::-1])[::-1]+compensation; edc_db=_env_db(edc/edc[0]); t=np.arange(cross)/sample_rate
+    out["edc_dynamic_range_db"]=float(-edc_db.min())
+    for name,hi,lo,floor in _RT_FITS:
+        if noise_db>floor: out[f"{name}_failure"]="insufficient dynamic range above noise floor"; continue
+        sel=np.flatnonzero((edc_db<=hi)&(edc_db>=lo))
+        if sel.size<10 or edc_db.min()>lo: out[f"{name}_failure"]=f"decay did not reach {lo:g} dB"; continue
+        k=float(np.polyfit(t[sel],edc_db[sel],1)[0])
+        if k>=0: out[f"{name}_failure"]="non-decaying fit"; continue
+        out[f"measured_{name}_seconds"]=float(-60/k)
+    return out
+
 def prepare_rir(audio: np.ndarray, native_rate: int, *, channel: int|None=None) -> tuple[np.ndarray,dict]:
-    """Convert one documented mono/W-channel RIR to 44.1 kHz and report T30."""
+    """Convert one documented mono/W-channel RIR to 44.1 kHz and report noise-compensated EDT/T20/T30."""
     raw=np.asarray(audio)
     if raw.ndim==2:
         if raw.shape[1]==1: extracted=raw[:,0]; selected=0
@@ -117,13 +166,7 @@ def prepare_rir(audio: np.ndarray, native_rate: int, *, channel: int|None=None) 
     else: raise ValueError("RIR must be mono or channels-last")
     if native_rate<=0 or not np.isfinite(extracted).all(): raise ValueError("invalid RIR sample rate or values")
     converted=resample_audio(extracted,native_rate,SAMPLE_RATE)
-    energy=converted.astype(np.float64)**2
-    decay=np.cumsum(energy[::-1])[::-1]
-    if not decay.size or decay[0]<=0: t30=None
-    else:
-        edc=10*np.log10(np.maximum(decay/decay[0],1e-30)); idx5=np.flatnonzero(edc<=-5); idx35=np.flatnonzero(edc<=-35)
-        t30=float(2*(idx35[0]-idx5[0])/SAMPLE_RATE) if idx5.size and idx35.size and idx35[0]>idx5[0] else None
-    return converted,{"native_sample_rate":native_rate,"sample_rate":SAMPLE_RATE,"channel_count":1 if raw.ndim==1 else raw.shape[1],"selected_channel":selected,"resampled":native_rate!=SAMPLE_RATE,"rt30_estimate_seconds":t30}
+    return converted,{"native_sample_rate":native_rate,"sample_rate":SAMPLE_RATE,"channel_count":1 if raw.ndim==1 else raw.shape[1],"selected_channel":selected,"resampled":native_rate!=SAMPLE_RATE,"rt":decay_times(converted)}
 
 def _save_npy_atomic(path: Path, array: np.ndarray) -> None:
     fd,tmp=tempfile.mkstemp(prefix=f".{path.name}.",dir=path.parent); os.close(fd)

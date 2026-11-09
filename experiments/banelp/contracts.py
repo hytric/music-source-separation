@@ -13,7 +13,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "crop_seconds": 30, "stft": {"nperseg": 4096, "hop": 1024, "window": "hann-periodic", "boundary": "zeros", "padded": True},
     "metrics": {"center": False, "pinv_rcond": 1e-10, "energy_epsilon": 1e-12, "db_cap": 120.0},
     "separator": {"name": "htdemucs", "device": "cuda", "fp32": True, "batch_size": 1, "shifts": 0, "split": True, "segment": 7.0, "overlap": 0.25},
-    "selection": {"sar_policy_status": "pending-owner-confirmation", "sar_floor_db": None, "minimum_sdr_gain_db": 0.2}}
+    "selection": {"sar_policy_status": "confirmed", "sar_floor_db": -0.5, "minimum_sdr_gain_db": 0.2, "baseline_train_data_policy": "allow-unknown-with-disclosure"}}
 
 def canonical_json(value: Any) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()

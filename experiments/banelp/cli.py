@@ -21,7 +21,7 @@ SEQUENCE = "prepare -> rirs -> build-wet -> register-model -> smoke -> develop -
 HELP = {
     "validate": "check the config and run the synthetic CPU self-test",
     "prepare": f"validate an extracted MUSDB18-HQ test tree and write manifests/dataset.json (step 1 of: {SEQUENCE})",
-    "rirs": "acquire RIRs (OpenAIR, then public substitute, then seeded synthetic) and write manifests/rirs.json",
+    "rirs": "acquire RIRs (gpuRIR fixed layout with --gpurir; else OpenAIR, public substitute, seeded synthetic) and write manifests/rirs.json",
     "build-wet": "write cache/wet/<split>/<track>/R1..R4 with complete.json from the dataset and RIR manifests",
     "register-model": "hash checkpoint files and record the model in manifests/models.json",
     "smoke": "CUDA baseline + donor forward on the first dev track, R4, first 5 or 30 s",
@@ -42,6 +42,8 @@ def _parser():
             q.add_argument("--sources", help="verified RIR source list (schema: experiments/banelp/rir_sources.example.json)")
             q.add_argument("--synthetic-fallback", action="store_true", help="use a seeded synthetic room when every listed source fails")
             q.add_argument("--offline-synthetic", action="store_true", help="skip downloads; all rooms synthetic")
+            q.add_argument("--gpurir", metavar="GEOMETRY_JSON", help="generate all rooms with gpuRIR from this fixed-layout JSON (experiments/banelp/rir_geometry.json)")
+            q.add_argument("--gpurir-build-record", metavar="JSON", help="toolchain build record written by bootstrap_gpurir.sh (required with --gpurir)")
         if name == "build-wet":
             q.add_argument("--split", choices=("all", "dev", "evaluation"), default="all"); q.add_argument("--limit", type=int)
         if name == "register-model":
@@ -218,6 +220,21 @@ def _develop(args, config, runtime, artifact):
     return {"develop": str(runtime / "results/develop.json"), "sha256": sha256_file(runtime / "results/develop.json"),
             "ok_candidates": sorted(ok), "unavailable": status}
 
+BASELINE_DISCLOSURE_KO = "기준 분리기 {model_id}의 학습 데이터는 미확인(MUSDB18 test 비포함의 직접 근거 없음); clean-winner 주장 없음."
+BASELINE_DISCLOSURE_EN = ("Training data of baseline separator {model_id} is unverified (no direct evidence that MUSDB18 test was excluded); "
+                          "no clean-winner claim.")
+
+def _baseline_disclosure(model, policy):
+    """What the seal and the results must say about the baseline's training data; evaluation-track leakage is never allowed."""
+    base = {"baseline_model_id": model["model_id"], "baseline_model_sha256": model["sha256"], "baseline_train_data_status": model.get("train_data_status")}
+    if model.get("train_data_status") == "verified-included": raise ValueError("baseline was trained on evaluation tracks (verified-included); evaluation refused")
+    if model.get("clean_winner_eligible"):
+        return {**base, "clean_winner_eligible": True, "clean_winner_claim": "eligible", "disclosure_ko": None, "disclosure_en": None}
+    if policy.get("baseline_train_data_policy") != "allow-unknown-with-disclosure":
+        raise ValueError("baseline without verified training-data exclusion requires selection.baseline_train_data_policy=allow-unknown-with-disclosure")
+    return {**base, "clean_winner_eligible": False, "clean_winner_claim": "not-eligible",
+            "disclosure_ko": BASELINE_DISCLOSURE_KO.format(model_id=model["model_id"]), "disclosure_en": BASELINE_DISCLOSURE_EN.format(model_id=model["model_id"])}
+
 def _require_policy(config):
     policy = config.get("selection", {})
     if policy.get("sar_policy_status") != "confirmed": raise ValueError("selection seal and evaluation blocked until owner confirms SAR policy")
@@ -233,16 +250,15 @@ def _seal(args, config, runtime, artifact):
     provenance.verify_binding(develop.get("binding", {}), binding, what="develop results are stale")
     model = _baseline_model(runtime, config)
     if develop.get("baseline_model_sha256") != model["sha256"]: raise ValueError("develop results used a different baseline model")
-    eligible = _eligible_hashes(runtime)
-    if not eligible: raise ValueError("no training-data-verified clean-winner checkpoint in model manifest")
+    disclosure = _baseline_disclosure(model, policy); eligible = _eligible_hashes(runtime)
     rows = [r for r in develop["candidates"] if r["status"] == "ok"]
     selection = select_candidate(rows, sar_policy_status=policy["sar_policy_status"], sar_floor_db=float(policy["sar_floor_db"]),
                                  minimum_sdr_gain_db=float(policy.get("minimum_sdr_gain_db", .2)))
     selection["excluded"] = [{"name": r["name"], "status": r["status"]} for r in develop["candidates"] if r["status"] != "ok"]
     seal = seal_selection(selection, policy=policy, develop_sha256=sha256_file(develop_path), binding=binding,
-                          model_hashes=eligible, baseline_model_sha256=model["sha256"])
+                          model_hashes=eligible, baseline_model_sha256=model["sha256"], baseline_disclosure=disclosure)
     atomic_json(artifact / "selection-seal.json", seal)
-    return {"seal": str(artifact / "selection-seal.json"), "sha256": seal["sha256"], "selected": selection["selected"]}
+    return {"seal": str(artifact / "selection-seal.json"), "sha256": seal["sha256"], "selected": selection["selected"], "baseline_disclosure": disclosure}
 
 def _evaluate(args, config, runtime, artifact):
     seal = _read_json(args.seal); validate_seal(seal, split="evaluation")
@@ -252,6 +268,7 @@ def _evaluate(args, config, runtime, artifact):
     provenance.verify_binding(seal, binding, what="sealed input changed")
     model = _baseline_model(runtime, config)
     if model["sha256"] != seal.get("baseline_model_sha256"): raise ValueError("sealed baseline model changed")
+    if _baseline_disclosure(model, policy) != seal.get("baseline_disclosure"): raise ValueError("sealed baseline disclosure changed")
     if _eligible_hashes(runtime) != seal.get("model_hashes"): raise ValueError("sealed eligible model set changed")
     selected = seal["selection"]["selected"]
     separator = _LazySeparator(config, model); registry = candidate_registry(separator)
@@ -290,7 +307,7 @@ def _evaluate(args, config, runtime, artifact):
                 before = {n: project_metrics(targets[i], estimates[i], targets) for i, n in enumerate(contracts.SOURCES)}
                 after = {n: project_metrics(targets[i], out[i], targets) for i, n in enumerate(contracts.SOURCES)}
                 records.append({"track": track, "room": room, "baseline": before, "selected": after, "mixture_residual": mixture_residual(x, out)})
-            result = {"split": "evaluation", "selected": selected, "seal_sha256": seal["sha256"], "records": records, "tracks": len(tracks),
+            result = {"split": "evaluation", "selected": selected, "seal_sha256": seal["sha256"], "baseline_disclosure": seal["baseline_disclosure"], "records": records, "tracks": len(tracks),
                       "claim": str(claim_path), "claim_attempt": claim["attempt"]}
             atomic_json(results_path, result); atomic_json(artifact / "evidence/evaluation.json", result)
         claim_complete(claim_path, seal_sha256=seal["sha256"], results_sha256=sha256_file(results_path), now=_now())
@@ -360,13 +377,23 @@ def main(argv=None):
         result = {"tracks": len(manifest["tracks"]), "dev": sum(t["split"] == "dev" for t in manifest["tracks"]),
                   "evaluation": sum(t["split"] == "evaluation" for t in manifest["tracks"]), "dataset_manifest": str(path), "next": "rirs"}
     elif args.command == "rirs":
-        sources = None if args.offline_synthetic else rir.load_sources(args.sources)
-        if sources is None and not (args.offline_synthetic or args.synthetic_fallback): raise ValueError("give --sources, or --offline-synthetic / --synthetic-fallback")
-        manifest = rir.acquire_rirs(runtime, sources=sources, synthetic_fallback=args.synthetic_fallback or args.offline_synthetic,
-                                    manifest_path=provenance.manifest_paths(runtime)["rirs"])
+        if args.gpurir:
+            if args.sources or args.synthetic_fallback or args.offline_synthetic: raise ValueError("--gpurir cannot be combined with --sources, --synthetic-fallback or --offline-synthetic")
+            if not args.gpurir_build_record: raise ValueError("--gpurir needs --gpurir-build-record (run bootstrap_gpurir.sh first)")
+            manifest = rir.acquire_rirs(runtime, sources=None, synthetic_fallback=False, manifest_path=provenance.manifest_paths(runtime)["rirs"],
+                                        gpurir_geometry=rir.load_geometry(args.gpurir), gpurir_build_record=_read_json(args.gpurir_build_record))
+        else:
+            if args.gpurir_build_record: raise ValueError("--gpurir-build-record is only used with --gpurir")
+            sources = None if args.offline_synthetic else rir.load_sources(args.sources)
+            if sources is None and not (args.offline_synthetic or args.synthetic_fallback): raise ValueError("give --sources, --gpurir, or --offline-synthetic / --synthetic-fallback")
+            manifest = rir.acquire_rirs(runtime, sources=sources, synthetic_fallback=args.synthetic_fallback or args.offline_synthetic,
+                                        manifest_path=provenance.manifest_paths(runtime)["rirs"])
         atomic_json(artifact / "evidence/manifests/rirs.json", manifest)
         result = {"rir_manifest": str(provenance.manifest_paths(runtime)["rirs"]), "rooms": {r: v["kind"] for r, v in manifest["rooms"].items()},
-                  "measured_t30": {r: {p: e["measured_t30_seconds"] for p, e in v["positions"].items()} for r, v in manifest["rooms"].items()}, "next": "build-wet"}
+                  "targets": {r: v["target_rt60_seconds"] for r, v in manifest["rooms"].items()},
+                  "measured_t30": {r: {p: e["measured_t30_seconds"] for p, e in v["positions"].items()} for r, v in manifest["rooms"].items()},
+                  "measured": {r: {p: {k: e.get(f"measured_{k}_seconds") for k in ("edt", "t20", "t30")} for p, e in v["positions"].items()} for r, v in manifest["rooms"].items()},
+                  "next": "build-wet"}
     elif args.command == "build-wet":
         binding = provenance.current_binding(runtime, args.config, require=("dataset", "rirs"))
         paths = provenance.manifest_paths(runtime); rir_manifest = _read_json(paths["rirs"])

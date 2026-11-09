@@ -1,11 +1,13 @@
-"""RIR acquisition: OpenAIR first, public full-band substitute next, seeded synthetic last.
+"""RIR acquisition: fixed-geometry gpuRIR ISM (primary since 2026-11-09); OpenAIR/substitute/synthetic retained.
+
+OpenAIR first, public full-band substitute next, seeded synthetic last on the legacy path.
 
 The source list is a host-run input (`rir_sources.example.json` documents its schema). URLs,
 checksums and licenses must be verified by the host-run before they are filled in; an entry
 with no URL fails with a recorded reason instead of guessing an endpoint.
 """
 from __future__ import annotations
-import hashlib, json, os, shutil, stat, tarfile, tempfile, urllib.parse, urllib.request, zipfile
+import hashlib, importlib, inspect, json, os, shutil, stat, tarfile, tempfile, urllib.parse, urllib.request, zipfile
 from pathlib import Path, PurePosixPath
 import numpy as np
 import soundfile as sf
@@ -110,8 +112,8 @@ def _write_rir(runtime: Path, room: str, position: str, rir: np.ndarray) -> tupl
     return str(path.relative_to(runtime)), sha256_file(path)
 
 def _measured(info: dict) -> dict:
-    t30 = info.pop("rt30_estimate_seconds")
-    return {**info, "measured_t30_seconds": t30, "t30_failure": None if t30 is not None else "decay did not reach -35 dB"}
+    rt = info.pop("rt")
+    return {**info, **rt}
 
 def _from_candidate(runtime: Path, room: str, index: int, entry: dict) -> dict:
     if entry.get("kind") not in {"openair", "substitute"}: raise ValueError("candidate kind must be openair or substitute")
@@ -150,9 +152,87 @@ def _synthetic_room(runtime: Path, room: str) -> dict:
     return {"kind": "synthetic", "space": None, "url": None, "license": "generated", "full_band": True,
             "note": "synthetic substitute; not an OpenAIR reproduction; target and measured RT60 are kept separate", "positions": records}
 
-def acquire_rirs(runtime: str | Path, *, sources: dict | None, synthetic_fallback: bool, manifest_path: str | Path | None = None) -> dict:
-    """Try each room's candidates in order; a room with no usable candidate uses synthetic only if allowed."""
-    runtime = Path(runtime).resolve(); rooms_spec = {r["room"]: r for r in (sources or {}).get("rooms", [])}
+GPURIR_REFERENCE = {"abs_weights": [0.9, 0.9, 0.9, 0.9, 0.9, 0.5], "att_diff_db": 25.0, "att_max_db": 60.0, "spkr_pattern": "omni",
+                    "mic_pattern": "omni", "c_m_s": 343.0, "mixed_precision": False, "lut": True}
+GPURIR_REQUIRED_API = ("activateMixedPrecision", "activateLUT", "beta_SabineEstimation", "att2t_SabineEstimator", "t2n", "simulateRIR")
+T60_INPUT_POLICY = "target (oracle); measured reported alongside"
+
+def load_geometry(path: str | Path) -> dict:
+    """Read and validate the fixed-layout JSON; anything off the reference settings is refused."""
+    path = Path(path); spec = json.loads(path.read_text(encoding="utf-8"))
+    if spec.get("fs") != SAMPLE_RATE: raise ValueError(f"geometry fs must be {SAMPLE_RATE}")
+    room = spec.get("room_sz_m")
+    if not (isinstance(room, list) and len(room) == 3 and all(isinstance(v, (int, float)) and v > 0 for v in room)): raise ValueError("room_sz_m must be three positive numbers")
+    def inside(point, what):
+        if not (isinstance(point, list) and len(point) == 3 and all(isinstance(v, (int, float)) and 0 < v < r for v, r in zip(point, room))):
+            raise ValueError(f"{what} must lie strictly inside the room")
+    receiver = spec.get("receiver") or {}
+    inside(receiver.get("pos_m"), "receiver")
+    if receiver.get("pattern") != "omni" or receiver.get("count") != 1: raise ValueError("receiver must be one omni microphone")
+    positions = spec.get("positions") or {}
+    if set(positions) != set(POSITIONS): raise ValueError(f"geometry must name exactly positions {POSITIONS}")
+    stem_of = {v: k for k, v in STEM_POSITION.items()}
+    for name, entry in positions.items():
+        if entry.get("stem") != stem_of[name]: raise ValueError(f"{name} must hold stem {stem_of[name]}")
+        inside(entry.get("pos_m"), name)
+    if spec.get("t60_s") != TARGET_RT60: raise ValueError(f"geometry t60_s must equal {TARGET_RT60}")
+    simulation = spec.get("simulation") or {}
+    for key, value in GPURIR_REFERENCE.items():
+        if simulation.get(key) != value: raise ValueError(f"simulation.{key} must be {value!r} (reference setting)")
+    return {"spec": spec, "path": str(path), "sha256": sha256_file(path)}
+
+def load_gpurir(simulator=None) -> tuple:
+    """Import gpuRIR (or accept an injected simulator), require the whole API, and record the binary hashes."""
+    sim = simulator if simulator is not None else importlib.import_module("gpuRIR")
+    missing = [n for n in GPURIR_REQUIRED_API if not callable(getattr(sim, n, None))]
+    if missing: raise RuntimeError(f"gpuRIR API incomplete: missing {missing}")
+    if simulator is not None: return sim, {"module_file": None, "fake": True}
+    module_file = Path(inspect.getfile(sim)).resolve()
+    return sim, {"module_file": str(module_file), "simulate_signature": str(inspect.signature(sim.simulateRIR)),
+                 "extension_sha256": {p.name: sha256_file(p) for p in sorted(module_file.parent.glob("*.so"))}}
+
+def _gpurir_room(runtime: Path, room: str, geometry: dict, sim) -> dict:
+    spec = geometry["spec"]; room_sz = [float(v) for v in spec["room_sz_m"]]; rcv = np.asarray(spec["receiver"]["pos_m"], dtype=np.float64)
+    ref = GPURIR_REFERENCE; t60 = TARGET_RT60[room]
+    beta = np.asarray(sim.beta_SabineEstimation(room_sz, t60, abs_weights=np.array(ref["abs_weights"], dtype=np.float64)), dtype=np.float64)
+    tdiff = float(sim.att2t_SabineEstimator(ref["att_diff_db"], t60)); tmax = float(sim.att2t_SabineEstimator(ref["att_max_db"], t60))
+    nb_img = [int(v) for v in sim.t2n(tdiff, room_sz)]
+    records = {}
+    for position in POSITIONS:
+        src = np.asarray(spec["positions"][position]["pos_m"], dtype=np.float64)
+        out = np.asarray(sim.simulateRIR(room_sz, beta, src[None, :], rcv[None, :], nb_img, tmax, SAMPLE_RATE, Tdiff=tdiff,
+                                         spkr_pattern=ref["spkr_pattern"], mic_pattern=ref["mic_pattern"], c=ref["c_m_s"]))
+        if out.ndim != 3 or out.shape[:2] != (1, 1) or out.shape[2] <= 0: raise RuntimeError(f"{room}/{position}: gpuRIR returned shape {out.shape}, expected (1, 1, n>0)")
+        if not np.isfinite(out).all() or not np.any(out): raise RuntimeError(f"{room}/{position}: gpuRIR output is nonfinite or all zero")
+        converted, info = prepare_rir(out[0, 0].astype(np.float64), SAMPLE_RATE)
+        path, digest = _write_rir(runtime, room, position, converted)
+        distance = float(np.linalg.norm(src - rcv))
+        records[position] = {"path": path, "sha256": digest, "source_pos_m": src.tolist(), "receiver_pos_m": rcv.tolist(), "distance_m": distance,
+                             "direct_delay_samples": int(round(distance / ref["c_m_s"] * SAMPLE_RATE)), "peak_index": int(np.argmax(np.abs(converted))),
+                             "length_samples": int(len(converted)), "resample_method": "none", "onset_offset": 0, **_measured(info)}
+    return {"kind": "gpurir", "space": "fixed layout 7.5x6.0x3.0 m (interim report image6)", "url": None,
+            "license": "generated (gpuRIR AGPL-3.0 tool, not redistributed)", "full_band": True,
+            "simulation": {**ref, "beta": beta.tolist(), "Tdiff_s": tdiff, "Tmax_s": tmax, "nb_img": nb_img, "T60_target_s": t60},
+            "t60_input_policy": T60_INPUT_POLICY, "positions": records}
+
+def acquire_rirs(runtime: str | Path, *, sources: dict | None, synthetic_fallback: bool, manifest_path: str | Path | None = None,
+                 gpurir_geometry: dict | None = None, gpurir_build_record: dict | None = None, simulator=None) -> dict:
+    """Try each room's candidates in order; a room with no usable candidate uses synthetic only if allowed.
+
+    With `gpurir_geometry` every room comes from the fixed-layout gpuRIR simulation instead; the two paths never mix."""
+    runtime = Path(runtime).resolve()
+    if gpurir_geometry is not None:
+        if sources is not None or synthetic_fallback: raise ValueError("gpuRIR generation cannot be combined with sources or synthetic fallback")
+        if gpurir_build_record is None and simulator is None: raise ValueError("gpuRIR generation needs the toolchain build record")
+        sim, info = load_gpurir(simulator); sim.activateMixedPrecision(GPURIR_REFERENCE["mixed_precision"]); sim.activateLUT(GPURIR_REFERENCE["lut"])
+        rooms = {room: {"target_rt60_seconds": target, "attempts": [], **_gpurir_room(runtime, room, gpurir_geometry, sim)} for room, target in TARGET_RT60.items()}
+        manifest = {"schema_version": 2, "generator": "gpurir", "sample_rate": SAMPLE_RATE, "onset_offset": 0, "positions": list(POSITIONS),
+                    "stem_position": STEM_POSITION, "t60_input_policy": T60_INPUT_POLICY,
+                    "geometry": {"path": gpurir_geometry["path"], "sha256": gpurir_geometry["sha256"], "spec": gpurir_geometry["spec"]},
+                    "gpurir": {**(gpurir_build_record or {}), **info}, "rooms": rooms}
+        atomic_json(manifest_path or runtime / "manifests/rirs.json", manifest)
+        return manifest
+    rooms_spec = {r["room"]: r for r in (sources or {}).get("rooms", [])}
     if set(rooms_spec) - set(TARGET_RT60): raise ValueError("source spec names unknown rooms")
     rooms = {}
     for room, target in TARGET_RT60.items():
@@ -167,7 +247,7 @@ def acquire_rirs(runtime: str | Path, *, sources: dict | None, synthetic_fallbac
             if not synthetic_fallback: raise RuntimeError(f"{room}: no RIR candidate succeeded and synthetic fallback is not enabled: {attempts}")
             chosen = _synthetic_room(runtime, room)
         rooms[room] = {"target_rt60_seconds": target, "attempts": attempts, **chosen}
-    manifest = {"schema_version": 1, "sample_rate": SAMPLE_RATE, "onset_offset": 0, "positions": list(POSITIONS),
+    manifest = {"schema_version": 2, "sample_rate": SAMPLE_RATE, "onset_offset": 0, "positions": list(POSITIONS),
                 "stem_position": STEM_POSITION, "rooms": rooms}
     atomic_json(manifest_path or runtime / "manifests/rirs.json", manifest)
     return manifest

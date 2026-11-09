@@ -10,10 +10,16 @@ class CliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(__file__).parents[1]; artifact=Path(tmp)/'artifacts'; runtime=Path(tmp)/'runtime'
             self.assertEqual(main(['validate','--runtime-dir',str(runtime),'--artifact-dir',str(artifact),'--config',str(root/'experiments/banelp/config.json'),'--synthetic']),0)
-    def test_seal_waits_for_owner_sar_policy(self):
+    def test_shipped_selection_policy_is_confirmed(self):
+        config=json.loads((Path(__file__).parents[1]/'experiments/banelp/config.json').read_text())
+        self.assertEqual(config['selection'],{'sar_policy_status':'confirmed','sar_floor_db':-0.5,'minimum_sdr_gain_db':0.2,
+                                              'baseline_train_data_policy':'allow-unknown-with-disclosure'})
+    def test_seal_refuses_pending_sar_policy(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root=Path(__file__).parents[1]
-            with self.assertRaises(ValueError): main(['seal','--runtime-dir',tmp+'/runtime','--artifact-dir',tmp+'/artifacts','--config',str(root/'experiments/banelp/config.json')])
+            root=Path(__file__).parents[1]; config=json.loads((root/'experiments/banelp/config.json').read_text())
+            config['selection']={'sar_policy_status':'pending-owner-confirmation','sar_floor_db':None,'minimum_sdr_gain_db':0.2}
+            path=Path(tmp)/'config.json'; path.write_text(json.dumps(config))
+            with self.assertRaisesRegex(ValueError,'owner confirms SAR policy'): main(['seal','--runtime-dir',tmp+'/runtime','--artifact-dir',tmp+'/artifacts','--config',str(path)])
     def test_smoke_slices_fixed_thirty_second_cache(self):
         x=np.arange(2*1_323_000,dtype=np.float32).reshape(2,-1)
         self.assertTrue(np.array_equal(_smoke_input(x,5,44100),x[:,:220500]))

@@ -1,4 +1,4 @@
-"""Predeclared dev selection contract; holdout remains sealed until policy approval."""
+"""Predeclared dev selection contract; the evaluation split opens only through a sealed dev selection."""
 from __future__ import annotations
 import hashlib, json, os, tempfile
 from pathlib import Path
@@ -18,12 +18,12 @@ def paired_summary(deltas: np.ndarray, *, seed: int=20261108, bootstrap: int=100
     return {"track_median_delta_db":statistic,"track_bootstrap_95_ci":[float(np.quantile(boots,.025)),float(np.quantile(boots,.975))],"wilcoxon_p":p,"tracks":len(per_track)}
 
 def seal_selection(selection: dict, *, policy: dict, develop_sha256: str, binding: dict, model_hashes: list[str],
-                   baseline_model_sha256: str) -> dict:
+                   baseline_model_sha256: str, baseline_disclosure: dict) -> dict:
     """Bind a `select_candidate` result to the dev results and every input hash it depends on."""
     if policy.get("sar_policy_status")!="confirmed": raise ValueError("selection seal blocked: SAR policy requires owner confirmation")
     if not selection.get("selected") or not selection.get("reason"): raise ValueError("selection seal requires a select_candidate result")
-    seal={"schema_version":2,"policy":policy,"selection":selection,"develop_sha256":develop_sha256,**binding,
-          "model_hashes":sorted(model_hashes),"baseline_model_sha256":baseline_model_sha256,"split":"dev","sealed":True}
+    seal={"schema_version":3,"policy":policy,"selection":selection,"develop_sha256":develop_sha256,**binding,
+          "model_hashes":sorted(model_hashes),"baseline_model_sha256":baseline_model_sha256,"baseline_disclosure":baseline_disclosure,"split":"dev","sealed":True}
     seal["sha256"]=hashlib.sha256(canonical_json(seal)).hexdigest()
     return seal
 

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "room_sz_m": [7.5, 6.0, 3.0],
+  "fs": 44100,
+  "receiver": {"pos_m": [3.73, 0.87, 1.5], "pattern": "omni", "count": 1,
+               "note": "mono RIR applied identically to both stereo channels (data.apply_rir)"},
+  "positions": {
+    "P1": {"stem": "vocals", "pos_m": [3.73, 2.87, 1.5]},
+    "P2": {"stem": "drums", "pos_m": [3.73, 4.86, 1.5]},
+    "P3": {"stem": "bass", "pos_m": [1.41, 3.88, 1.5]},
+    "P4": {"stem": "other", "pos_m": [6.09, 3.89, 1.5]}
+  },
+  "t60_s": {"R1": 0.26, "R2": 0.89, "R3": 1.28, "R4": 1.96},
+  "simulation": {
+    "abs_weights": [0.9, 0.9, 0.9, 0.9, 0.9, 0.5],
+    "att_diff_db": 25.0,
+    "att_max_db": 60.0,
+    "tdiff_tmax": "att2t_SabineEstimator",
+    "nb_img": "t2n(Tdiff, room_sz)",
+    "beta": "beta_SabineEstimation(room_sz, T60, abs_weights)",
+    "spkr_pattern": "omni",
+    "mic_pattern": "omni",
+    "c_m_s": 343.0,
+    "mixed_precision": false,
+    "lut": true,
+    "call_granularity": "per-source (1 source x 1 receiver per simulateRIR call)",
+    "normalization": "none (apply_rir restores stem RMS)"
+  },
+  "t60_input_policy": "target (oracle); measured reported alongside",
+  "provenance": {
+    "layout_source": "반엘프_Separation_중간보고서.hwpx BinData/image6.bmp, pixel reading (estimate)",
+    "hwpx_sha256": "e916a0876ccae6f905c061f8fb350ef80fa66b08ec34e89496bbd87edff1fd1c",
+    "image6_sha256": "d993d6369046ae061e2b198a78cfdb8c14b23c51b161ed8749f9335a96549d42",
+    "height_assumption": "room height 3.0 m and all z = 1.5 m are user-approved assumptions (not in the figure)",
+    "vocals_note": "figure label 2.00 m used; marker-centre reading is (3.72, 3.05), 2.18 m from the mic",
+    "unused": "image7 test layout; reference rooms_tr list, mic-centre rule and source sampler of rir_gen_gpuRIR.py",
+    "reference_code": ["https://github.com/dmlguq456/SR_CorrNet_SS/blob/main/data/rir_gen/rir_gen_gpuRIR.py"],
+    "rejected_reference_settings": "gpurir_example.py att_diff=15, multi-receiver arrays and peak normalization are not used"
+  }
+}
