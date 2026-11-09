@@ -57,11 +57,13 @@ def _parser():
             q.add_argument("--introspect", action="store_true", help="demucs only: load the registered files through the resolved member set and take sources/samplerate/bag size from them")
             q.add_argument("--family", choices=("demucs", "msst"), default="demucs"); q.add_argument("--model-type", help="MSST model_type, e.g. bs_roformer or scnet")
             q.add_argument("--msst-config", help="MSST config yaml (hashed and recorded)"); q.add_argument("--msst-config-url"); q.add_argument("--msst-commit", help="pinned commit of the MSST checkout under $R/src/MSST")
+            q.add_argument("--msst-batch-size", type=int, help="MSST only: recorded override of config.inference.batch_size (batching does not change eval-mode results); default is the config's value")
             q.add_argument("--declaration-url"); q.add_argument("--declaration-quote"); q.add_argument("--release", help="release tag of the distributed checkpoint")
         if name == "smoke":
             q.add_argument("--device", default="cuda"); q.add_argument("--require-cuda", action="store_true")
             q.add_argument("--split", default="dev", choices=("dev", "evaluation")); q.add_argument("--track-index", type=int, default=0)
             q.add_argument("--seconds", type=int, default=5); q.add_argument("--model", help="smoke this registered model id instead of the baseline (5 s and 30 s)")
+            q.add_argument("--msst-batch-size", type=int, help="with --model <msst id>: batch size for this smoke only (recorded in the smoke file); the registration's value is unchanged")
         if name == "evaluate": q.add_argument("--seal", required=True)
     return p
 
@@ -107,11 +109,12 @@ def _baseline_model(runtime, config):
 
 class _LazySeparator:
     """Create the registered separator once, on first use."""
-    def __init__(self, config, record, runtime=None): self.config, self.record, self.runtime, self.instance = config, record, runtime, None
+    def __init__(self, config, record, runtime=None, batch_size=None): self.config, self.record, self.runtime, self.batch_size, self.instance = config, record, runtime, batch_size, None
     def __call__(self):
         if self.instance is None:
             if self.record.get("family", "demucs") == "msst":
-                self.instance = MSST_FACTORY(registered=self.record, runtime_dir=self.runtime)
+                kwargs = {} if self.batch_size is None else {"batch_size": self.batch_size}
+                self.instance = MSST_FACTORY(registered=self.record, runtime_dir=self.runtime, **kwargs)
             else:
                 sep = self.config["separator"]
                 self.instance = SEPARATOR_FACTORY(model_name=self.record["model_id"], segment=sep.get("segment_seconds", 7.0), overlap=sep["overlap"], registered=self.record)
@@ -135,7 +138,8 @@ def _verified_lock(config, runtime, *, what):
 
 def _inference_config(config, model):
     if model.get("family", "demucs") == "msst":
-        return {"family": "msst", "model_type": model["model_type"], "config_sha256": model["config_file"]["sha256"], "msst_commit": model["msst_commit"]}
+        return {"family": "msst", "model_type": model["model_type"], "config_sha256": model["config_file"]["sha256"], "msst_commit": model["msst_commit"],
+                "adapter": "official-sequence-v2", "fp32": True, "normalization": "official-by-config"}
     return config["separator"]
 
 def _keys(binding, config, model):
@@ -464,7 +468,8 @@ def _smoke_model(args, config, runtime, artifact, *, binding, x, track, wet_key)
               "seconds": args.seconds, "device_name": torch.cuda.get_device_name(), "dtype": "float32", "eligibility": record_eligibility(record),
               "binding": binding, "wet_cache_key": wet_key, "torch_version": torch.__version__, "cuda_version": torch.version.cuda}
     try:
-        start = time.perf_counter(); separator = _LazySeparator(config, record, runtime)(); load_seconds = time.perf_counter() - start
+        start = time.perf_counter(); separator = _LazySeparator(config, record, runtime, batch_size=args.msst_batch_size)(); load_seconds = time.perf_counter() - start
+        if hasattr(separator, "attestation"): result["msst_attestation"] = separator.attestation
         torch.cuda.synchronize(); t0 = time.perf_counter(); estimates = separator(x); torch.cuda.synchronize(); cold = time.perf_counter() - t0
         t0 = time.perf_counter(); separator(x); torch.cuda.synchronize(); warm = time.perf_counter() - t0
         result.update(status="ok", load_seconds=load_seconds, cold_forward_seconds=cold, warm_forward_seconds=warm, rtf_cold=cold / args.seconds, rtf_warm=warm / args.seconds,
@@ -521,7 +526,11 @@ def _smoke(args, config, runtime, artifact):
 def _register_model(args, config, runtime, artifact):
     native, samplerate, checkpoints = args.native_source_order, args.samplerate, [Path(p).resolve() for p in args.checkpoint]
     declaration = declaration_record(args.declaration_url, args.declaration_quote, args.release)
-    check_registration_allowed(model_id=args.model_id, filenames=[p.name for p in checkpoints], status=args.train_data_status, release=args.release, family=args.family)
+    config_file = Path(args.msst_config).resolve() if args.family == "msst" and args.msst_config else None
+    if args.msst_batch_size is not None and (args.family != "msst" or args.msst_batch_size < 1): raise ValueError("--msst-batch-size is for MSST models and must be >= 1")
+    check_registration_allowed(model_id=args.model_id, filenames=[p.name for p in checkpoints], status=args.train_data_status, release=args.release, family=args.family,
+                               checkpoint_sha256={p.name: sha256_file(p) for p in checkpoints}, config_name=config_file.name if config_file else None,
+                               config_sha256=sha256_file(config_file) if config_file and config_file.is_file() else None)
     extra = {"family": args.family, "declaration": declaration}
     if args.family == "msst":
         if args.introspect: raise ValueError("--introspect is for demucs checkpoints; give --native-source-order and --samplerate for MSST")
@@ -529,7 +538,8 @@ def _register_model(args, config, runtime, artifact):
         config_path = Path(args.msst_config).resolve()
         if not config_path.is_file(): raise FileNotFoundError(config_path)
         extra.update(model_type=args.model_type, msst_commit=args.msst_commit,
-                     config_file={"path": str(config_path), "sha256": sha256_file(config_path), "url": args.msst_config_url})
+                     config_file={"path": str(config_path), "sha256": sha256_file(config_path), "url": args.msst_config_url},
+                     inference_overrides={"batch_size": args.msst_batch_size} if args.msst_batch_size is not None else None)
     elif args.introspect:
         provisional = {"model_id": args.model_id, "members": [{"path": str(p), "sha256": sha256_file(p)} for p in checkpoints]}
         loaded = load_registered_demucs(provisional, args.model_id)  # hash + resolved-member-set check, then load from exactly those files

@@ -1,20 +1,108 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "recorded": "2026-11-09",
   "source": "MSST docs/pretrained_models.md section 'Multi-stem models (MUSDB18HQ)' (declares MUSDB18-HQ train 100 songs only); .agent_reports/notes/2026-11-09_supplementary-survey/04_checkpoint_provenance.md",
-  "policy": "A checkpoint may be registered as documented-train-only only if it is listed under `allowed` (same file name and release). Its status is not verified-excluded: the table's declaration is not a per-song audit.",
+  "policy": "A checkpoint may be registered as documented-train-only only if it is listed under `allowed` (same file name and release). Its status is not verified-excluded: the table's declaration is not a per-song audit. register-model also refuses a different checkpoint sha256 or config file name/sha256 for a listed file.",
   "label_ko": "문서상 train-only, 곡별 감사 미확인",
   "allowed": [
-    {"file": "model_bs_roformer_ep_17_sdr_9.6568.ckpt", "release": "v1.0.12", "family": "msst", "model_type": "bs_roformer", "stems": 4},
-    {"file": "scnet_checkpoint_musdb18.ckpt", "release": "v1.0.6", "family": "msst", "model_type": "scnet", "stems": 4},
-    {"file": "SCNet-large_starrytong_fixed.ckpt", "release": "v1.0.9", "family": "msst", "model_type": "scnet", "stems": 4},
-    {"file": "model_scnet_sdr_9.3244.ckpt", "release": null, "family": "msst", "model_type": "scnet", "stems": 4, "note": "release tag to be recorded from the distribution table by the registering host-run"},
-    {"file": "model_scnet_ep_54_sdr_9.8051.ckpt", "release": null, "family": "msst", "model_type": "scnet", "stems": 4, "note": "release tag to be recorded from the distribution table by the registering host-run"}
+    {
+      "file": "model_bs_roformer_ep_17_sdr_9.6568.ckpt",
+      "release": "v1.0.12",
+      "family": "msst",
+      "model_type": "bs_roformer",
+      "stems": 4,
+      "sha256": "3e9daecd70aaed5b5a0d1f861cc4d77eaa45afb3fc6301b1cf32c1be0f5868fb",
+      "bytes": 527385512,
+      "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.12/model_bs_roformer_ep_17_sdr_9.6568.ckpt",
+      "config": {
+        "file": "config_bs_roformer_384_8_2_485100.yaml",
+        "sha256": "d8afb980318d0c08b9c2e24a7adc00d4f3150320c127a7e4de861800d1321939",
+        "bytes": 4566,
+        "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.12/config_bs_roformer_384_8_2_485100.yaml"
+      }
+    },
+    {
+      "file": "scnet_checkpoint_musdb18.ckpt",
+      "release": "v.1.0.6",
+      "family": "msst",
+      "model_type": "scnet",
+      "stems": 4,
+      "sha256": "1bc0d1abb20bfdf966dcd07637bafd03e4bc13653d09ef18bc9b3e342eafe2aa",
+      "bytes": 42434986,
+      "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v.1.0.6/scnet_checkpoint_musdb18.ckpt",
+      "config": {
+        "file": "config_musdb18_scnet.yaml",
+        "sha256": "19103def86d549701f824804fc5f3d244e8e8ccd4032da6ee9d5b4f2a5f2da16",
+        "bytes": 1739,
+        "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v.1.0.6/config_musdb18_scnet.yaml"
+      }
+    },
+    {
+      "file": "SCNet-large_starrytong_fixed.ckpt",
+      "release": "v1.0.9",
+      "family": "msst",
+      "model_type": "scnet",
+      "stems": 4,
+      "sha256": "65900dfa07d6b6e5d784c0f143920200a4bd281d6e78a806c549d0b912d5885e",
+      "bytes": 168852258,
+      "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.9/SCNet-large_starrytong_fixed.ckpt",
+      "config": {
+        "file": "config_musdb18_scnet_large_starrytong.yaml",
+        "sha256": "3efa43af7c50d4a6e1105d2599d2d6a31c8012ee99eaad9a7e80e057945d44ee",
+        "bytes": 1955,
+        "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.9/config_musdb18_scnet_large_starrytong.yaml"
+      }
+    },
+    {
+      "file": "model_scnet_sdr_9.3244.ckpt",
+      "release": "v1.0.8",
+      "family": "msst",
+      "model_type": "scnet",
+      "stems": 4,
+      "sha256": "fe550315a76e8f4aed8475d7d5952137504a3b6c63b3adcef2443bfe73aac540",
+      "bytes": 168868194,
+      "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.8/model_scnet_sdr_9.3244.ckpt",
+      "config": {
+        "file": "config_musdb18_scnet_large.yaml",
+        "sha256": "9e350719e1dd1c375a024753774f3b73864d95d76f41d36cb996b40e0257b72a",
+        "bytes": 1956,
+        "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.8/config_musdb18_scnet_large.yaml"
+      }
+    },
+    {
+      "file": "model_scnet_ep_54_sdr_9.8051.ckpt",
+      "release": "v1.0.13",
+      "family": "msst",
+      "model_type": "scnet",
+      "stems": 4,
+      "sha256": "fd889cc1d97619ccac59280ecc859c190cd3cc1b1557fbe3a19b1610bb67e410",
+      "bytes": 216189106,
+      "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.13/model_scnet_ep_54_sdr_9.8051.ckpt",
+      "config": {
+        "file": "config_musdb18_scnet_xl.yaml",
+        "sha256": "6739967f846cd557308b86afc901228f534792f75aec9f6a78486559195d89cf",
+        "bytes": 6015,
+        "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.13/config_musdb18_scnet_xl.yaml"
+      }
+    }
   ],
   "excluded": [
-    {"model_id": "mdx_extra", "reason": "demucs README: trained including the MUSDB18 test set"},
-    {"file": "model_bs_roformer_ep_317_sdr_12.9755.ckpt", "reason": "viperx BS-RoFormer: outside the train-only section, training list unconfirmed, vocal model"},
-    {"file": "model_mel_band_roformer_ep_3005_sdr_11.4360.ckpt", "reason": "viperx Mel-RoFormer: outside the train-only section, training list unconfirmed, vocal model"},
-    {"file": "MelBandRoformer.ckpt", "reason": "Kimberley Jensen MelBandRoformer: uses extra data with no published list, vocal-only"}
-  ]
+    {
+      "model_id": "mdx_extra",
+      "reason": "demucs README: trained including the MUSDB18 test set"
+    },
+    {
+      "file": "model_bs_roformer_ep_317_sdr_12.9755.ckpt",
+      "reason": "viperx BS-RoFormer: outside the train-only section, training list unconfirmed, vocal model"
+    },
+    {
+      "file": "model_mel_band_roformer_ep_3005_sdr_11.4360.ckpt",
+      "reason": "viperx Mel-RoFormer: outside the train-only section, training list unconfirmed, vocal model"
+    },
+    {
+      "file": "MelBandRoformer.ckpt",
+      "reason": "Kimberley Jensen MelBandRoformer: uses extra data with no published list, vocal-only"
+    }
+  ],
+  "verified_against": "host-run prep downloads (parts/autopilot-lab/host-run/logs/prep/msst-downloads.txt) and the release URLs; MSST checkout tag v1.0.23 = f17924ddb1817cdbae6353706708c4518dd7cd14"
 }
