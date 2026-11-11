@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "experiment": "banelp-refine-v1",
+  "sources": ["vocals", "drums", "bass", "other"],
+  "seed": 20261111,
+  "audio": {"sample_rate": 44100, "channels": 2, "record_seconds": 30, "crop_seconds": 4, "edge_seconds": 3},
+  "data": {"split_salt": "training-design-v1", "split_counts": {"train": 80, "validation": 10, "confirmation": 10}, "conditions_per_song": 4, "dry_conditions": 1, "window": "center-30s-or-symmetric-zero-pad", "minimum_free_gb": 65},
+  "rir": {"seed": 20261111, "pools": {"train": {"rooms": 16, "sets_per_room": 4}, "validation": {"rooms": 4, "sets_per_room": 4}, "confirmation": {"rooms": 4, "sets_per_room": 4}}, "dimensions_m": [[4, 12], [3, 10], [2.5, 4]], "target_t60_s": [0.2, 2.5], "wall_margin_m": 0.3, "minimum_distance_m": 0.5, "max_image_product": 5000000, "max_sampling_attempts": 128, "attenuation_diffuse_db": 25, "attenuation_end_db": 60},
+  "baseline": {"model_id": "htdemucs", "signature": "955717e8", "precision": "fp32", "shifts": 0, "segment_seconds": 7.0, "overlap": 0.25},
+  "model": {"widths": [24, 48, 96], "dilations": [1, 2, 4, 8, 16], "n_fft": 2048, "hop": 512, "center": true, "pad_mode": "constant", "hann_periodic": true, "common_rms_floor": 0.00001, "residual_spectral_scale": 45.254833995939045},
+  "loss": {"variant": "base", "wave": 1.0, "spectral": 0.5, "complex": 0.25, "low": 0.25, "fft_sizes": [512, 2048, 8192], "log_floor": 0.001, "stem_floor_fraction": 0.05, "low_hz": [20, 1000]},
+  "training": {"batch_size": 1, "precision": "fp32", "learning_rate": 0.0001, "weight_decay": 0.0001, "clip_gradient_norm": 5.0, "max_steps": 3000, "validate_every": 500, "early_stop_validations": 5, "num_workers": 0, "cpu_threads": 2},
+  "readiness": {"peak_reserved_gib_limit": 4.5, "gpu_temperature_c_limit": 83, "required_cache_records": 400},
+  "evaluation": {"bootstrap_replicates": 10000, "bootstrap_seed": 20261111, "minimum_gain_db": 0.2, "noninferiority_margin_db": -0.2, "sar_median_floor_db": -0.5, "bass_gain_threshold": 0.1}
+}

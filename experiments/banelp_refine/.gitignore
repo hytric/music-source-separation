@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.npy
+*.pt
+*.wav
+*.part
+*.writing
+data/
+rirs/
+cache/
+initial/
+runs/
+claims/
+evaluations/
+manifests/
+readiness.json
+run_local.sh
