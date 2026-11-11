@@ -1,0 +1,13 @@
+﻿step,seconds,minutes
+prewarm-dev-htdemucs,12.0,0.2
+prewarm-dev-msst_bsroformer_ep17,10.0,0.167
+prewarm-dev-msst_scnet_large_9_3244,11.0,0.183
+prewarm-dev-msst_scnet_large_starrytong,10.0,0.167
+prewarm-dev-msst_scnet_small,9.0,0.15
+prewarm-dev-msst_scnet_xl_ep54,842.0,14.033
+develop,3218.0,53.633
+oracle-gap,1812.0,30.2
+leak-check-pre-seal,1.0,0.017
+seal,0.0,0.0
+evaluate,5506.0,91.767
+eval-diag,85.0,1.417

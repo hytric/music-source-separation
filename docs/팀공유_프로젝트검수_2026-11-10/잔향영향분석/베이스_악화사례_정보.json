@@ -1,0 +1,19 @@
+{
+  "selection": "largest negative paired bass SI-SDR change among 5s windows whose original gain >= 0.3 and wet gain <0.1; output/target RMS <0.1 for lowlevel, >=0.1 for mismatch; illustration only",
+  "case": {
+    "track": "Signe Jakobsen - What Have You Done To Me",
+    "split": "dev",
+    "condition": "R3",
+    "stem": "bass",
+    "crop_start_s": 15,
+    "original_track_start_s": 88.69866213151927,
+    "original_si_sdr": -0.6534368814157488,
+    "wet_si_sdr": -70.21678597374778,
+    "delta_si_sdr": -69.56334909233203,
+    "original_gain": 0.3666084302623763,
+    "wet_gain": 1.8541074031018708e-06,
+    "wet_target_rms": 0.02848757040512861,
+    "wet_output_to_target_rms": 0.006011380349179229
+  },
+  "spectrogram": "4096 Hann / hop1024, same absolute scale across panels, not individually normalized"
+}

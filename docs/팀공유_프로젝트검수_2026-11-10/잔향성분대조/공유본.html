@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="ko"><meta charset="utf-8"><title>잔향 성분 대조 결과</title><style>
+:root{font-family:"Noto Sans CJK KR","Malgun Gothic",sans-serif;color:#172331;background:#f4f6f8;line-height:1.8}
+*{box-sizing:border-box}body{margin:0}main{max-width:1120px;margin:0 auto;padding:36px 28px 80px;background:white}
+nav{border:1px solid #d6dee8;padding:18px 24px;border-radius:10px;background:#f7faff;margin-bottom:36px}
+nav a{display:block;margin:4px 0}a{color:#1555a0;text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:1.9rem;line-height:1.4;margin-top:12px}h2{font-size:1.25rem;margin-top:32px;border-bottom:1px solid #dce3eb;padding-bottom:8px}
+p,li{font-size:1rem}section{margin-bottom:56px;scroll-margin:20px}strong{color:#102d4e}
+table{border-collapse:collapse;width:100%;font-size:.88rem;line-height:1.65;margin:20px 0;overflow-wrap:anywhere}
+th,td{border:1px solid #d9e0e7;padding:10px 12px;text-align:left;vertical-align:top}th{background:#edf3f9}
+tbody tr:nth-child(even){background:#fafbfd}code{font-family:monospace;font-size:.9em;background:#f1f3f5;padding:2px 4px;overflow-wrap:anywhere}
+pre{background:#eef2f6;padding:16px;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:6px}pre code{padding:0;background:transparent}
+blockquote{margin:20px 0;padding:10px 22px;border-left:4px solid #356da5;background:#f4f8fc}img{max-width:100%;height:auto}
+.cover-note{color:#526478;font-size:.9rem}.figures{margin:24px 0}footer{border-top:1px solid #dce3eb;padding-top:16px;color:#526478}
+@media(max-width:700px){main{padding:20px 14px}table{font-size:.78rem}th,td{padding:7px}}
+@media print{body,main{background:white}main{max-width:none;padding:0}nav{display:none}section{page-break-before:always}section:first-of-type{page-break-before:auto}table{font-size:9pt}a{color:inherit}tr{break-inside:avoid}}
+</style><main><h1>지연과 초기 반사와 전체 잔향의 분리 영향</h1>
+<p>개발 10곡의 새 HTDemucs 추론 60개를 실행했다. 원본 및 전체 RIR 출력은 기존 결과를 재사용했다. 이 실험은 잔향 성분을 바꾸어 만든 입력의 진단이며, 관측된 혼합에 적용한 후처리의 성능 개선 실험이 아니다.</p>
+<h2>확인된 결론</h2>
+<p>지연만 적용한 bass의 원본 대비 변화는 +0.020 dB로 작았다. R4 초기 50 ms는 지연만 대비 −4.326 dB, 전체 R4는 초기 R4 대비 −6.399 dB였다. 전체 R4 gain을 유지한 초기 구간 대조에서도 전체 R4가 −8.131 dB 낮았다. 따라서 이 개발 10곡에서는 지연만이 주된 원인이라는 설명은 지지되지 않고, 초기 반사와 후기 부분 모두 영향을 보였다.</p>
+<p>초기 R4의 bass 소실은 1/10, 전체 R4는 4/10이었다. 하지만 초기/전체 입력과 정답 자체가 다르므로 이를 실제 후처리로 소실을 4→1로 줄였다고 설명해서는 안 된다. 초기 RIR 절단은 주파수 응답과 에너지 배분도 바꾸며, R2/R3의 bass 후기 차이 신뢰구간은 0을 포함했다. 모든 공간에 대한 확정 결론이 아니다.</p>
+<p>Notion 상세 결과: https://app.notion.com/p/414457fc721b81b4acf3ce2d2ed8fdf8</p>
+<h2>실험 조건</h2>
+<ul>
+<li>D0: 추가 RIR 없음.</li>
+<li>D1: 음원별 기하학적 도달 지연만 반영한 단위 임펄스. 각 stem RMS를 원본에 맞춤.</li>
+<li>E1~E4: 실제 생성 RIR의 직접 도달 뒤 50 ms까지 유지, 다음 5 ms cosine fade. 각 stem RMS를 원본에 맞춤.</li>
+<li>F1~F4: 전체 RIR. 기존 데이터와 같은 정답·분리 결과.</li>
+<li>E4-fixedgain: E4에 전체 R4 데이터 생성 gain을 적용. 초기 성분의 크기를 다시 조정하는 영향 확인용.</li>
+<li>동일 중앙 30초·44.1 kHz stereo·HTDemucs 955717e8·FP32·shifts0·segment7s·overlap0.25. 새 학습 없음.</li>
+<li>50 ms는 이번 탐색의 고정값이다. 모든 공간에 공통인 물리적 초기/후기 경계라고 가정하지 않는다.</li>
+</ul>
+<h2>절대 성능과 베이스 소실</h2>
+<table>
+<thead>
+<tr>
+<th>조건</th>
+<th style="text-align:right">vocals</th>
+<th style="text-align:right">drums</th>
+<th style="text-align:right">bass</th>
+<th style="text-align:right">other</th>
+<th style="text-align:right">bass 소실 / 10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>original</td>
+<td style="text-align:right">11.785</td>
+<td style="text-align:right">8.898</td>
+<td style="text-align:right">8.283</td>
+<td style="text-align:right">6.795</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td>delay</td>
+<td style="text-align:right">12.053</td>
+<td style="text-align:right">8.607</td>
+<td style="text-align:right">8.219</td>
+<td style="text-align:right">6.705</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td>early_R1</td>
+<td style="text-align:right">10.885</td>
+<td style="text-align:right">8.321</td>
+<td style="text-align:right">6.715</td>
+<td style="text-align:right">5.712</td>
+<td style="text-align:right">1</td>
+</tr>
+<tr>
+<td>full_R1</td>
+<td style="text-align:right">10.344</td>
+<td style="text-align:right">8.660</td>
+<td style="text-align:right">7.369</td>
+<td style="text-align:right">5.622</td>
+<td style="text-align:right">1</td>
+</tr>
+<tr>
+<td>early_R2</td>
+<td style="text-align:right">10.691</td>
+<td style="text-align:right">5.194</td>
+<td style="text-align:right">4.795</td>
+<td style="text-align:right">6.041</td>
+<td style="text-align:right">1</td>
+</tr>
+<tr>
+<td>full_R2</td>
+<td style="text-align:right">7.646</td>
+<td style="text-align:right">3.977</td>
+<td style="text-align:right">-0.111</td>
+<td style="text-align:right">3.955</td>
+<td style="text-align:right">2</td>
+</tr>
+<tr>
+<td>early_R3</td>
+<td style="text-align:right">10.755</td>
+<td style="text-align:right">5.046</td>
+<td style="text-align:right">4.434</td>
+<td style="text-align:right">6.009</td>
+<td style="text-align:right">1</td>
+</tr>
+<tr>
+<td>full_R3</td>
+<td style="text-align:right">6.704</td>
+<td style="text-align:right">2.746</td>
+<td style="text-align:right">-1.886</td>
+<td style="text-align:right">2.917</td>
+<td style="text-align:right">3</td>
+</tr>
+<tr>
+<td>early_R4</td>
+<td style="text-align:right">10.808</td>
+<td style="text-align:right">4.973</td>
+<td style="text-align:right">4.188</td>
+<td style="text-align:right">5.984</td>
+<td style="text-align:right">1</td>
+</tr>
+<tr>
+<td>full_R4</td>
+<td style="text-align:right">6.424</td>
+<td style="text-align:right">0.366</td>
+<td style="text-align:right">-3.724</td>
+<td style="text-align:right">0.924</td>
+<td style="text-align:right">4</td>
+</tr>
+<tr>
+<td>early_R4_fixedgain</td>
+<td style="text-align:right">8.157</td>
+<td style="text-align:right">5.687</td>
+<td style="text-align:right">5.476</td>
+<td style="text-align:right">5.842</td>
+<td style="text-align:right">1</td>
+</tr>
+</tbody>
+</table>
+<p>단위 dB, 각 조건의 절대 중앙값. vocals는 무음 정답 1곡을 제외해 9곡, 나머지는 10곡이다. 중앙값끼리 뺀 값과 다음 대응 차이 중앙값은 다를 수 있다.</p>
+<p><img src="%EC%9E%94%ED%96%A5%EC%84%B1%EB%B6%84%EB%B3%84_%EB%8C%80%EC%A1%B0.png" alt="조건 비교" /></p>
+<h2>같은 곡의 대응 차이</h2>
+<table>
+<thead>
+<tr>
+<th>비교</th>
+<th style="text-align:right">vocals</th>
+<th style="text-align:right">drums</th>
+<th style="text-align:right">bass</th>
+<th style="text-align:right">other</th>
+<th>bass 95% CI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>delay minus original</td>
+<td style="text-align:right">0.144</td>
+<td style="text-align:right">-0.070</td>
+<td style="text-align:right">0.020</td>
+<td style="text-align:right">0.065</td>
+<td>[-0.203, 0.167]</td>
+</tr>
+<tr>
+<td>early_R4 minus delay</td>
+<td style="text-align:right">-0.795</td>
+<td style="text-align:right">-3.688</td>
+<td style="text-align:right">-4.326</td>
+<td style="text-align:right">-1.606</td>
+<td>[-9.055, -2.891]</td>
+</tr>
+<tr>
+<td>full_R1 minus early_R1</td>
+<td style="text-align:right">-0.213</td>
+<td style="text-align:right">0.072</td>
+<td style="text-align:right">-0.070</td>
+<td style="text-align:right">-0.129</td>
+<td>[-0.156, 0.490]</td>
+</tr>
+<tr>
+<td>full_R2 minus early_R2</td>
+<td style="text-align:right">-2.440</td>
+<td style="text-align:right">-2.295</td>
+<td style="text-align:right">-3.203</td>
+<td style="text-align:right">-1.954</td>
+<td>[-6.563, 1.304]</td>
+</tr>
+<tr>
+<td>full_R3 minus early_R3</td>
+<td style="text-align:right">-3.154</td>
+<td style="text-align:right">-3.495</td>
+<td style="text-align:right">-4.658</td>
+<td style="text-align:right">-2.501</td>
+<td>[-9.467, 0.667]</td>
+</tr>
+<tr>
+<td>full_R4 minus early_R4</td>
+<td style="text-align:right">-3.618</td>
+<td style="text-align:right">-4.933</td>
+<td style="text-align:right">-6.399</td>
+<td style="text-align:right">-3.990</td>
+<td>[-13.913, -0.365]</td>
+</tr>
+<tr>
+<td>full_R4 minus early_R4_fixedgain</td>
+<td style="text-align:right">-1.334</td>
+<td style="text-align:right">-4.282</td>
+<td style="text-align:right">-8.131</td>
+<td style="text-align:right">-4.215</td>
+<td>[-15.839, -4.825]</td>
+</tr>
+</tbody>
+</table>
+<p>CI는 곡을 10,000회 재표집한 탐색적 percentile bootstrap(seed 20261110)이다. 작은 개발 세트에서 여러 비교를 본 결과이며 확증적 일반화 성능으로 주장하지 않는다.</p>
+<h2>해석 범위</h2>
+<p>지연만 적용한 결과, 초기 반사까지 남긴 결과, 전체 잔향 결과를 구분한다. 전체 RIR의 후기 부분을 제거하면 주파수 응답과 에너지 배분도 변하므로 시간 감쇠 길이 하나의 독립 효과로 해석하지 않는다. 초기 50 ms 조건과 fixedgain 조건을 함께 사용해 RMS 복원에 따른 영향도 확인한다.</p>
+<p>현재 목표는 wet stem 분리다. 따라서 이 결과가 좋다고 실제 입력의 잔향을 제거하는 알고리즘을 바로 채택할 수는 없다. 정답에 남겨야 하는 잔향 성분을 각 음원에 올바르게 배정하는 후처리를 별도로 설계·검증해야 한다.</p>
+<p>실행 시간: 149.7초. GPU: GTX 1660 6 GB의 고정 모델 추론. CPU: RIR convolution·정규화·지표 계산. 기존 전체 R4 정답 재합성 최대 오차 0.0, 기존 지표 최대 차이 0.0. GPU 오류 점검 통과.</p>
+<p>관련 원문: <a href="https://arxiv.org/abs/1810.11359">gpuRIR</a>, <a href="https://arxiv.org/abs/1910.13934">SMS-WSJ</a>, <a href="https://arxiv.org/abs/2108.07376">Convolutive Prediction</a>, <a href="https://arxiv.org/abs/2607.27828">CrowdioSet/PaRIRset</a>. 이 논문들의 음성·dry/early 목표와 본 wet 음악 목표의 차이를 유지한다.</p>
+</main></html>

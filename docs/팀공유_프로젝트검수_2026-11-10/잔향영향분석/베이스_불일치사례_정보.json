@@ -1,0 +1,19 @@
+{
+  "selection": "largest negative paired bass SI-SDR change among 5s windows whose original gain >= 0.3 and wet gain <0.1; output/target RMS <0.1 for lowlevel, >=0.1 for mismatch; illustration only",
+  "case": {
+    "track": "PR - Happy Daze",
+    "split": "evaluation",
+    "condition": "R4",
+    "stem": "bass",
+    "crop_start_s": 5,
+    "original_track_start_s": 71.35111111111111,
+    "original_si_sdr": 12.475799453439054,
+    "wet_si_sdr": -80.03979789508895,
+    "delta_si_sdr": -92.515597348528,
+    "original_gain": 0.9329198494279977,
+    "wet_gain": 5.1101103748207844e-05,
+    "wet_target_rms": 0.06494546436594642,
+    "wet_output_to_target_rms": 0.5133578147594781
+  },
+  "spectrogram": "4096 Hann / hop1024, same absolute scale across panels, not individually normalized"
+}
