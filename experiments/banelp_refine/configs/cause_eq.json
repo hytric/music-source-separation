@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "experiment": "cause-eq-v1",
+  "seed": 20261112,
+  "n_fft_block": 8388608,
+  "dsp_fft_length": 33554432,
+  "maximum_discarded_input_energy_fraction": 0.00001,
+  "sample_rate": 44100,
+  "core_samples": 1323000,
+  "common_rir": {"room": "R4", "position": "P3"},
+  "model": {"name": "htdemucs", "signature": "955717e8", "fp32": true, "segment": 7.0, "overlap": 0.25, "shifts": 0},
+  "eq": {"smooth_octaves": 0.3333333333333333, "max_db": 6, "band_hz": [20, 1000], "taper_hz": [10, 1500], "reference_tracks": 80, "stft_n_fft": 4096, "hop": 1024, "boundary": null, "padded": false, "power_floor_fraction": 1e-8},
+  "numerics": {"factor": 1e-10, "boundary_relative_rms": 0.0001, "eq_roundtrip_relative_rms": 0.000001, "metric_equivalence_db": 0.00000001},
+  "bootstrap": {"resamples": 10000, "unit": "song", "seed": 20261112},
+  "cpu_threads": 2,
+  "gpu_temperature_limit": 83,
+  "confirmation_policy": "do_not_use_refiner_confirmation_split"
+}

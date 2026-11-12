@@ -8,7 +8,7 @@
 
 ## 원인 검증을 위한 추가 실험
 
-[주파수 착색 원인 검증과 전후 EQ 대조](CAUSE_EXPERIMENT.md)를 별도 설계했다. 주파수 크기와 위상 변화를 나눠 어떤 조건에서 베이스 오류가 생기는지 확인하고, 분리 전 EQ와 분리 후 역EQ가 같은 잔향 정답에서 오류를 줄이는지 비교한다. 알려진 RIR을 쓰는 원인 진단과 입력만 쓰는 적용 확인을 구분한다. 현재는 설계 단계이며 새 추론이나 학습은 실행하지 않았다.
+[주파수 착색 원인 검증과 전후 EQ 대조](CAUSE_EXPERIMENT.md)를 별도 설계했다. 주파수 크기와 위상 변화를 나눠 어떤 조건에서 베이스 오류가 생기는지 확인하고, 분리 전 EQ와 분리 후 역EQ가 같은 잔향 정답에서 오류를 줄이는지 비교한다. 알려진 RIR을 쓰는 원인 진단과 입력만 쓰는 적용 확인을 구분한다. 2026년 11월 12일 실행기를 구현하고 로컬 GTX 1660에서 pilot을 시작했다. 수치 경계 문제를 점검한 뒤 모델 입력 190.22초·DSP grid 760.87초로 고정하고 같은 중앙 30초를 평가한다. 기존 보정망 학습 업데이트는 여전히 0회다. 실행 상태는 [원인 실험 실행 기록](RUN_STATUS.md)에 남긴다.
 
 ## 현재 컴퓨터에서 실행
 
@@ -79,3 +79,27 @@ python -m unittest discover -s tests -v
 ```
 
 검증은 곡/공간 분할, 파일 변조 거부, STFT 왕복·길이, 영 초기화, 출력 합, 무음, 손실 gradient, overlap-add, 준비 과정에서 optimizer update가 없음을 다룬다. 모델 가중치를 갱신하는 학습 테스트를 실행해 준비 상태를 학습 결과로 바꾸지 않는다.
+
+## 원인 대조 실행 코드
+
+`run_cause.py`와 `cause_eq/`는 별도 원인 대조 실행기다. 설정은 `configs/cause_eq.json`이다. 기존 학습 source/config와 runtime은 변경하지 않는다. 아래 인자의 경로는 각 컴퓨터에 맞게 지정한다.
+
+```bash
+python run_cause.py --baseline-repo /기존/music-source-separation \
+  --baseline-runtime /기존/banelp-v1 --prepared-runtime /준비된/banelp-refine-v1 \
+  --runtime /새/cause-eq-v1 --phase pilot
+
+# pilot 검사가 통과한 뒤 같은 binding으로 전체 실행
+python run_cause.py --baseline-repo /기존/music-source-separation \
+  --baseline-runtime /기존/banelp-v1 --prepared-runtime /준비된/banelp-refine-v1 \
+  --runtime /새/cause-eq-v1 --phase all
+
+python -m cause_eq.report --run /새/cause-eq-v1/run-실제binding \
+  --output 원인대조결과_2026-11-12
+```
+
+현재 컴퓨터의 `run_cause_job.py`와 systemd 실행은 로컬 전용이다. 작업은 완료 후 보고서를 저장하며, 실패 시 부분 집계와 실패 상태를 남긴다. 채팅으로 자동 완료 메시지를 보내는 기능은 연결하지 않았다. 추가 DSP/지표 테스트는 기존 저장소가 PYTHONPATH에 있어야 한다.
+
+```bash
+PYTHONPATH=/기존/music-source-separation python -m unittest discover -s tests -p test_cause_eq.py -v
+```
