@@ -1,0 +1,82 @@
+{
+  "experiment": "frontend-verify-v1.1",
+  "seed": 20261113,
+  "split": "validation",
+  "songs": 10,
+  "conditions": [
+    "dry",
+    "wet_R4"
+  ],
+  "sample_rate": 44100,
+  "core_seconds": 30,
+  "guard_seconds": 5,
+  "stft": {
+    "n_fft": 4096,
+    "hop": 1024,
+    "window": "hann",
+    "boundary": "zeros",
+    "padded": true
+  },
+  "wpe": {
+    "package": "nara_wpe",
+    "version": "0.0.11",
+    "function": "wpe_v7",
+    "taps": 10,
+    "delay": 3,
+    "iterations": 3,
+    "psd_context": 0,
+    "statistics_mode": "full"
+  },
+  "residual_allocation": {
+    "power_exponent": 2,
+    "causal_power_smoothing_seconds": 0.2,
+    "silence_fallback": "uniform",
+    "eps_relative": 1e-12
+  },
+  "eq": {
+    "reference": "80_training_dry_mixtures_only",
+    "smooth_octaves": 0.3333333333333333,
+    "max_db": 6,
+    "band_hz": [
+      20,
+      1000
+    ],
+    "taper_hz": [
+      10,
+      1500
+    ],
+    "dsp_fft": 2097152
+  },
+  "outputs": [
+    "raw",
+    "raw_weighted",
+    "eq",
+    "wpe",
+    "wpe_uniform",
+    "wpe_weighted",
+    "gain_weighted"
+  ],
+  "primary_candidate": "wpe_weighted",
+  "primary_metric": "wet_record_4stem_mean_delta_si_sdr_median",
+  "minimum_primary_gain_db": 0.2,
+  "primary_ci_lower_threshold_db": 0,
+  "wet_target": "original_reverberant_stems_unchanged",
+  "bootstrap": {
+    "resamples": 10000,
+    "unit": "song_keep_all_outputs",
+    "seed": 20261113
+  },
+  "model": {
+    "id": "htdemucs",
+    "signature": "955717e8",
+    "precision": "fp32",
+    "shifts": 0,
+    "segment": 7,
+    "overlap": 0.25
+  },
+  "cpu_threads": 2,
+  "maximum_gpu_temperature": 83,
+  "training_parameter_updates": 0,
+  "confirmation_split_used": false,
+  "gain_control": "F(g*x) with g=RMS(WPE(x))/RMS(x), then identical weighted residual allocation"
+}

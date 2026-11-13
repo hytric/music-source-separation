@@ -1,0 +1,4 @@
+# Install into the new runtime/vendor only, with --no-deps.
+# NumPy/SciPy/PyTorch/Demucs use the existing research environment.
+nara_wpe==0.0.11
+click==8.5.1
