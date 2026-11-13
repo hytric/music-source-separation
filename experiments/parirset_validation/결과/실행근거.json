@@ -1,0 +1,188 @@
+{
+  "official_repository": "https://github.com/enricguso/guso_ismir26",
+  "official_commit": "600585bc0d50cb48dd64e4602e3c34fe48be7347",
+  "official_files": [
+    {
+      "bytes": 42420349,
+      "path": "models/M1_clean/model.th",
+      "sha256": "08240a5b31639a52fae7612385d00fb925dcd9c28e3dcdc8992b0695343af2f2",
+      "source": "https://raw.githubusercontent.com/enricguso/guso_ismir26/600585bc0d50cb48dd64e4602e3c34fe48be7347/models/M1_clean/model.th"
+    },
+    {
+      "bytes": 42420349,
+      "path": "models/M2_reverberant/model.th",
+      "sha256": "fec36cd1d2de2a4d1e201bb1a5fdd1585553d41dce6b429113395dd3b1e3763e",
+      "source": "https://raw.githubusercontent.com/enricguso/guso_ismir26/600585bc0d50cb48dd64e4602e3c34fe48be7347/models/M2_reverberant/model.th"
+    },
+    {
+      "bytes": 1112,
+      "path": "conf/ismir26_clean.yaml",
+      "sha256": "4fbd1253ca6de37cffa1f86adb55b4c24b83908c046b151ce228585ca7e23a16",
+      "source": "https://raw.githubusercontent.com/enricguso/guso_ismir26/600585bc0d50cb48dd64e4602e3c34fe48be7347/conf/ismir26_clean.yaml"
+    },
+    {
+      "bytes": 1171,
+      "path": "conf/ismir26_rev.yaml",
+      "sha256": "20d5ef5fd2ff7bbbabb60e9da5b986dd6c4aaf767e1a4f84662f8291117dcaeb",
+      "source": "https://raw.githubusercontent.com/enricguso/guso_ismir26/600585bc0d50cb48dd64e4602e3c34fe48be7347/conf/ismir26_rev.yaml"
+    },
+    {
+      "bytes": 13518,
+      "path": "scnet/inference.py",
+      "sha256": "540400485484607c4b92b53cfb22a1a5a65bb1dcb6aa6fd722def64d426eeb9f",
+      "source": "https://raw.githubusercontent.com/enricguso/guso_ismir26/600585bc0d50cb48dd64e4602e3c34fe48be7347/scnet/inference.py"
+    },
+    {
+      "bytes": 4750,
+      "path": "README.md",
+      "sha256": "1ddf74b718ca3a98e8ffa97de4c67913748d48f6d47eae07097e73890dfbb0fd",
+      "source": "https://raw.githubusercontent.com/enricguso/guso_ismir26/600585bc0d50cb48dd64e4602e3c34fe48be7347/README.md"
+    },
+    {
+      "bytes": 1067,
+      "path": "LICENSE",
+      "sha256": "0bdf1b69335198118ab16cfc50d337b496b8c6d90e83beeaba4643781ab62513",
+      "source": "https://raw.githubusercontent.com/enricguso/guso_ismir26/600585bc0d50cb48dd64e4602e3c34fe48be7347/LICENSE"
+    }
+  ],
+  "official_source_sha256": {
+    "source/scnet/SCNet.py": "035035a382dc1a440f23e09414c68e11840135584dffff361f3b8b559af3d80d",
+    "source/scnet/__init__.py": "21b5f8fae849055f3b428d2353de72b477a722cc44e87c6fa0d3b22ac5f36fa2",
+    "source/scnet/apply.py": "68b60535ad50b9b6cb0da4e4a0e7a269ff1349d345de30e666bdbda3d8fc8a31",
+    "source/scnet/augment.py": "f03328615927bf167ffd2e648bc022ef8cced6d3d157a5a281a73569d525113d",
+    "source/scnet/crowdioset_eval.py": "367067aa62d70954cacbe2929c2138cf319223017cc9b4b5d3e141ef891570ef",
+    "source/scnet/ema.py": "c707f9a16ad2e5bbcadddbb35610e511e2faa8e5978997cfd0b6c81baa4d97f0",
+    "source/scnet/inference.py": "540400485484607c4b92b53cfb22a1a5a65bb1dcb6aa6fd722def64d426eeb9f",
+    "source/scnet/log.py": "f4e9380e789cbf2a256e0e4f24d3313403f9cdf9f877d76cc658c96fbfe76b5a",
+    "source/scnet/loss.py": "ca8c79f4a52107b1ca37362fd4b727e133ead7d569c67954f3260829d1e4a14c",
+    "source/scnet/parirset_eval.py": "23165686e4b44d5d4b1209d9130b64e3afa93f97406f56707433a921b66b3693",
+    "source/scnet/separation.py": "43402dc6579436d3b5abb921990572684beed8fa10b377a112892b438f40713b",
+    "source/scnet/solver.py": "c52f41e2472ec874bfcaad0d86b63e307ef820a7c5dd86c15de4acf694ce00dd",
+    "source/scnet/train_clean.py": "710efbcf2bb55f673d769588fabbfa68fcaa71348912819e97f6aa2eb95028f4",
+    "source/scnet/train_noisy.py": "0e21953d8d3f6bd9934428174c63555a3dfac49b2f08372072142b47e39e0409",
+    "source/scnet/utils.py": "b5c80f35a9a1391037445635c8f19f74e627252915331b44225e26adbca3cc5d",
+    "source/scnet/wav.py": "39e0f92e70eb3699fefbdbb972ee9cca5b7f1d2d48ec9b8cf31ec5c67c2abd36"
+  },
+  "code_sha256": {
+    "adapter.py": "5e20a73ffc9c1d3f3a8cb9e69d52d3c423784979a53f91eb35e67bf2cc7f75d8",
+    "run.py": "dbd08f1bf8ea01406af02ad30425984118a39d301e7d712274bab80f825750ef",
+    "smoke.py": "ef2d2519ab5c93a3ff1f33ebc23b9131dd5041387309e95d9b6c99ff3a26dcf4",
+    "tests.py": "8ec3b3d5978615b82c797581f8644e546548b094d8ff28b5f4a2230f33a54b3b"
+  },
+  "environment": {
+    "demucs": "4.0.1",
+    "numpy": "2.2.6",
+    "python": "3.12.11",
+    "scipy": "1.15.3",
+    "soundfile": "0.13.1",
+    "torch": "2.6.0+cu126"
+  },
+  "binding": "1ddb02604df98ea7d0f08dd2dd7a76aa6ea0decb5a070a42ecafb431c9b4e59b",
+  "source_validation": "cached HTD reconstructed target scores match exactly for all 20 cases; original input hashes unavailable",
+  "smoke": {
+    "torch": "2.6.0+cu126",
+    "records": [
+      {
+        "seconds": 5,
+        "shape": [
+          4,
+          2,
+          220500
+        ],
+        "elapsed": 1.2989364300156012,
+        "peak_allocated": 354137088,
+        "peak_reserved": 809500672
+      },
+      {
+        "seconds": 20,
+        "shape": [
+          4,
+          2,
+          882000
+        ],
+        "elapsed": 1.8958117290167138,
+        "peak_allocated": 1175276544,
+        "peak_reserved": 1619001344
+      }
+    ]
+  },
+  "attestations": {
+    "clean": {
+      "fp32": true,
+      "native_sources": [
+        "drums",
+        "bass",
+        "other",
+        "vocals"
+      ],
+      "overlap": 0.5,
+      "reorder": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "segment": 20,
+      "shifts": 0,
+      "strict": true
+    },
+    "rev": {
+      "fp32": true,
+      "native_sources": [
+        "drums",
+        "bass",
+        "other",
+        "vocals"
+      ],
+      "overlap": 0.5,
+      "reorder": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "segment": 20,
+      "shifts": 0,
+      "strict": true
+    },
+    "bsr": {
+      "autocast_enabled": false,
+      "batch_size": 1,
+      "batch_size_overridden": true,
+      "config_batch_size": 2,
+      "config_use_amp": true,
+      "fp32": true,
+      "loader": "load_start_checkpoint(type_='inference'), strict",
+      "model_type": "bs_roformer",
+      "msst_commit": "f17924ddb1817cdbae6353706708c4518dd7cd14",
+      "normalize": false,
+      "num_overlap": 2,
+      "policies": [
+        "config.training.use_amp is forced to False before demix, so demix's autocast is disabled (FP32, same as the HTDemucs baseline); the original config value is recorded",
+        "official inference.py:104-106,142-145: if config.inference['normalize'] is True the mixture goes through utils.audio_utils.normalize_audio before demix and every estimate through denormalize_audio after it; otherwise nothing is applied",
+        "std(mono mix)==0 (silent/constant input): normalize_audio would divide by zero (NaN); here the mix is centred only, the estimates are restored with +mean (std recorded as 1.0) and `centered_only` is recorded"
+      ],
+      "use_amp_forced_false": true
+    }
+  },
+  "performance": {
+    "clean": {
+      "cases": 20,
+      "inference_total_seconds": 54.50143408100121,
+      "max_allocated_bytes": 1206398464,
+      "max_reserved_bytes": 1377828864
+    },
+    "rev": {
+      "cases": 20,
+      "inference_total_seconds": 53.87424066715175,
+      "max_allocated_bytes": 1206398464,
+      "max_reserved_bytes": 1377828864
+    },
+    "bsr": {
+      "cases": 20,
+      "inference_total_seconds": 600.1158781459089,
+      "max_allocated_bytes": 1901317120,
+      "max_reserved_bytes": 2571108352
+    }
+  }
+}
