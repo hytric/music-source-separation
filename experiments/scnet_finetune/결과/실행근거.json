@@ -1,0 +1,81 @@
+{
+  "binding": "4e19e37a78e0340b602a02325cf1b7539df3847ba74f88c0002903fe5e74c4f5",
+  "source_sha256": {
+    "benchmark.py": "027ff7a9ee21cbffe4f8f8695d39597e3ebd4c8d368a8dab981f6ea6df752ff9",
+    "core.py": "e64bf172f6694ce78b683506c74b1b3d776ae957d729bf41dd2c68ab997d9d85",
+    "report.py": "821fac9c1a79baba9ea0d37a88e67a0aba5de473b9f74dc8f62d228d079827c0",
+    "run.py": "c41a0f80c4b8566f07e47f916194ceb2df90ddec99c98f2309d7eb9271e8786e",
+    "tests.py": "607b11ab8f4cd1065c38027596e5d0670f308e39e098899edb21ab68ff433dff"
+  },
+  "manifests": {
+    "cache.json": "1256cb90fb884d7652c0992f26c9451fc62ac0c2162f60b2e688cfc1fda90e66",
+    "dataset.json": "c0150f7eeef1bf601be6611900f0f68c269a4277bc5df866932d01147fa3d156",
+    "rirs.json": "c0709b45403a5f642fb429a61ee787501cc873fec57613880fa3173c96ce8dab"
+  },
+  "environment": {
+    "demucs": "4.0.1",
+    "numpy": "2.2.6",
+    "python": "3.12.11",
+    "scipy": "1.15.3",
+    "soundfile": "0.13.1",
+    "torch": "2.6.0+cu126"
+  },
+  "device": "NVIDIA GeForce GTX 1660",
+  "state": {
+    "accepted": true,
+    "binding": "4e19e37a78e0340b602a02325cf1b7539df3847ba74f88c0002903fe5e74c4f5",
+    "final_state_sha256": "f0ccb7c8efaa686f3dc8a1c124193da35c8182a0bd7101d1eb75526124786488",
+    "peak_allocated": 2678153216,
+    "peak_reserved": 4271898624,
+    "seconds": 1458.7379779919866,
+    "selected_step": 1000,
+    "status": "complete",
+    "step": 1000
+  },
+  "initial_check": {
+    "max_abs_output_difference": 0.0,
+    "parameter_count": 10578768,
+    "production_optimizer_updates": 0,
+    "shape": [
+      4,
+      2,
+      1764000
+    ],
+    "state_sha256": "1b32d21beaf01be46986ff256fe5232a950bf4e23bdf865cace5b91f5b2aa32a"
+  },
+  "checkpoint_verification": {
+    "step": 100,
+    "strict_reload": true,
+    "state_hash_matches": true,
+    "state_changed_from_initial": true,
+    "optimizer_min_step": 100,
+    "optimizer_max_step": 100,
+    "optimizer_parameter_states": 372
+  },
+  "final_checkpoint_verification": {
+    "step": 1000,
+    "strict_reload": true,
+    "state_hash_matches": true,
+    "state_sha256": "f0ccb7c8efaa686f3dc8a1c124193da35c8182a0bd7101d1eb75526124786488",
+    "optimizer_min_step": 1000,
+    "optimizer_max_step": 1000,
+    "optimizer_parameter_states": 372
+  },
+  "benchmark": {
+    "optimizer_updates": 3,
+    "seconds": 4.20485896297032,
+    "peak_allocated": 2658438656,
+    "peak_reserved": 3464495104,
+    "state_changed": true,
+    "parameters": 10578768,
+    "production_training_updates": 0
+  },
+  "prediction_files_checked": 40,
+  "csv_rows": 800,
+  "metrics_legacy_max_difference": 2.2568613644580182e-11,
+  "checkpoint_files": {
+    "step-0000.pt": "52a984571d19f852e9fc98115fc6dc0a622acc92db474cbedcf602b571ae7678",
+    "step-0500.pt": "16a2cf062fdbd8aed10bdf79d411002873736e6e6b70ffd21a090fab72b4b036",
+    "step-1000.pt": "904e872166ba75fa0db68f1e0323453ff1fb63caab9f41746bbec6322c8d0114"
+  }
+}
