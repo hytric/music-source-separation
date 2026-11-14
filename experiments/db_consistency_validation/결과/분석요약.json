@@ -1,0 +1,2125 @@
+{
+  "comparisons": {
+    "dry": {
+      "baseline": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.46502589665541905
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.15500863221847302
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.18231721508736065
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      },
+      "selected_raw": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 0.0,
+            "ci": [
+              -0.46502589665541905,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 0.0,
+            "ci": [
+              -0.15500863221847302,
+              0.0
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 0.0,
+            "ci": [
+              -0.18231721508736065,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      },
+      "selected_uniform": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -0.0463026295476574,
+            "ci": [
+              -0.16524704680412938,
+              0.033778481602530164
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": -0.009324547968297736,
+            "ci": [
+              -3.192381699456258,
+              0.021581398768732996
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -0.012126075266371217,
+            "ci": [
+              -0.8527522902304023,
+              -0.006925517373539636
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.0067982790125238335,
+            "ci": [
+              -0.042082827951079316,
+              0.0028456049829094594
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -0.02844864874753572,
+            "ci": [
+              -0.09965935994805175,
+              0.4999788336912889
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.006529396830828205,
+            "ci": [
+              -0.026148878483070348,
+              0.030831516509182144
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -0.010855871355693436,
+            "ci": [
+              -0.039679412493325295,
+              0.16660963813306282
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.002581459709047662,
+            "ci": [
+              -0.021389227957961852,
+              0.1892813160106376
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      },
+      "selected_power": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -0.06903642482722017,
+            "ci": [
+              -0.14933234340851076,
+              0.10781052412392533
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": -0.02158395227286647,
+            "ci": [
+              -4.3879786783654735,
+              0.007351486197133994
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -0.025869038593151927,
+            "ci": [
+              -1.06377956177909,
+              -0.014475546183202237
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.012174734312633495,
+            "ci": [
+              -0.4682673073180358,
+              -0.002519313923725397
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -0.06903642482722017,
+            "ci": [
+              -0.14933234340851076,
+              0.38867073911671346
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": -0.017504344459856824,
+            "ci": [
+              -0.037073225695746004,
+              0.018640249170463363
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -0.0190381644662716,
+            "ci": [
+              -0.039117183701106395,
+              0.049366187932750036
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.010953944231434365,
+            "ci": [
+              -0.024655313038082216,
+              0.07569867050216397
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      },
+      "baseline_uniform": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -0.0463026295476574,
+            "ci": [
+              -0.11189031640373504,
+              0.03985422983120124
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.006529396830828205,
+            "ci": [
+              -0.026148878483070348,
+              0.030831516509182144
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -0.010855871355693436,
+            "ci": [
+              -0.039679412493325295,
+              -0.006627507054084547
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.002581459709047662,
+            "ci": [
+              -0.021389227957961852,
+              0.011478485287008233
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -0.02844864874753572,
+            "ci": [
+              -0.09965935994805175,
+              1.032585877376338
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.006529396830828205,
+            "ci": [
+              -0.026148878483070348,
+              0.030831516509182144
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -0.010855871355693436,
+            "ci": [
+              -0.039679412493325295,
+              0.16863488754261982
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.002581459709047662,
+            "ci": [
+              -0.021389227957961852,
+              0.20504100897888197
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      },
+      "baseline_power": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -0.06903642482722017,
+            "ci": [
+              -0.14933234340851076,
+              0.04483017286925062
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": -0.017504344459856824,
+            "ci": [
+              -0.037073225695746004,
+              0.018640249170463363
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -0.025869038593151927,
+            "ci": [
+              -0.039117183701106395,
+              -0.014475546183202237
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.012174734312633495,
+            "ci": [
+              -0.024655313038082216,
+              -0.002519313923725397
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -0.045276323461560075,
+            "ci": [
+              -0.14359786226384763,
+              0.8074833817775824
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": -0.017504344459856824,
+            "ci": [
+              -0.037073225695746004,
+              0.018640249170463363
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -0.0190381644662716,
+            "ci": [
+              -0.039117183701106395,
+              0.16773790067398134
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.010953944231434365,
+            "ci": [
+              -0.024655313038082216,
+              0.2055171398242925
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 0,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      }
+    },
+    "wet_R4": {
+      "baseline": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 1,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -1.5218801824295516,
+            "ci": [
+              -4.011852876834942,
+              -0.24034100874050957
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": -3.8768995476018535,
+            "ci": [
+              -6.635239372803532,
+              0.0
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -1.4596714969862092,
+            "ci": [
+              -2.0624232685708233,
+              -0.08011366958016986
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -1.1253865478477962,
+            "ci": [
+              -1.9645767014835,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 1,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      },
+      "selected_raw": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 1.5218801824295516,
+            "ci": [
+              0.24034100874050957,
+              4.011852876834942
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 3.8768995476018535,
+            "ci": [
+              0.0,
+              6.635239372803532
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 1.4596714969862092,
+            "ci": [
+              0.08011366958016986,
+              2.0624232685708233
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 1.1253865478477962,
+            "ci": [
+              0.0,
+              1.9645767014835
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 1,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 1,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      },
+      "selected_uniform": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 1.3463232247260444,
+            "ci": [
+              0.8234221952394165,
+              3.6263777689097787
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 3.1154884170538866,
+            "ci": [
+              -0.4170633811139295,
+              4.684133854208255
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 0.882961422235639,
+            "ci": [
+              0.2744740650798055,
+              1.613088718359498
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 0.7977494941480088,
+            "ci": [
+              0.2816165303615668,
+              1.8669062549544948
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -0.07227738481920598,
+            "ci": [
+              -0.8305669120973165,
+              0.583081186498907
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": -0.7787152348985611,
+            "ci": [
+              -4.477838105855561,
+              0.04549046698666448
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -0.273382109297744,
+            "ci": [
+              -0.833383568459169,
+              -0.003908763032947293
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.26805568638698507,
+            "ci": [
+              -0.8476588065064836,
+              0.689536296659516
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      },
+      "selected_power": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 1.3686614606274876,
+            "ci": [
+              0.6624281114329871,
+              3.7415839818986427
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 1.613889931195435,
+            "ci": [
+              -0.4781068396183956,
+              4.215050165186062
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 1.0366349818767318,
+            "ci": [
+              0.06631913826079419,
+              1.4234382534054333
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 0.6121190323250082,
+            "ci": [
+              0.29464332505893404,
+              0.9038421156999594
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -0.30324619250243057,
+            "ci": [
+              -0.4604203121079018,
+              0.7433833926615724
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": -0.9239009776575717,
+            "ci": [
+              -4.759657473003919,
+              -0.40680302950926883
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -0.2851058867467895,
+            "ci": [
+              -0.969602478919037,
+              -0.06063462072720386
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.45274082196274534,
+            "ci": [
+              -0.7957666242109664,
+              0.07179585830653011
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      },
+      "baseline_uniform": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 0.38551213940045437,
+            "ci": [
+              0.024435433974823617,
+              0.6260599411843789
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.11357454562318048,
+            "ci": [
+              -0.13661069003654536,
+              0.3285082483324091
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 0.13831441991676696,
+            "ci": [
+              0.0035405341551218716,
+              0.21031471860127401
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 0.3318477302937155,
+            "ci": [
+              0.19836562102062258,
+              0.5831825620862772
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -1.2061425132077084,
+            "ci": [
+              -3.362830467407102,
+              -0.23266271812650718
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": -3.7758067434661173,
+            "ci": [
+              -6.521664827180352,
+              -2.1913037546206757
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -1.4054784754464822,
+            "ci": [
+              -1.7737742359540811,
+              -0.6397238282566549
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -0.9142387120106763,
+            "ci": [
+              -1.5221941275299904,
+              0.43775867548638714
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      },
+      "baseline_power": {
+        "baseline": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": 0.011473128522985654,
+            "ci": [
+              -0.045849645059565125,
+              0.3822188407884775
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": 0.21484438159572938,
+            "ci": [
+              -0.4781068396183956,
+              0.4553679737476175
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": 0.051890407949315306,
+            "ci": [
+              -0.0074570190685601945,
+              0.11068265883630947
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": 0.16858802922601052,
+            "ci": [
+              0.07779369459223431,
+              0.3560327651891771
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        },
+        "selected_raw": {
+          "vocals": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "drums": {
+            "median": -1.5318722160675617,
+            "ci": [
+              -3.7480018514361557,
+              -0.22857839606580788
+            ],
+            "n": 10
+          },
+          "bass": {
+            "median": -3.603757869596487,
+            "ci": [
+              -6.420394991207804,
+              -1.9542272938615808
+            ],
+            "n": 9
+          },
+          "other": {
+            "median": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "n": 10
+          },
+          "overall": {
+            "median": -1.3594872594826781,
+            "ci": [
+              -1.9073770891589983,
+              -0.6941313686992788
+            ],
+            "n": 10
+          },
+          "si_sar": {
+            "median": -1.047592853255562,
+            "ci": [
+              -1.6651650621919543,
+              0.3155737115165431
+            ],
+            "n": 10
+          },
+          "bass_collapse": {
+            "reference": 1,
+            "candidate": 0,
+            "new": 0,
+            "valid": 9
+          }
+        }
+      }
+    }
+  },
+  "reconstruction": {
+    "dry": {
+      "baseline": {
+        "median_relative_rms": 0.02304701817384544,
+        "max_relative_rms": 0.03345549704052391,
+        "full40_max_abs": 0.08058464573696256,
+        "protected_max_abs": 0.0
+      },
+      "selected_raw": {
+        "median_relative_rms": 0.023599337987561073,
+        "max_relative_rms": 0.18611218785000144,
+        "full40_max_abs": 0.17027946907910518,
+        "protected_max_abs": 0.0
+      },
+      "selected_uniform": {
+        "median_relative_rms": 1.006934629025992e-08,
+        "max_relative_rms": 1.4567469095440747e-08,
+        "full40_max_abs": 2.9802322387695312e-08,
+        "protected_max_abs": 0.0
+      },
+      "selected_power": {
+        "median_relative_rms": 9.448125528360845e-09,
+        "max_relative_rms": 1.3219944017868736e-08,
+        "full40_max_abs": 2.9802322387695312e-08,
+        "protected_max_abs": 0.0
+      },
+      "baseline_uniform": {
+        "median_relative_rms": 1.006934629025992e-08,
+        "max_relative_rms": 1.4567469095440747e-08,
+        "full40_max_abs": 2.9802322387695312e-08,
+        "protected_max_abs": 0.0
+      },
+      "baseline_power": {
+        "median_relative_rms": 9.448125528360845e-09,
+        "max_relative_rms": 1.3219944017868736e-08,
+        "full40_max_abs": 2.9802322387695312e-08,
+        "protected_max_abs": 0.0
+      }
+    },
+    "wet_R4": {
+      "baseline": {
+        "median_relative_rms": 0.05450473566276692,
+        "max_relative_rms": 0.08526181628064239,
+        "full40_max_abs": 0.09983043186366558,
+        "protected_max_abs": 0.0
+      },
+      "selected_raw": {
+        "median_relative_rms": 0.181280694370281,
+        "max_relative_rms": 0.373703507388335,
+        "full40_max_abs": 0.3085159473121166,
+        "protected_max_abs": 0.0
+      },
+      "selected_uniform": {
+        "median_relative_rms": 6.996047641505743e-09,
+        "max_relative_rms": 1.1892227826723694e-08,
+        "full40_max_abs": 2.421438694000244e-08,
+        "protected_max_abs": 0.0
+      },
+      "selected_power": {
+        "median_relative_rms": 6.512050331559855e-09,
+        "max_relative_rms": 1.0073027223862613e-08,
+        "full40_max_abs": 2.2351741790771484e-08,
+        "protected_max_abs": 0.0
+      },
+      "baseline_uniform": {
+        "median_relative_rms": 5.84316412887836e-09,
+        "max_relative_rms": 1.0729938533689845e-08,
+        "full40_max_abs": 2.421438694000244e-08,
+        "protected_max_abs": 0.0
+      },
+      "baseline_power": {
+        "median_relative_rms": 6.0098524567963035e-09,
+        "max_relative_rms": 9.719712635722747e-09,
+        "full40_max_abs": 2.2351741790771484e-08,
+        "protected_max_abs": 0.0
+      }
+    }
+  },
+  "individual_damage": {
+    "dry": {
+      "baseline": {
+        "worst": {
+          "track": "Clara Berry And Wooldog - Waltz For My Victims",
+          "delta": 0.0
+        },
+        "below_minus_point2": 0,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": 0.0
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": 0.0
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": 0.0
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": 0.0
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": 0.0
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": 0.0
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": 0.0
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": 0.0
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": 0.0
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": 0.0
+          }
+        ]
+      },
+      "selected_raw": {
+        "worst": {
+          "track": "Titanium - Haunted Age",
+          "delta": -2.201649861905776
+        },
+        "below_minus_point2": 2,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": 0.0
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": 0.0
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": 0.0
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": 0.0
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": 0.0
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": 0.0
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": 0.0
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": -0.31001726443694605
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": -2.201649861905776
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": 0.0
+          }
+        ]
+      },
+      "selected_uniform": {
+        "worst": {
+          "track": "Matthew Entwistle - Dont You Ever",
+          "delta": -3.2413127159094666
+        },
+        "below_minus_point2": 2,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": -0.012595752527870374
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": -0.006925517373539636
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": -0.010055344706514813
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": -0.01165639800487206
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": -3.2413127159094666
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": -0.00494129063053661
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": -0.04857900780774127
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": 0.030127529202719217
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": -1.6658251679674794
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": -0.039679412493325295
+          }
+        ]
+      },
+      "selected_power": {
+        "worst": {
+          "track": "Matthew Entwistle - Dont You Ever",
+          "delta": -2.8077697836989657
+        },
+        "below_minus_point2": 2,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": -0.013254818472734797
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": -0.031239403273346067
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": -0.020498673912957788
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": -0.014475546183202237
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": -2.8077697836989657
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": -0.017577655019585414
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": -0.039117183701106395
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": 0.08192098393066871
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": -2.0884419398570735
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": -0.04314279225325768
+          }
+        ]
+      },
+      "baseline_uniform": {
+        "worst": {
+          "track": "Matthew Entwistle - Dont You Ever",
+          "delta": -3.2413127159094666
+        },
+        "below_minus_point2": 1,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": -0.012595752527870374
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": -0.006925517373539636
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": -0.010055344706514813
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": -0.01165639800487206
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": -3.2413127159094666
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": -0.00494129063053661
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": -0.04857900780774127
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": 0.034178028021833264
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": -0.008313723477632484
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": -0.039679412493325295
+          }
+        ]
+      },
+      "baseline_power": {
+        "worst": {
+          "track": "Matthew Entwistle - Dont You Ever",
+          "delta": -2.8077697836989657
+        },
+        "below_minus_point2": 1,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": -0.013254818472734797
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": -0.031239403273346067
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": -0.020498673912957788
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": -0.014475546183202237
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": -2.8077697836989657
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": -0.017577655019585414
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": -0.039117183701106395
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": 0.0399340830942189
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": -0.033428105803166464
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": -0.04314279225325768
+          }
+        ]
+      }
+    },
+    "wet_R4": {
+      "baseline": {
+        "worst": {
+          "track": "Clara Berry And Wooldog - Waltz For My Victims",
+          "delta": 0.0
+        },
+        "below_minus_point2": 0,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": 0.0
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": 0.0
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": 0.0
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": 0.0
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": 0.0
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": 0.0
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": 0.0
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": 0.0
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": 0.0
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": 0.0
+          }
+        ]
+      },
+      "selected_raw": {
+        "worst": {
+          "track": "Cnoc An Tursa - Bannockburn",
+          "delta": 0.0
+        },
+        "below_minus_point2": 0,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": 2.095408436098663
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": 0.0
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": 1.0327859891450486
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": 1.3702667128187926
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": 0.0
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": 3.5500700296712164
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": 1.605362036111035
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": 0.08011366958016986
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": 2.0624232685708233
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": 1.5490762811536258
+          }
+        ]
+      },
+      "selected_uniform": {
+        "worst": {
+          "track": "Matthew Entwistle - Dont You Ever",
+          "delta": -1.3666757930876094
+        },
+        "below_minus_point2": 1,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": 2.0776279057795084
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": 0.2595485588968678
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": 0.7040354317938425
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": 0.9500340577420332
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": -1.3666757930876094
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": 3.332056368426935
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": 1.1485495309394873
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": 0.2744740650798055
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": 0.8158887867292447
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": 1.5451675181206785
+          }
+        ]
+      },
+      "selected_power": {
+        "worst": {
+          "track": "Matthew Entwistle - Dont You Ever",
+          "delta": -0.969602478919037
+        },
+        "below_minus_point2": 1,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": 1.0664487587772533
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": 0.06631913826079419
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": 0.6437581085987143
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": 1.00682120497621
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": -0.969602478919037
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": 3.34330376402022
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": 1.4234382534054333
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": 0.019479048852965992
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": 1.0880129872875277
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": 1.4978076458104037
+          }
+        ]
+      },
+      "baseline_uniform": {
+        "worst": {
+          "track": "Matthew Entwistle - Dont You Ever",
+          "delta": -1.3666757930876094
+        },
+        "below_minus_point2": 1,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": 0.18015361252301082
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": 0.2595485588968678
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": 0.0035405341551218716
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": 0.16853446237834657
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": -1.3666757930876094
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": 0.11554796152785365
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": 0.16108087830568024
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": 0.0023982635073060976
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": 0.28864903261674213
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": 0.029083075603038244
+          }
+        ]
+      },
+      "baseline_power": {
+        "worst": {
+          "track": "Matthew Entwistle - Dont You Ever",
+          "delta": -0.969602478919037
+        },
+        "below_minus_point2": 1,
+        "songs": [
+          {
+            "track": "Clara Berry And Wooldog - Waltz For My Victims",
+            "delta": 0.058974667627778005
+          },
+          {
+            "track": "Cnoc An Tursa - Bannockburn",
+            "delta": 0.06631913826079419
+          },
+          {
+            "track": "Johnny Lokke - Promises & Lies",
+            "delta": -0.0074570190685601945
+          },
+          {
+            "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+            "delta": 0.07684948017787019
+          },
+          {
+            "track": "Matthew Entwistle - Dont You Ever",
+            "delta": -0.969602478919037
+          },
+          {
+            "track": "Music Delta - Hendrix",
+            "delta": 0.03807134713383255
+          },
+          {
+            "track": "Skelpolu - Human Mistakes",
+            "delta": 0.17980474978660083
+          },
+          {
+            "track": "St Vitus - Word Gets Around",
+            "delta": -0.014731835177465532
+          },
+          {
+            "track": "Titanium - Haunted Age",
+            "delta": 0.15504617941182475
+          },
+          {
+            "track": "Triviul - Dorothy",
+            "delta": 0.04480614827085261
+          }
+        ]
+      }
+    }
+  },
+  "silent_bass": [
+    {
+      "track": "St Vitus - Word Gets Around",
+      "condition": "dry",
+      "output_rms": {
+        "baseline": 0.00011762535022757696,
+        "selected_raw": 0.0007777037526190375,
+        "selected_uniform": 0.002451237070629981,
+        "selected_power": 0.0007716461620339856,
+        "baseline_uniform": 0.0007377242714047123,
+        "baseline_power": 0.00014847295746014117
+      }
+    },
+    {
+      "track": "St Vitus - Word Gets Around",
+      "condition": "wet_R4",
+      "output_rms": {
+        "baseline": 0.0001304581311474491,
+        "selected_raw": 0.0010255792582708715,
+        "selected_uniform": 0.004064417406310749,
+        "selected_power": 0.001026791192523576,
+        "baseline_uniform": 0.0010770277729380635,
+        "baseline_power": 0.00022668948493791686
+      }
+    }
+  ],
+  "candidate_gates": {
+    "selected_uniform": {
+      "mixture_sum": true,
+      "protected_waveforms": true,
+      "wet_gain_vs_baseline": true,
+      "wet_retention_vs_raw": false,
+      "wet_drums_retention": false,
+      "wet_bass_retention": false,
+      "dry_overall": false,
+      "wet_si_sar": false,
+      "each_dry_song": false,
+      "no_new_bass_collapse": true
+    },
+    "selected_power": {
+      "mixture_sum": true,
+      "protected_waveforms": true,
+      "wet_gain_vs_baseline": true,
+      "wet_retention_vs_raw": false,
+      "wet_drums_retention": false,
+      "wet_bass_retention": false,
+      "dry_overall": false,
+      "wet_si_sar": false,
+      "each_dry_song": false,
+      "no_new_bass_collapse": true
+    }
+  },
+  "gates": {
+    "mixture_sum": true,
+    "protected_waveforms": true,
+    "wet_gain_vs_baseline": true,
+    "wet_retention_vs_raw": false,
+    "wet_drums_retention": false,
+    "wet_bass_retention": false,
+    "dry_overall": false,
+    "wet_si_sar": false,
+    "each_dry_song": false,
+    "no_new_bass_collapse": true
+  },
+  "accepted": false,
+  "numeric_checks": {
+    "baseline_metric_max_error": 0.0,
+    "selected_metric_max_error": 0.0,
+    "legacy_metric_max_error": 4.39932534845866e-11
+  },
+  "complete": true,
+  "cases": 20,
+  "binding": "6baa09eb2861b3b92256aa0e92592267f2ef92932545e913af7202f0a399ed05",
+  "seconds": 141.91831425298005,
+  "new_gpu_inferences": 0,
+  "training_updates": 0,
+  "deployment_ready": false
+}
