@@ -35,3 +35,7 @@ pilot성공은B대비wet≥+0.2dB/CI하한>0, G0대비wet보존, dry중앙값과
 현재알려진자산에는train320용40초teacher출력이없다. 기본저장약58.71GB이며가용80GB를확인한다. 과거40초val호출시간을320조건에단순환산하면약3.16시간이지만I/O·합성·라벨·현재GPU공유부하는미포함이다. 실제pilot시간으로다시산정한다. 다른GPU작업을중단하거나CPU/FP16으로조용히전환하지않는다.
 
 이번작성에서실행한것은자산/코드확인,템플릿/문서검증,동료검토뿐이다. `quality_gate` CLI는목표인터페이스이며아직구현되지않았다. 실제실행자가선행검사를마치고새protocol.lock.json/run ID를만들어야한다. 문서상의예상시나리오를결과로제출하지않는다.
+
+## 2026-11-15 구현 착수
+
+[QG1 첫 구현·타임라인](../../../../experiments/quality_gate_v1/README.md)에preflight/40초입력준비/cache실행인터페이스와핵심라벨·가중fit·threshold함수를추가했다. 단위검사4개와8조건CPU입력smoke/재개는통과했고teacher출력은0이다. GPU는최초4GiB여유조건미달로resource_blocked다. 전체labels/교정/동결/평가CLI통합과GPU경로검증은아직대기다. 이가이드의목표CLI전체가완성된것은아니다.
