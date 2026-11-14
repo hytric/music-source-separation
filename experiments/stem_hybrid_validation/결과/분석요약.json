@@ -1,0 +1,729 @@
+{
+  "comparisons": {
+    "dry": {
+      "baseline": {
+        "vocals": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "drums": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "bass": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 9,
+          "excluded": 1
+        },
+        "other": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall_si_sar": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "improved_songs": 0,
+        "bass_collapse": {
+          "baseline": 0,
+          "candidate": 0,
+          "new": 0,
+          "valid": 9
+        }
+      },
+      "finetuned": {
+        "vocals": {
+          "median": -1.5044690205474014,
+          "ci": [
+            -1.7003600992047652,
+            -1.2025787965073007
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "drums": {
+          "median": -1.9650218437612317,
+          "ci": [
+            -3.1311575803890648,
+            -1.2751768944562416
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "bass": {
+          "median": -1.9972127441833774,
+          "ci": [
+            -4.423579393400349,
+            -1.9577503790933743
+          ],
+          "n": 9,
+          "excluded": 1
+        },
+        "other": {
+          "median": -2.0090807967016073,
+          "ci": [
+            -2.816579935424198,
+            -1.551993054552618
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall": {
+          "median": -2.1535596492683187,
+          "ci": [
+            -2.5611803477990294,
+            -1.776806377483687
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall_si_sar": {
+          "median": -2.037406356307829,
+          "ci": [
+            -2.3686169584544556,
+            -1.553485853001416
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "improved_songs": 0,
+        "bass_collapse": {
+          "baseline": 0,
+          "candidate": 0,
+          "new": 0,
+          "valid": 9
+        }
+      },
+      "hybrid": {
+        "vocals": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "drums": {
+          "median": -1.9650218437612317,
+          "ci": [
+            -3.1311575803890648,
+            -1.2751768944562416
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "bass": {
+          "median": -1.9972127441833774,
+          "ci": [
+            -4.423579393400349,
+            -1.9577503790933743
+          ],
+          "n": 9,
+          "excluded": 1
+        },
+        "other": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall": {
+          "median": -1.253070024886517,
+          "ci": [
+            -1.4241733154826786,
+            -0.8460561884510107
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall_si_sar": {
+          "median": -1.1460159494903985,
+          "ci": [
+            -1.3123758162089527,
+            -0.8232026697580248
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "improved_songs": 0,
+        "bass_collapse": {
+          "baseline": 0,
+          "candidate": 0,
+          "new": 0,
+          "valid": 9
+        }
+      },
+      "condition_label_route": {
+        "vocals": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "drums": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "bass": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 9,
+          "excluded": 1
+        },
+        "other": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall_si_sar": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "improved_songs": 0,
+        "bass_collapse": {
+          "baseline": 0,
+          "candidate": 0,
+          "new": 0,
+          "valid": 9
+        }
+      },
+      "gt_case_oracle": {
+        "vocals": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "drums": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "bass": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 9,
+          "excluded": 1
+        },
+        "other": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall_si_sar": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "improved_songs": 0,
+        "bass_collapse": {
+          "baseline": 0,
+          "candidate": 0,
+          "new": 0,
+          "valid": 9
+        }
+      }
+    },
+    "wet_R4": {
+      "baseline": {
+        "vocals": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "drums": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "bass": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 9,
+          "excluded": 1
+        },
+        "other": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall_si_sar": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "improved_songs": 0,
+        "bass_collapse": {
+          "baseline": 1,
+          "candidate": 1,
+          "new": 0,
+          "valid": 9
+        }
+      },
+      "finetuned": {
+        "vocals": {
+          "median": -0.4034003330042526,
+          "ci": [
+            -1.1353146056456165,
+            0.08624742546876618
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "drums": {
+          "median": 2.032899974301884,
+          "ci": [
+            0.768853501004247,
+            4.1889183495416615
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "bass": {
+          "median": 3.8768995476018535,
+          "ci": [
+            2.4095952676091983,
+            6.635239372803532
+          ],
+          "n": 9,
+          "excluded": 1
+        },
+        "other": {
+          "median": 0.3159523257793054,
+          "ci": [
+            -0.8751191811634933,
+            0.7472261670592524
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall": {
+          "median": 1.5310002276720183,
+          "ci": [
+            0.17283393424418725,
+            2.2430725961999616
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall_si_sar": {
+          "median": 0.45219597505856324,
+          "ci": [
+            -0.10478848145931802,
+            1.0542395481250721
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "improved_songs": 9,
+        "bass_collapse": {
+          "baseline": 1,
+          "candidate": 1,
+          "new": 0,
+          "valid": 9
+        }
+      },
+      "hybrid": {
+        "vocals": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "drums": {
+          "median": 2.032899974301884,
+          "ci": [
+            0.768853501004247,
+            4.1889183495416615
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "bass": {
+          "median": 3.8768995476018535,
+          "ci": [
+            2.4095952676091983,
+            6.635239372803532
+          ],
+          "n": 9,
+          "excluded": 1
+        },
+        "other": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall": {
+          "median": 1.5772191586323303,
+          "ci": [
+            0.7251901911994812,
+            2.078915852334743
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall_si_sar": {
+          "median": 1.3630648432161705,
+          "ci": [
+            0.24233348219010864,
+            1.9645767014835
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "improved_songs": 9,
+        "bass_collapse": {
+          "baseline": 1,
+          "candidate": 1,
+          "new": 0,
+          "valid": 9
+        }
+      },
+      "condition_label_route": {
+        "vocals": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "drums": {
+          "median": 2.032899974301884,
+          "ci": [
+            0.768853501004247,
+            4.1889183495416615
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "bass": {
+          "median": 3.8768995476018535,
+          "ci": [
+            2.4095952676091983,
+            6.635239372803532
+          ],
+          "n": 9,
+          "excluded": 1
+        },
+        "other": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall": {
+          "median": 1.5772191586323303,
+          "ci": [
+            0.7251901911994812,
+            2.078915852334743
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall_si_sar": {
+          "median": 1.3630648432161705,
+          "ci": [
+            0.24233348219010864,
+            1.9645767014835
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "improved_songs": 9,
+        "bass_collapse": {
+          "baseline": 1,
+          "candidate": 1,
+          "new": 0,
+          "valid": 9
+        }
+      },
+      "gt_case_oracle": {
+        "vocals": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "drums": {
+          "median": 2.032899974301884,
+          "ci": [
+            0.768853501004247,
+            4.1889183495416615
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "bass": {
+          "median": 3.8768995476018535,
+          "ci": [
+            2.4095952676091983,
+            6.635239372803532
+          ],
+          "n": 9,
+          "excluded": 1
+        },
+        "other": {
+          "median": 0.0,
+          "ci": [
+            0.0,
+            0.0
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall": {
+          "median": 1.5772191586323303,
+          "ci": [
+            0.7251901911994812,
+            2.078915852334743
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "overall_si_sar": {
+          "median": 1.3630648432161705,
+          "ci": [
+            0.24233348219010864,
+            1.9645767014835
+          ],
+          "n": 10,
+          "excluded": 0
+        },
+        "improved_songs": 9,
+        "bass_collapse": {
+          "baseline": 1,
+          "candidate": 1,
+          "new": 0,
+          "valid": 9
+        }
+      }
+    }
+  },
+  "reconstruction": {
+    "dry": {
+      "baseline": {
+        "median_relative_rms": 0.02304701817384544,
+        "max_relative_rms": 0.03345549704052391
+      },
+      "finetuned": {
+        "median_relative_rms": 0.020419420600666816,
+        "max_relative_rms": 0.062478700880185
+      },
+      "hybrid": {
+        "median_relative_rms": 0.0921687691688467,
+        "max_relative_rms": 0.18611218785000144
+      },
+      "condition_label_route": {
+        "median_relative_rms": 0.02304701817384544,
+        "max_relative_rms": 0.03345549704052391
+      },
+      "gt_case_oracle": {
+        "median_relative_rms": 0.02304701817384544,
+        "max_relative_rms": 0.03345549704052391
+      }
+    },
+    "wet_R4": {
+      "baseline": {
+        "median_relative_rms": 0.05450473566276692,
+        "max_relative_rms": 0.08526181628064239
+      },
+      "finetuned": {
+        "median_relative_rms": 0.022206479431386657,
+        "max_relative_rms": 0.034220545996762185
+      },
+      "hybrid": {
+        "median_relative_rms": 0.19191914256904655,
+        "max_relative_rms": 0.373703507388335
+      },
+      "condition_label_route": {
+        "median_relative_rms": 0.19191914256904655,
+        "max_relative_rms": 0.373703507388335
+      },
+      "gt_case_oracle": {
+        "median_relative_rms": 0.19191914256904655,
+        "max_relative_rms": 0.373703507388335
+      }
+    }
+  },
+  "diagnostic_choices": {
+    "dry": {
+      "condition_label_route": {
+        "baseline": 10,
+        "hybrid": 0
+      },
+      "gt_case_oracle": {
+        "baseline": 10,
+        "hybrid": 0
+      }
+    },
+    "wet_R4": {
+      "condition_label_route": {
+        "baseline": 0,
+        "hybrid": 10
+      },
+      "gt_case_oracle": {
+        "baseline": 1,
+        "hybrid": 9
+      }
+    }
+  },
+  "gates": {
+    "wet_primary": true,
+    "dry_overall": false,
+    "wet_vocals": true,
+    "wet_other": true,
+    "no_new_bass_collapse": true
+  },
+  "accepted": false,
+  "checks": {
+    "protected_stem_max_abs": 0.0,
+    "baseline_metric_max_error": 0.0,
+    "finetuned_metric_max_error": 0.0,
+    "spliced_metric_max_error": 0.0,
+    "legacy_metric_max_error": 4.39932534845866e-11
+  },
+  "binding": "ce84b450944829d31f021c0f2ae8eeed155b943657df72e80ba24e8c6daad7df",
+  "cases": 20,
+  "complete": true,
+  "seconds": 65.26273025001865,
+  "new_gpu_inferences": 0,
+  "training_updates": 0,
+  "deployment_ready": false,
+  "accepted_scope": "predefined exposed-validation metric gates only"
+}

@@ -1,0 +1,17 @@
+{
+  "binding": "ce84b450944829d31f021c0f2ae8eeed155b943657df72e80ba24e8c6daad7df",
+  "cases": 20,
+  "input_prediction_files_verified": 60,
+  "hybrid_files": 20,
+  "training_updates": 0,
+  "new_gpu_inferences": 0,
+  "checks": {
+    "protected_stem_max_abs": 0.0,
+    "baseline_metric_max_error": 0.0,
+    "finetuned_metric_max_error": 0.0,
+    "spliced_metric_max_error": 0.0,
+    "legacy_metric_max_error": 4.39932534845866e-11
+  },
+  "checkpoint_sha256": "904e872166ba75fa0db68f1e0323453ff1fb63caab9f41746bbec6322c8d0114",
+  "unit_tests_passed": 5
+}

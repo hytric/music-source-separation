@@ -1,0 +1,158 @@
+{
+  "comparisons": {
+    "dry": {
+      "vocals": {
+        "median": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ],
+        "n": 10
+      },
+      "drums": {
+        "median": 0.0,
+        "ci": [
+          -0.46502589665541905,
+          0.0
+        ],
+        "n": 10
+      },
+      "bass": {
+        "median": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ],
+        "n": 9
+      },
+      "other": {
+        "median": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ],
+        "n": 10
+      },
+      "overall": {
+        "median": 0.0,
+        "ci": [
+          -0.15500863221847302,
+          0.0
+        ],
+        "n": 10
+      },
+      "bass_collapse": {
+        "baseline": 0,
+        "candidate": 0,
+        "new": 0,
+        "valid": 9
+      }
+    },
+    "wet_R4": {
+      "vocals": {
+        "median": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ],
+        "n": 10
+      },
+      "drums": {
+        "median": 1.5218801824295516,
+        "ci": [
+          0.24034100874050957,
+          4.011852876834942
+        ],
+        "n": 10
+      },
+      "bass": {
+        "median": 3.8768995476018535,
+        "ci": [
+          0.0,
+          6.635239372803532
+        ],
+        "n": 9
+      },
+      "other": {
+        "median": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ],
+        "n": 10
+      },
+      "overall": {
+        "median": 1.4596714969862092,
+        "ci": [
+          0.08011366958016986,
+          2.0624232685708233
+        ],
+        "n": 10
+      },
+      "bass_collapse": {
+        "baseline": 1,
+        "candidate": 1,
+        "new": 0,
+        "valid": 9
+      }
+    }
+  },
+  "choices": {
+    "dry": {
+      "baseline": 8,
+      "hybrid": 2
+    },
+    "wet_R4": {
+      "baseline": 2,
+      "hybrid": 8
+    }
+  },
+  "classification_confusion": {
+    "dry": {
+      "predicted_dry": 8,
+      "predicted_wet": 2
+    },
+    "wet_R4": {
+      "predicted_dry": 2,
+      "predicted_wet": 8
+    }
+  },
+  "gates": {
+    "wet_primary": true,
+    "dry_overall": true,
+    "wet_vocals": true,
+    "wet_other": true,
+    "no_new_bass_collapse": true
+  },
+  "accepted": true,
+  "binding": "27889b82e2b414f4f9d27dc67c7900b09c2ed9b06ddcf676471509013475b197",
+  "complete": true,
+  "cases": 20,
+  "seconds": 119.2918439990026,
+  "separator_weight_updates": 0,
+  "new_gpu_inferences": 0,
+  "deployment_ready": false,
+  "accepted_scope": "predefined exposed-validation metric gates only",
+  "reconstruction_diagnostic": {
+    "dry": {
+      "baseline_median_relative_rms": 0.02304701817384544,
+      "selector_median_relative_rms": 0.023599337987561073,
+      "selector_max_relative_rms": 0.18611218785000144
+    },
+    "wet_R4": {
+      "baseline_median_relative_rms": 0.05450473566276692,
+      "selector_median_relative_rms": 0.181280694370281,
+      "selector_max_relative_rms": 0.373703507388335
+    }
+  },
+  "dry_failure_cases": [
+    {
+      "track": "St Vitus - Word Gets Around",
+      "sigmoid_score": 0.940578597355436
+    },
+    {
+      "track": "Titanium - Haunted Age",
+      "sigmoid_score": 0.9781305168700131
+    }
+  ]
+}
