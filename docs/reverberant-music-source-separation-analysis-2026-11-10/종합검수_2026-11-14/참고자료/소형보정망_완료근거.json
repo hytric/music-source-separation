@@ -1,0 +1,260 @@
+{
+  "scope": "fixed_center_4s_validation_not_final_30s_evaluation",
+  "status": "complete",
+  "optimizer_steps": 3000,
+  "selected_checkpoint_step": 2500,
+  "best_delta_htd": 0.04610653262634369,
+  "initial_delta_htd": 0.035253475090221496,
+  "paired_best_minus_initial": 0.017898185823912616,
+  "dry": -0.026902699603503638,
+  "wet": 0.04388165529639941,
+  "best_loss": 1.391028717160225,
+  "initial_loss": 1.3537498265504837,
+  "sources": {
+    "runs/seed-20261111-base/run-state.json": "2cad762021cffa85bb66a38b725578198c89358dc9d50d48683d3279fd755986",
+    "runs/seed-20261111-base/validation-002500.json": "d3917ba7bb19837e1442c96819c31b221b8adf95c2887f5cc02ec536306dae45",
+    "initial/validation-step-000000.json": "3298cb60ec72f7e9db21e8f353c572d971db5ad76c06a334e60fe76875c624f7"
+  },
+  "paired_records": [
+    {
+      "id": "0dc3771cd504d3751dae553d",
+      "track": "Clara Berry And Wooldog - Waltz For My Victims",
+      "condition": "no_added_rir",
+      "best_minus_initial": -0.0037285148770946908
+    },
+    {
+      "id": "94c894b1172bccda5a117203",
+      "track": "Clara Berry And Wooldog - Waltz For My Victims",
+      "condition": "validation-room-02-set-01",
+      "best_minus_initial": 0.007712837258434302
+    },
+    {
+      "id": "db9442d61962e1e43a3c1ab8",
+      "track": "Clara Berry And Wooldog - Waltz For My Victims",
+      "condition": "validation-room-01-set-02",
+      "best_minus_initial": 0.02274249484027746
+    },
+    {
+      "id": "b32e6abee85ec3943f7023e9",
+      "track": "Clara Berry And Wooldog - Waltz For My Victims",
+      "condition": "validation-room-00-set-00",
+      "best_minus_initial": 0.047848272362969735
+    },
+    {
+      "id": "3a8d42188df5972950947e27",
+      "track": "Cnoc An Tursa - Bannockburn",
+      "condition": "no_added_rir",
+      "best_minus_initial": -0.02459007470019764
+    },
+    {
+      "id": "4d9e772747271aea49316164",
+      "track": "Cnoc An Tursa - Bannockburn",
+      "condition": "validation-room-03-set-02",
+      "best_minus_initial": 1.1147090357015015
+    },
+    {
+      "id": "f84c85ecc1b563d5ff896c95",
+      "track": "Cnoc An Tursa - Bannockburn",
+      "condition": "validation-room-00-set-01",
+      "best_minus_initial": 0.01305387680754777
+    },
+    {
+      "id": "684a9628fc5bcc16ad0a7c18",
+      "track": "Cnoc An Tursa - Bannockburn",
+      "condition": "validation-room-02-set-00",
+      "best_minus_initial": -0.004901374961484642
+    },
+    {
+      "id": "f70d38fd63f924f6c0f80a72",
+      "track": "Johnny Lokke - Promises & Lies",
+      "condition": "no_added_rir",
+      "best_minus_initial": -0.029215324506809637
+    },
+    {
+      "id": "1ab48bc0146700dcd1152c2d",
+      "track": "Johnny Lokke - Promises & Lies",
+      "condition": "validation-room-00-set-00",
+      "best_minus_initial": 0.07624866515457605
+    },
+    {
+      "id": "c35aafa279e3f7069d0513ce",
+      "track": "Johnny Lokke - Promises & Lies",
+      "condition": "validation-room-01-set-01",
+      "best_minus_initial": 0.027003403194445864
+    },
+    {
+      "id": "5c81f1a0b5f300d658385327",
+      "track": "Johnny Lokke - Promises & Lies",
+      "condition": "validation-room-01-set-00",
+      "best_minus_initial": 0.03991503822982908
+    },
+    {
+      "id": "1b33c310c489944cb5857218",
+      "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+      "condition": "no_added_rir",
+      "best_minus_initial": 0.008987565450788715
+    },
+    {
+      "id": "7e91a1c0c481424e08bc97e5",
+      "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+      "condition": "validation-room-03-set-03",
+      "best_minus_initial": 5.316585365757739
+    },
+    {
+      "id": "051654fd018d121f75c97174",
+      "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+      "condition": "validation-room-00-set-02",
+      "best_minus_initial": 1.150730385190021
+    },
+    {
+      "id": "24d276e6c659f0b8f443b810",
+      "track": "Jokers, Jacks & Kings - Sea Of Leaves",
+      "condition": "validation-room-01-set-03",
+      "best_minus_initial": 0.33463870306142474
+    },
+    {
+      "id": "29796f99df31f56fc9d475d1",
+      "track": "Matthew Entwistle - Dont You Ever",
+      "condition": "no_added_rir",
+      "best_minus_initial": -0.7902360523230523
+    },
+    {
+      "id": "1c396a31cd5398e62d9e630a",
+      "track": "Matthew Entwistle - Dont You Ever",
+      "condition": "validation-room-03-set-03",
+      "best_minus_initial": -1.6279622559335358
+    },
+    {
+      "id": "0170d37f2bfb2a43f053cc62",
+      "track": "Matthew Entwistle - Dont You Ever",
+      "condition": "validation-room-00-set-03",
+      "best_minus_initial": -1.8734741303032498
+    },
+    {
+      "id": "bed11811e0867b1a19d945e5",
+      "track": "Matthew Entwistle - Dont You Ever",
+      "condition": "validation-room-02-set-02",
+      "best_minus_initial": -1.6764448563254635
+    },
+    {
+      "id": "32fce49291a45818af99ca4b",
+      "track": "Music Delta - Hendrix",
+      "condition": "no_added_rir",
+      "best_minus_initial": -0.012066707522074838
+    },
+    {
+      "id": "a291037c572f88af20883a77",
+      "track": "Music Delta - Hendrix",
+      "condition": "validation-room-03-set-00",
+      "best_minus_initial": 1.412955202826005
+    },
+    {
+      "id": "2703e8a3fad5f3fb97629adc",
+      "track": "Music Delta - Hendrix",
+      "condition": "validation-room-01-set-00",
+      "best_minus_initial": 0.039044933882762534
+    },
+    {
+      "id": "9df3969055b35cc58e04a5dd",
+      "track": "Music Delta - Hendrix",
+      "condition": "validation-room-01-set-01",
+      "best_minus_initial": 0.18602601786735518
+    },
+    {
+      "id": "24df3da2cfb07f622f353e51",
+      "track": "Skelpolu - Human Mistakes",
+      "condition": "no_added_rir",
+      "best_minus_initial": -0.4629494947465824
+    },
+    {
+      "id": "5213d62414b1fa1c2ca13814",
+      "track": "Skelpolu - Human Mistakes",
+      "condition": "validation-room-01-set-00",
+      "best_minus_initial": 1.5659514351044037
+    },
+    {
+      "id": "405088f42a5e80bd21aacb49",
+      "track": "Skelpolu - Human Mistakes",
+      "condition": "validation-room-00-set-02",
+      "best_minus_initial": -0.06489786926301155
+    },
+    {
+      "id": "2faf425eefeff9022be53d8f",
+      "track": "Skelpolu - Human Mistakes",
+      "condition": "validation-room-03-set-01",
+      "best_minus_initial": 0.4751605977872124
+    },
+    {
+      "id": "83f5843e528ec7e4d821118d",
+      "track": "St Vitus - Word Gets Around",
+      "condition": "no_added_rir",
+      "best_minus_initial": 0.09356870948641904
+    },
+    {
+      "id": "8c5c9a207b54dd57ff6bfcff",
+      "track": "St Vitus - Word Gets Around",
+      "condition": "validation-room-00-set-01",
+      "best_minus_initial": 0.7513618638677537
+    },
+    {
+      "id": "0b182da7ed39356ea6925807",
+      "track": "St Vitus - Word Gets Around",
+      "condition": "validation-room-03-set-02",
+      "best_minus_initial": -0.6714863261474626
+    },
+    {
+      "id": "68aeed9e68e311f613c2be46",
+      "track": "St Vitus - Word Gets Around",
+      "condition": "validation-room-03-set-01",
+      "best_minus_initial": -0.10256021603454002
+    },
+    {
+      "id": "ae54a043b93636f22510330e",
+      "track": "Titanium - Haunted Age",
+      "condition": "no_added_rir",
+      "best_minus_initial": -0.03298397538998299
+    },
+    {
+      "id": "fd29cd2cdfcd646e1bee026f",
+      "track": "Titanium - Haunted Age",
+      "condition": "validation-room-03-set-01",
+      "best_minus_initial": 1.3922153348411421
+    },
+    {
+      "id": "bc3215db1a76378ecac55b24",
+      "track": "Titanium - Haunted Age",
+      "condition": "validation-room-00-set-00",
+      "best_minus_initial": 1.7136082778968111
+    },
+    {
+      "id": "b9dd32f7872436f4a86b75c2",
+      "track": "Titanium - Haunted Age",
+      "condition": "validation-room-00-set-01",
+      "best_minus_initial": 0.17896506069688778
+    },
+    {
+      "id": "31e11196cf7efcd6397154a3",
+      "track": "Triviul - Dorothy",
+      "condition": "no_added_rir",
+      "best_minus_initial": -0.04659861337979393
+    },
+    {
+      "id": "8b0ba84ee3274956af744e0f",
+      "track": "Triviul - Dorothy",
+      "condition": "validation-room-02-set-01",
+      "best_minus_initial": 0.010594470633244146
+    },
+    {
+      "id": "c497c92f46b912bea4d8817b",
+      "track": "Triviul - Dorothy",
+      "condition": "validation-room-01-set-02",
+      "best_minus_initial": -0.028835012239611213
+    },
+    {
+      "id": "684521d3e2d2ffa68e7ee224",
+      "track": "Triviul - Dorothy",
+      "condition": "validation-room-03-set-00",
+      "best_minus_initial": 3.2396387640515982
+    }
+  ]
+}

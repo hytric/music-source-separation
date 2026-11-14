@@ -1,0 +1,22 @@
+{
+  "primary_papers_checked": 11,
+  "legacy_catalog_not_fully_rechecked": true,
+  "scnet_repository_commit": "600585bc0d50cb48dd64e4602e3c34fe48be7347",
+  "prepare_script_sha256": "ee146f4308aa0a18bd5a6324334ff3001a0c2c1b8a1c277eacc235f412283fb9",
+  "dataset_manifest_sha256": "c0150f7eeef1bf601be6611900f0f68c269a4277bc5df866932d01147fa3d156",
+  "overlap_counts": {
+    "train": {
+      "train": 69,
+      "valid": 11
+    },
+    "validation": {
+      "train": 7,
+      "valid": 3
+    },
+    "confirmation": {
+      "train": 10,
+      "valid": 0
+    }
+  },
+  "caveat": "recipe split comparison, not verified historical checkpoint manifest; script preserves pre-existing valid directory"
+}
