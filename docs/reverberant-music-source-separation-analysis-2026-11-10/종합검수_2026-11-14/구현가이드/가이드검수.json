@@ -16,7 +16,7 @@
   "new_selector_fit": false,
   "quality_gate_cli_implemented": false,
   "files_sha256": {
-    "03_하위모델_전달문.md": "7715d007e74438a44b85338e0f739006159ba554a9ec33e0037a928a2898337c",
+    "03_하위모델_전달문.md": "d1c15d049f52ac58b73ad67180676572457be61ee687028d387b302c92a3951c",
     "01_구현실행명세.md": "b93d04c87d3f5088f4e69e52f82792e9cdb4eb8416038589185674d001129388",
     "02_예상결과와성공조건.md": "a9b1c34abe296945b6d4000d12bb39d5a5b96a2021eeaa9c0499d2a8ae5dd1a8",
     "contract_cases.json": "6399c9ae84870f769d2e2d24a16e87258b68fad45c3582211fc463f13ac7935a",
