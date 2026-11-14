@@ -12,7 +12,7 @@ def load(path,name):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('stage',choices=['preflight','prepare','cache'])
-    p.add_argument('--project',required=True);p.add_argument('--runtime',required=True);p.add_argument('--limit',type=int,default=320)
+    p.add_argument('--memory-policy',choices=['strict','profiled_scnet','bounded_smoke'],default='strict');p.add_argument('--project',required=True);p.add_argument('--runtime',required=True);p.add_argument('--limit',type=int,default=320)
     p.add_argument('--model',choices=['htdemucs','msst_bsroformer_ep17','finetuned_scnet']);args=p.parse_args()
     project=Path(args.project).resolve();root=Path(args.runtime).resolve();root.mkdir(parents=True,exist_ok=True)
     guide=project/'전체실험검수_2026-11-14/구현가이드';config=json.loads((guide/'protocol.template.json').read_text());assets=json.loads((guide/'assets.template.json').read_text())
@@ -42,7 +42,7 @@ def main():
         if len(rows)!=4 or sum(r['rir_set'] is None for r in rows)!=1 or len({r['rir_set'] for r in rows})!=4:raise ValueError('song conditions changed')
     for r in records:
         if r['track'] not in roles or r['rir_set'] is not None and rir_by_id[r['rir_set']]['split']!='train':raise ValueError('split leakage')
-    binding={'protocol':config,'assets_sha256':sha256(guide/'assets.template.json'),'code':{p.name:sha256(p) for p in sorted(Path(__file__).parent.glob('*.py'))},'environment':environment()}
+    binding={'memory_policy':args.memory_policy,'protocol':config,'assets_sha256':sha256(guide/'assets.template.json'),'code':{p.name:sha256(p) for p in sorted(Path(__file__).parent.glob('*.py'))},'environment':environment()}
     locked={**config,'document_state':'implementation_milestone1_locked','binding':digest(binding)}
     if (root/'binding.json').exists() and read_json(root/'binding.json')!=binding:raise ValueError('code/config changed: new runtime required')
     atomic_json(root/'binding.json',binding);atomic_json(root/'protocol.lock.json',locked)
@@ -87,15 +87,26 @@ def main():
             atomic_json(root/'status.json',{'stage':'inputs_ready' if len(done)==320 else 'preparation_partial','prepared':len(done),'expected':320,'teacher_outputs':0,'selector_fit':False});emit('prepare_done',prepared=len(done),seconds=time.monotonic()-started);return
         if not args.model:raise ValueError('--model required')
         info=gpu()
-        if info['free_bytes']<config['resources']['initial_smoke_min_free_gpu_bytes'] or info['temperature_C']>=config['resources']['gpu_temperature_limit_C']:
-            atomic_json(root/'gpu_status.json',{'stage':'resource_blocked','model':args.model,'gpu':info,'required_free_bytes':config['resources']['initial_smoke_min_free_gpu_bytes'],'teacher_outputs':0});emit('resource_blocked',**info);return
+        required=config['resources']['initial_smoke_min_free_gpu_bytes']
+        if args.memory_policy=='profiled_scnet' and args.model=='finetuned_scnet':
+            required=int((config['resources']['historical_reserved_gib']['scnet_rev_observation']+1)*1024**3)
+        if args.memory_policy=='bounded_smoke':required=int(2.25*1024**3)
+        if info['free_bytes']<required or info['temperature_C']>=config['resources']['gpu_temperature_limit_C']:
+            atomic_json(root/'gpu_status.json',{'stage':'resource_blocked','model':args.model,'gpu':info,'required_free_bytes':required,'memory_policy':args.memory_policy,'teacher_outputs':0});emit('resource_blocked',**info);return
         # Avoid loading any model before the full dataset contract is ready.
         manifest=read_json(root/'inputs.json')
         if not 1<=args.limit<=320 or len(manifest['records'])<args.limit:raise RuntimeError('prepare requested inputs before teacher caching')
         if args.limit==320 and not manifest['complete']:raise RuntimeError('full cache requires all320 inputs')
         from experiments.banelp.separators import HTDemucsCUDA,MSSTSeparator,verify_model_record
+        if args.memory_policy=='bounded_smoke':
+            import torch
+            total=torch.cuda.get_device_properties(0).total_memory
+            torch.cuda.set_per_process_memory_fraction(min(1.,2*1024**3/total),0)
         if args.model=='finetuned_scnet':
             import torch
+            if args.memory_policy=='profiled_scnet':
+                total=torch.cuda.get_device_properties(0).total_memory
+                torch.cuda.set_per_process_memory_fraction(min(1.,2*1024**3/total),0)
             adapter=load(assets['models']['F']['adapter'],'qg1_official_adapter')
             sep=adapter.OfficialSCNet(assets['models']['F']['official_assets'],'rev',segment=20)
             checkpoint=torch.load(assets['models']['F']['checkpoint'],map_location='cpu',weights_only=True)
@@ -114,12 +125,15 @@ def main():
                 verify_entry(root,old['output']);completed+=1;continue
             current=gpu()
             if current['temperature_C']>=config['resources']['gpu_temperature_limit_C']:raise RuntimeError('GPU thermal limit')
-            x=np.load(verify_entry(root,row['mixture']),allow_pickle=False);torch.cuda.reset_peak_memory_stats();started=time.monotonic();z=sep(x)
+            x=np.load(verify_entry(root,row['mixture']),allow_pickle=False);torch.cuda.reset_peak_memory_stats();started=time.monotonic()
+            try:z=sep(x)
+            except torch.cuda.OutOfMemoryError:
+                atomic_json(root/'gpu_status.json',{'stage':'resource_blocked_oom','model':args.model,'completed':completed,'memory_policy':args.memory_policy});raise
             if z.shape!=(4,2,config['audio']['input_frames']) or z.dtype!=np.float32 or not np.isfinite(z).all():raise ValueError('teacher contract failed')
             path=folder/'prediction.npy'
             with path.with_suffix('.part').open('wb') as stream:np.save(stream,z,allow_pickle=False)
             path.with_suffix('.part').replace(path)
-            value={'binding':digest(binding),'input_sha256':row['mixture']['sha256'],'model':args.model,'output':file_entry(path,root),'sources':config['audio']['sources'],'precision':'fp32','seconds':time.monotonic()-started,'peak_reserved':torch.cuda.max_memory_reserved()}
+            value={'binding':digest(binding),'input_sha256':row['mixture']['sha256'],'model':args.model,'output':file_entry(path,root),'sources':config['audio']['sources'],'precision':'fp32','seconds':time.monotonic()-started,'peak_reserved':torch.cuda.max_memory_reserved(),'peak_allocated':torch.cuda.max_memory_allocated(),'memory_policy':args.memory_policy,'required_free_bytes':required,'device':'cuda'}
             atomic_json(meta,value);completed+=1;emit('teacher_record_complete',model=args.model,completed=completed)
         atomic_json(root/(args.model+'-status.json'),{'stage':'cache_complete' if completed==320 else 'cache_partial','completed':completed,'expected':320,'binding':digest(binding)})
 

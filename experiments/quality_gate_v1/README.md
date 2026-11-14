@@ -16,3 +16,7 @@ OPENBLAS_NUM_THREADS=2 python run.py cache --project /seperation --runtime /새/
 ```
 
 Python은가이드의기존banelp-v1환경을사용한다. 30초예측을40초teacher로대체하지않으며train조건에는각record의trainRIR를사용한다. 소스/원자료/모델manifest를검증하고하나라도다르면중단한다. `cache`는한프로세스한모델이며실제GPU출력경로는아직이장비에서검증하지않았다. 누락산출물을0으로채우거나실제실행전성능수치를보고하지않는다.
+
+## 2026-11-15 GPU 실행 시작
+
+[GPU실행기록](GPU실행_2026-11-15.md)과[확인시점snapshot](GPU진행_2026-11-15.json)을추가했다. 새strict실행에서세모델각8개/총24GPU출력의SHA를검증했다. 전체320입력준비후960teacher추론으로이어가는작업이실행중이다. 이전M1의teacher0문구는그마일스톤시점기록이며현재상태와구분한다. C/Qfit과validation평가는아직미실행이고자동최종보고를약속하지않는다.
