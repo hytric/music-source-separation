@@ -1,0 +1,28 @@
+{
+  "status": "documentation_and_templates_complete_experiment_not_run",
+  "guide_pages": 5,
+  "templates": 3,
+  "validation": {
+    "json_parsed": true,
+    "full_model_registry_records_match": true,
+    "split_and_frame_contracts_consistent": true,
+    "quality_label_fixture_cases": 6,
+    "calibration_fixture_cases": 3,
+    "asset_checkpoint_sha_verified": true,
+    "source_asset_review": true,
+    "protocol_review": true
+  },
+  "new_teacher_inference": 0,
+  "new_selector_fit": false,
+  "quality_gate_cli_implemented": false,
+  "files_sha256": {
+    "03_하위모델_전달문.md": "7715d007e74438a44b85338e0f739006159ba554a9ec33e0037a928a2898337c",
+    "01_구현실행명세.md": "b93d04c87d3f5088f4e69e52f82792e9cdb4eb8416038589185674d001129388",
+    "02_예상결과와성공조건.md": "a9b1c34abe296945b6d4000d12bb39d5a5b96a2021eeaa9c0499d2a8ae5dd1a8",
+    "contract_cases.json": "6399c9ae84870f769d2e2d24a16e87258b68fad45c3582211fc463f13ac7935a",
+    "README.md": "af31018a9c43da5134b6621e2e6bd9a14ac8bb2d9273a7b0a4e30adda1a71cdc",
+    "protocol.template.json": "f7be35fc7083c8cf7f50f29563ae465979cc09b7ecda7b85fb0b6cb851fb65a3",
+    "assets.template.json": "4d47570ddb1d3242f717ef7b931c5f95f7c0cc279db7d7e47b5f513366dca906",
+    "04_후속실험_작업분할.md": "1415a29a2ac52d8538ac06f84af2da9f5c066cff0c3984bc670e9a31921de61d"
+  }
+}

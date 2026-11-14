@@ -49,3 +49,7 @@
 ## 재계산 실행
 
 `python recompute.py --project /원래/seperation`과 `python activity_sensitivity.py --project /원래/seperation --hybrid-runtime /stem-hybrid-v1`로 숫자를 다시 확인할 수 있다. 기존 실험 CSV와후자의mixture RMS 기록이필요하며새학습이나추론은수행하지않는다. 민감도분석은사후보조분석으로서원래판정을대체하지않는다.
+
+## 하위 모델에게 구현을 맡길 때
+
+[구현 가이드](구현가이드/README.md)와[복사 전달문](구현가이드/03_하위모델_전달문.md)을추가했다. QG1은64곡적합/16곡교정,40초teacher cache신규준비,실제품질라벨과RIR라벨의같은구조대조를기본안으로한다. 기존30초HTD예측을40초로padding해재사용할수없고,교정후80곡재적합도금지한다. 예상결과는가설이며새실험은아직실행하지않았다. 설정/자산템플릿과성공·실패규칙을함께전달한다.

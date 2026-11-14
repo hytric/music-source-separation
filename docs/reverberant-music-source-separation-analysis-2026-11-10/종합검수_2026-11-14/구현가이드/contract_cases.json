@@ -1,0 +1,179 @@
+{
+  "purpose": "implementation test fixtures only; not measured experimental outcomes",
+  "source_order": [
+    "vocals",
+    "drums",
+    "bass",
+    "other"
+  ],
+  "quality_label_cases": [
+    {
+      "name": "gain_boundary_positive",
+      "delta_si_sdr": [
+        0,
+        0.4,
+        0.4,
+        0
+      ],
+      "target_rms_fraction": [
+        0.4,
+        0.1,
+        0.08,
+        0.2
+      ],
+      "bass_gain_B": 0.5,
+      "bass_gain_H": 0.6,
+      "expected_label": 1
+    },
+    {
+      "name": "gain_below_boundary",
+      "delta_si_sdr": [
+        0,
+        0.3,
+        0.3,
+        0
+      ],
+      "target_rms_fraction": [
+        0.4,
+        0.1,
+        0.08,
+        0.2
+      ],
+      "bass_gain_B": 0.5,
+      "bass_gain_H": 0.6,
+      "expected_label": 0
+    },
+    {
+      "name": "active_bass_harmed_despite_total_gain",
+      "delta_si_sdr": [
+        0,
+        1.4,
+        -0.4,
+        0
+      ],
+      "target_rms_fraction": [
+        0.4,
+        0.1,
+        0.08,
+        0.2
+      ],
+      "bass_gain_B": 0.5,
+      "bass_gain_H": 0.6,
+      "expected_label": 0
+    },
+    {
+      "name": "new_collapse_rejected",
+      "delta_si_sdr": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "target_rms_fraction": [
+        0.4,
+        0.1,
+        0.08,
+        0.2
+      ],
+      "bass_gain_B": 0.5,
+      "bass_gain_H": 0.05,
+      "expected_label": 0
+    },
+    {
+      "name": "no_active_free_source_rejected",
+      "delta_si_sdr": [
+        0,
+        2,
+        2,
+        0
+      ],
+      "target_rms_fraction": [
+        0.4,
+        0.001,
+        0.001,
+        0.2
+      ],
+      "bass_gain_B": 0.5,
+      "bass_gain_H": 0.6,
+      "expected_label": 0
+    },
+    {
+      "name": "exact_silent_bass_excluded",
+      "delta_si_sdr": [
+        0,
+        0.9,
+        null,
+        0
+      ],
+      "target_rms_fraction": [
+        0.4,
+        0.1,
+        0,
+        0.2
+      ],
+      "bass_gain_B": null,
+      "bass_gain_H": null,
+      "expected_label": 1
+    }
+  ],
+  "calibration_cases": [
+    {
+      "name": "higher_safe_threshold_wins_tie",
+      "candidates": [
+        {
+          "threshold": 0.5,
+          "safe": true,
+          "wet_song_median": 0.3
+        },
+        {
+          "threshold": 0.8,
+          "safe": true,
+          "wet_song_median": 0.3
+        }
+      ],
+      "expected_policy": 0.8
+    },
+    {
+      "name": "zero_gain_fallback_not_success",
+      "candidates": [
+        {
+          "threshold": 0.9,
+          "safe": true,
+          "wet_song_median": 0
+        },
+        {
+          "policy": "always_baseline",
+          "safe": true,
+          "wet_song_median": 0
+        }
+      ],
+      "expected_policy": "always_baseline",
+      "expected_state": "scientific_failed_no_effect_candidate"
+    },
+    {
+      "name": "unsafe_gain_rejected",
+      "candidates": [
+        {
+          "threshold": 0.7,
+          "safe": false,
+          "wet_song_median": 2
+        },
+        {
+          "threshold": 0.9,
+          "safe": true,
+          "wet_song_median": 0.1
+        }
+      ],
+      "expected_policy": 0.9,
+      "note": "Calibration choice is not validation pilot success."
+    }
+  ],
+  "failure_cases": [
+    "30s prediction offered as40s -> contract_error",
+    "missing teacher -> pending,never zero-filled",
+    "Q labels one class -> label_degenerate",
+    "post-calibration refit changes coefficient hash -> contract_error",
+    "alter validation GT/condition metadata -> inference choices identical",
+    "always baseline yields delta0 -> not effect success"
+  ]
+}

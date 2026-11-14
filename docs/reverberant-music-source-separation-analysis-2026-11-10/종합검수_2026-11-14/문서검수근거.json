@@ -22,15 +22,26 @@
     "활동도_사후민감도.csv": "0404a144cf5317310f562ac145aa11a923617cece650991c723160bd7eeb5c4b",
     "정량검수근거.json": "4f45bc3418806cc356a656a45d866c59ad572593a5ded8b561f2b6d204bd53dc",
     "최근실험_재계산.csv": "09991b8143d0716b42d77e5756e5c9c568bb801a34b2d74c7a431b76b5a25e1f",
-    "README.md": "e4864479d684200df07b027080a93e4525764cc1e4f97cb8f941906c858586bd",
+    "README.md": "2b6e2529838110def8cff96fd50eb32c44fbb57b4efe157aed1a6062305ef48d",
     "03_관련연구서베이.md": "2cbefccffd32a12919a679dc14fa1d43f7d37fecc90b870154e2863f7caaabae",
     "activity_sensitivity.py": "1c18185b214c26476b43350165d680bce344e8d592e0b2ba0c267c947a6c04f5",
     "실험목록.csv": "0341bd2d99aa7fb47a5a2f205acbb5cf6526830034aa9bc944427ec4e616205d",
     "02_검수와피드백.md": "6966fb256ffd062516b0a12568ba9616739875f63bcc8d7dd80d6d8fedabfbec",
     "공개학습분할_대조.csv": "91218e57b504a2e5484a7c1ec06a4902c358b74b30663f3742f5f07f00a2ad7b",
+    "구현가이드/03_하위모델_전달문.md": "7715d007e74438a44b85338e0f739006159ba554a9ec33e0037a928a2898337c",
+    "구현가이드/01_구현실행명세.md": "b93d04c87d3f5088f4e69e52f82792e9cdb4eb8416038589185674d001129388",
+    "구현가이드/02_예상결과와성공조건.md": "a9b1c34abe296945b6d4000d12bb39d5a5b96a2021eeaa9c0499d2a8ae5dd1a8",
+    "구현가이드/contract_cases.json": "6399c9ae84870f769d2e2d24a16e87258b68fad45c3582211fc463f13ac7935a",
+    "구현가이드/가이드검수.json": "315c910442327017133434d553bb222c818b2991dbe9f781b6ddec2078ddd728",
+    "구현가이드/README.md": "af31018a9c43da5134b6621e2e6bd9a14ac8bb2d9273a7b0a4e30adda1a71cdc",
+    "구현가이드/protocol.template.json": "f7be35fc7083c8cf7f50f29563ae465979cc09b7ecda7b85fb0b6cb851fb65a3",
+    "구현가이드/assets.template.json": "4d47570ddb1d3242f717ef7b931c5f95f7c0cc279db7d7e47b5f513366dca906",
+    "구현가이드/04_후속실험_작업분할.md": "1415a29a2ac52d8538ac06f84af2da9f5c066cff0c3984bc670e9a31921de61d",
     "참고자료/초기_OpenAIR_제공보고.md": "445b8df862d651aff78355c2376a172576bc4751fb9d823009e953075426386f",
     "참고자료/소형보정망_완료근거.json": "5649eff94c7a3bc4bf394ebaaa1e685e1be76db9112821b04443832e3db13b95",
     "참고자료/README.md": "301719010b10df1d9c35c1afda75e9e5b85a5c06afce982da49a8f00374a46be"
   },
-  "small_refiner_paired_records_checked": 40
+  "small_refiner_paired_records_checked": 40,
+  "implementation_guide_pages": 5,
+  "implementation_guide_status": "specification_only_not_run"
 }
