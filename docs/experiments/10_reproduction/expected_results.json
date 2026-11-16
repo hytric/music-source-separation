@@ -1,0 +1,62 @@
+{
+  "frontend_validation//dry/wpe_weighted/raw": [
+    -0.13932299972295115,
+    -0.36944694888317764,
+    -0.014100278361604462
+  ],
+  "frontend_validation//wet_R4/wpe_weighted/raw": [
+    1.1845683581746325,
+    -0.12666319861202546,
+    2.6368696117388772
+  ],
+  "parirset_validation//dry/rev/htdemucs": [
+    -0.4400645195991231,
+    -0.7881271158291034,
+    1.1739241266676348
+  ],
+  "parirset_validation//wet_R4/rev/htdemucs": [
+    3.198082401097981,
+    1.6506406744006812,
+    4.707032352207833
+  ],
+  "scnet_finetune/1000/dry/candidate/ensemble": [
+    -2.1535596492683187,
+    -2.5611803477990294,
+    -1.776806377483687
+  ],
+  "scnet_finetune/1000/wet_R4/candidate/ensemble": [
+    1.5310002276720183,
+    0.17283393424418725,
+    2.2430725961999616
+  ],
+  "stem_hybrid_validation//dry/hybrid/baseline": [
+    -1.253070024886517,
+    -1.4241733154826786,
+    -0.8460561884510107
+  ],
+  "stem_hybrid_validation//wet_R4/hybrid/baseline": [
+    1.5772191586323303,
+    0.7251901911994812,
+    2.078915852334743
+  ],
+  "db_consistency_validation//dry/selected_power/baseline": [
+    -0.025869038593151927,
+    -1.06377956177909,
+    -0.014475546183202237
+  ],
+  "db_consistency_validation//wet_R4/selected_power/baseline": [
+    1.0366349818767318,
+    0.06631913826079419,
+    1.4234382534054333
+  ],
+  "input_selector/dry": [
+    0.0,
+    -0.15500863221847302,
+    0.0
+  ],
+  "input_selector/wet_R4": [
+    1.4596714969862092,
+    0.08011366958016986,
+    2.0624232685708233
+  ]
+}

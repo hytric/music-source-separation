@@ -1,0 +1,25 @@
+﻿rms_fraction_threshold,condition,method,median_delta,ci_low,ci_high,song_count,valid_stem_song_count,worst_song,worst_delta,excluded_nonzero_targets
+0.0,dry,selected_raw,0.0,-0.15500863221847302,0.0,10,39,Titanium - Haunted Age,-2.201649861905776,
+0.0,dry,selected_uniform,-0.012126075266371217,-0.8527522902304023,-0.006925517373539636,10,39,Matthew Entwistle - Dont You Ever,-3.2413127159094666,
+0.0,dry,selected_power,-0.025869038593151927,-1.06377956177909,-0.014475546183202237,10,39,Matthew Entwistle - Dont You Ever,-2.8077697836989657,
+0.0,wet_R4,selected_raw,1.4596714969862092,0.08011366958016986,2.0624232685708233,10,39,Cnoc An Tursa - Bannockburn,0.0,
+0.0,wet_R4,selected_uniform,0.882961422235639,0.2744740650798055,1.613088718359498,10,39,Matthew Entwistle - Dont You Ever,-1.3666757930876094,
+0.0,wet_R4,selected_power,1.0366349818767318,0.06631913826079419,1.4234382534054333,10,39,Matthew Entwistle - Dont You Ever,-0.969602478919037,
+0.001,dry,selected_raw,0.0,-0.15500863221847302,0.0,10,38,Titanium - Haunted Age,-2.201649861905776,Matthew Entwistle - Dont You Ever / bass
+0.001,dry,selected_uniform,-0.010855871355693436,-0.039679412493325295,0.01160100591458979,10,38,Titanium - Haunted Age,-1.6658251679674794,Matthew Entwistle - Dont You Ever / bass
+0.001,dry,selected_power,-0.0190381644662716,-0.039117183701106395,0.03372271887373324,10,38,Titanium - Haunted Age,-2.0884419398570735,Matthew Entwistle - Dont You Ever / bass
+0.001,wet_R4,selected_raw,1.4596714969862092,0.08011366958016986,2.0624232685708233,10,38,Cnoc An Tursa - Bannockburn,0.0,Matthew Entwistle - Dont You Ever / bass
+0.001,wet_R4,selected_uniform,0.882961422235639,0.2744740650798055,1.613088718359498,10,38,Matthew Entwistle - Dont You Ever,0.17038726040471777,Matthew Entwistle - Dont You Ever / bass
+0.001,wet_R4,selected_power,1.0366349818767318,0.29374918577592385,1.4234382534054333,10,38,St Vitus - Word Gets Around,0.019479048852965992,Matthew Entwistle - Dont You Ever / bass
+0.01,dry,selected_raw,0.0,-0.15500863221847302,0.0,10,38,Titanium - Haunted Age,-2.201649861905776,Matthew Entwistle - Dont You Ever / bass
+0.01,dry,selected_uniform,-0.010855871355693436,-0.039679412493325295,0.01160100591458979,10,38,Titanium - Haunted Age,-1.6658251679674794,Matthew Entwistle - Dont You Ever / bass
+0.01,dry,selected_power,-0.0190381644662716,-0.039117183701106395,0.03372271887373324,10,38,Titanium - Haunted Age,-2.0884419398570735,Matthew Entwistle - Dont You Ever / bass
+0.01,wet_R4,selected_raw,1.4596714969862092,0.08011366958016986,2.0624232685708233,10,38,Cnoc An Tursa - Bannockburn,0.0,Matthew Entwistle - Dont You Ever / bass
+0.01,wet_R4,selected_uniform,0.882961422235639,0.2744740650798055,1.613088718359498,10,38,Matthew Entwistle - Dont You Ever,0.17038726040471777,Matthew Entwistle - Dont You Ever / bass
+0.01,wet_R4,selected_power,1.0366349818767318,0.29374918577592385,1.4234382534054333,10,38,St Vitus - Word Gets Around,0.019479048852965992,Matthew Entwistle - Dont You Ever / bass
+0.03162277660168379,dry,selected_raw,0.0,-0.15500863221847302,0.0,10,38,Titanium - Haunted Age,-2.201649861905776,Matthew Entwistle - Dont You Ever / bass
+0.03162277660168379,dry,selected_uniform,-0.010855871355693436,-0.039679412493325295,0.01160100591458979,10,38,Titanium - Haunted Age,-1.6658251679674794,Matthew Entwistle - Dont You Ever / bass
+0.03162277660168379,dry,selected_power,-0.0190381644662716,-0.039117183701106395,0.03372271887373324,10,38,Titanium - Haunted Age,-2.0884419398570735,Matthew Entwistle - Dont You Ever / bass
+0.03162277660168379,wet_R4,selected_raw,1.4596714969862092,0.08011366958016986,2.0624232685708233,10,38,Cnoc An Tursa - Bannockburn,0.0,Matthew Entwistle - Dont You Ever / bass
+0.03162277660168379,wet_R4,selected_uniform,0.882961422235639,0.2744740650798055,1.613088718359498,10,38,Matthew Entwistle - Dont You Ever,0.17038726040471777,Matthew Entwistle - Dont You Ever / bass
+0.03162277660168379,wet_R4,selected_power,1.0366349818767318,0.29374918577592385,1.4234382534054333,10,38,St Vitus - Word Gets Around,0.019479048852965992,Matthew Entwistle - Dont You Ever / bass

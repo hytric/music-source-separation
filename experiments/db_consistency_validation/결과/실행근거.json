@@ -1,0 +1,25 @@
+{
+  "binding": "6baa09eb2861b3b92256aa0e92592267f2ef92932545e913af7202f0a399ed05",
+  "source_sha256": {
+    "core.py": "88a7def8576e488094c00c98409059a90a8775fb068d79d5a6b0e29521276414",
+    "report.py": "3da8297f5e8eedf105ba812224e964792454cfe7a3511a1537e98d5977de6d8b",
+    "run.py": "ea719b340d1c69e0c32e01bc13af012a91cfabc69b8f7f3a3de49794a5abcf85",
+    "tests.py": "d4d60b2396f35fd187e09187a67d6bd4d589cb14f281b18e431e940d5202de8c"
+  },
+  "selector_model_sha256": "fdba768b6839826c13dc3f2eec949ff4cbb4a11bc6a2889cb9e1517f1425c4ce",
+  "selector_rows_sha256": "3fb6966b02d675db6dbb7c19c86fa4e09d170d225acedd8f434d844e3de63cea",
+  "validation_cases": 20,
+  "corrected_files_verified": 80,
+  "csv_rows": 480,
+  "unit_tests_passed": 5,
+  "numeric_checks": {
+    "baseline_metric_max_error": 0.0,
+    "legacy_metric_max_error": 4.39932534845866e-11,
+    "selected_metric_max_error": 0.0
+  },
+  "physical_projection_max_abs": 2.9802322387695312e-08,
+  "protected_max_abs": 0,
+  "new_gpu_inferences": 0,
+  "training_updates": 0,
+  "seconds": 141.91831425298005
+}

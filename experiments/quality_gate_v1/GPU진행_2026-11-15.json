@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-11-15T08:40:47.812938+09:00",
+  "runtime": "/home/iiplab/code/music-source-separation/.agent_runtime/quality-gate-v1-full",
+  "job_status": {
+    "stage": "prepare320",
+    "pid": 1822494,
+    "started_at": 1794699267.6528633,
+    "updated_at": "2026-11-15T08:39:29.960142+09:00",
+    "selector_fit": false,
+    "validation_evaluated": false
+  },
+  "smoke": {
+    "finetuned_scnet": {
+      "completed": 8,
+      "median_seconds": 2.212343987484928,
+      "max_reserved_GiB": 1.283203125
+    },
+    "htdemucs": {
+      "completed": 8,
+      "median_seconds": 2.2457313335034996,
+      "max_reserved_GiB": 0.86328125
+    },
+    "msst_bsroformer_ep17": {
+      "completed": 8,
+      "median_seconds": 29.434708120999858,
+      "max_reserved_GiB": 2.39453125
+    }
+  },
+  "smoke_verified_predictions": 24,
+  "expected_teacher_predictions": 960,
+  "prepared_file_count_at_check": 57,
+  "selector_fit": false,
+  "validation_evaluated": false,
+  "eta_scope": "teacher cache only; not full QG1 implementation/fit/evaluation",
+  "stage_status_note": "prepare-stage status teacher_outputs=0 is a legacy stage-local field; count teacher complete files or per-model statuses for actual progress"
+}

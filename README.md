@@ -1,5 +1,7 @@
 # Music Source Separation
 
+연구 실험은 [전체 실험 docs 허브](docs/experiments/README.md)와 [다른 환경 재현 절차](docs/experiments/10_reproduction/README.md)를 참고한다. 웹데모환경과연구환경은다르며,연구결과재집계·이전자산재추론·새학습의검증범위를구분했다.
+
 음원을 **보컬 / 반주**로 분리하는 웹 데모와 CLI입니다. CPU로 기본 실행하며, NVIDIA CUDA GPU 사용 시 장치가 없거나 VRAM이 부족하면 알림 후 CPU로 전환합니다. 데이터셋 없이 파일 업로드로 시작할 수 있습니다.
 
 ## Git으로 받아서 실행

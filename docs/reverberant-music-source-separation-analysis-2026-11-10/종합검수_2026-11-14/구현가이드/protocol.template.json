@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "experiment": "quality-gate-v1",
+  "document_state": "implementation_template_not_executed",
+  "seed": 20261114,
+  "scope": {
+    "fit_selector": true,
+    "separator_updates": false,
+    "validation_evaluation": true,
+    "confirmation_evaluation": false,
+    "external_final_evaluation": false,
+    "deployment": false
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "channels": 2,
+    "dtype": "float32",
+    "sources": [
+      "vocals",
+      "drums",
+      "bass",
+      "other"
+    ],
+    "input_frames": 1764000,
+    "score_slice": [
+      220500,
+      1543500
+    ],
+    "feature_slice": [
+      308700,
+      1455300
+    ],
+    "target": "original_wet_stems",
+    "core_equivalence_max_abs": 1e-06,
+    "teacher_input_policy": "same_actual_40s_waveform_for_all_models"
+  },
+  "split": {
+    "population": "existing_train80_only",
+    "salt": "quality-gate-v1-fit64-cal16",
+    "algorithm": "sort (sha256(UTF8(salt+NUL+song_name)).hexdigest(),song_name),first64fit,last16calibration",
+    "fit_songs": 64,
+    "calibration_songs": 16,
+    "conditions_per_song": 4,
+    "fit_records": 256,
+    "calibration_records": 64,
+    "room_holdout_claim": false,
+    "refit_after_calibration": false
+  },
+  "teachers": {
+    "baseline": "0.5*htdemucs+0.5*msst_bsroformer_ep17",
+    "finetuned": "SCNet_step1000",
+    "hybrid": [
+      "B_vocals",
+      "F_drums",
+      "F_bass",
+      "B_other"
+    ],
+    "precision": "fp32",
+    "htdemucs": {
+      "segment": 7.0,
+      "overlap": 0.25,
+      "shifts": 0
+    },
+    "bsr": {
+      "batch_size": 1,
+      "num_overlap": 2,
+      "autocast": false,
+      "other_options": "registered_config"
+    },
+    "scnet": {
+      "segment": 20,
+      "overlap": 0.5,
+      "shifts": 0,
+      "checkpoint_state_key": "model",
+      "strict": true
+    },
+    "save": [
+      "x40",
+      "htdemucs40",
+      "bsr40",
+      "finetuned40"
+    ],
+    "do_not_save_by_default": [
+      "B40_duplicate",
+      "H40_duplicate",
+      "y40_duplicate"
+    ],
+    "train_teacher_prediction_count": 960,
+    "execution": "one dedicated sequential process per model",
+    "smoke_outputs_included_in_total": true
+  },
+  "features": {
+    "source": "existing input-selector-v1 core.features",
+    "dimension": 33,
+    "input_only": true,
+    "forbidden": [
+      "GT_audio",
+      "GT_metrics",
+      "RIR_label",
+      "song_id",
+      "file_name",
+      "input_length_feature",
+      "synthesis_guard_tail"
+    ],
+    "standardizer_fit_split": "fit64"
+  },
+  "activity": {
+    "role": "label_safety_and_secondary_evaluation_only",
+    "target_rms_div_mixture_rms_min": 0.01,
+    "mixture_rms_floor": 1e-12,
+    "mask_shared_across_methods": true,
+    "legacy_metrics_retained": true,
+    "not_an_inference_feature": true
+  },
+  "quality_label": {
+    "positive_all_of": [
+      "legacy_mean_delta_H_minus_B >= 0.2",
+      "at_least_one_active_drums_or_bass",
+      "each_active_drums_or_bass_delta >= -0.2",
+      "no_new_valid_bass_gain_below_0.1"
+    ],
+    "gain_threshold": 0.1,
+    "undefined_record": "stop_with_data_error",
+    "fit_single_class": "scientific_failed_label_degenerate",
+    "min_legacy_overall_gain_db": 0.2,
+    "min_active_free_stem_delta_db": -0.2,
+    "min_active_free_stems": 1,
+    "max_new_bass_collapse": 0
+  },
+  "fit": {
+    "models": [
+      "C_condition_label",
+      "Q_quality_label"
+    ],
+    "primary": "Q_quality_label",
+    "l2": 0.01,
+    "intercept_penalty": 0,
+    "max_newton_iterations": 100,
+    "step_max_abs_convergence": 1e-08,
+    "sample_weights": {
+      "group_by": "added_RIR_status_from_training_manifest",
+      "group_total_mass": {
+        "dry": 0.5,
+        "wet": 0.5
+      },
+      "expected_group_records": {
+        "dry": 64,
+        "wet": 192
+      },
+      "within_group": "uniform",
+      "identical_C_Q": true
+    },
+    "label_based_class_reweighting": false,
+    "validation_tuning": false,
+    "line_search_min_rate": 1e-08,
+    "nonconvergence": "implementation_failed_not_success"
+  },
+  "calibration": {
+    "threshold_grid": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      0.95,
+      0.99
+    ],
+    "fallback_policy": "always_baseline",
+    "decision": "H if sigmoid_score >= threshold else B",
+    "constraints": [
+      "each_dry_case_mean_delta >= -0.2",
+      "no_new_bass_collapse_on_any_valid_calibration_case"
+    ],
+    "objective": "median_over16songs(mean_over3wetRIR(case_mean_stem_delta))",
+    "tie_tolerance": 1e-12,
+    "tie_break": "higher_threshold; if gain0 tie prefer always_baseline",
+    "only_safe_zero_effect": "scientific_failed_no_effect_candidate",
+    "parameter_hash_before_after_equal": true,
+    "dry_case_delta_floor_db": -0.2,
+    "max_new_bass_collapse": 0,
+    "minimum_positive_objective": 0,
+    "positive_objective_comparison": "strictly_greater_than"
+  },
+  "evaluation": {
+    "primary_metric": "legacy per-song valid-stem-mean paired SI-SDR delta",
+    "secondary_active_metrics": true,
+    "bootstrap": {
+      "seed": 20261114,
+      "replicates": 10000,
+      "cluster": "song",
+      "percentiles": [
+        2.5,
+        97.5
+      ]
+    },
+    "methods": [
+      "B",
+      "H",
+      "G0_frozen80_threshold0.8",
+      "C",
+      "Q",
+      "GT_oracle_diagnostic"
+    ],
+    "primary": "Q",
+    "pilot_gates": {
+      "wet_vs_B_median_min": 0.2,
+      "wet_vs_B_ci_low_exclusive": 0,
+      "wet_vs_G0_ci_low_min": -0.2,
+      "dry_vs_B_ci_low_min": -0.2,
+      "each_dry_vs_B_min": -0.2,
+      "protected_VO_max_abs": 0,
+      "new_bass_collapse_max": 0,
+      "active_bass_vs_B_ci_low_min": -0.2,
+      "wet_si_sar_vs_G0_ci_low_min": -0.5,
+      "always_baseline_is_success": false,
+      "active_bass_scope": [
+        "dry",
+        "wet_R4"
+      ]
+    },
+    "report": [
+      "per_song_deltas",
+      "damage_count",
+      "worst",
+      "5th_percentile",
+      "gain_and_rms",
+      "silent_target_output",
+      "mixture_sum_residual",
+      "activity_exclusions",
+      "resource_cost"
+    ],
+    "final_goal_eligible": false,
+    "deployment_ready": false,
+    "validation_RIR_source": "banelp-v1 original R4 P1-P4, not prepared validation-pool cache",
+    "legacy_cache_import": "native metadata plus input/target SHA and full binding chain",
+    "minimum_observations": {
+      "required_cases": 20,
+      "primary_valid_songs_per_condition": 10,
+      "si_sar_valid_songs_wet": 10,
+      "active_bass_valid_songs_per_condition": 8,
+      "bass_gain_valid_pairs_per_condition": 8,
+      "protected_byte_checks": 20,
+      "otherwise": "insufficient_evidence"
+    },
+    "label_advantage_observed": {
+      "pilot_safe_effect_required": true,
+      "comparison": "Q minus C on same validation songs",
+      "risk_reduction_branch": {
+        "wet_ci_low_min": -0.2,
+        "Q_dry_harm_count_strictly_less_than_C": true
+      },
+      "zero_harm_gain_branch": {
+        "Q_dry_harm_count": 0,
+        "C_dry_harm_count": 0,
+        "wet_median_min": 0.2,
+        "wet_ci_low_exclusive": 0
+      },
+      "dry_harm_definition": "case mean delta vs B < -0.2dB",
+      "interpretation": "observed internal-sample effect only"
+    }
+  },
+  "resources": {
+    "cpu_threads": 2,
+    "gpu_models_at_once": 1,
+    "gpu_headroom_over_smoke_peak_reserved_bytes": 1073741824,
+    "gpu_temperature_limit_C": 83,
+    "minimum_free_disk_bytes": 80000000000,
+    "expected_stored_bytes_approx": 58710000000,
+    "other_jobs_may_be_stopped": false,
+    "silent_CPU_or_FP16_fallback": false,
+    "initial_smoke_min_free_gpu_bytes": 4294967296,
+    "historical_reserved_gib": {
+      "msst_bsroformer_ep17": 2.395,
+      "scnet_rev_observation": 1.283,
+      "htdemucs": null
+    },
+    "post_smoke_requirement": "max(verified_historical_peak_reserved,current_full40_smoke_peak_reserved)+1GiB"
+  },
+  "failure_policy": {
+    "missing_predictions": "pending_not_zero_fill",
+    "hash_mismatch": "stop",
+    "nonfinite": "stop",
+    "protocol_change": "new_run_new_binding",
+    "calibration_failure": "report_not_relax",
+    "validation_failure": "report_not_retune"
+  }
+}

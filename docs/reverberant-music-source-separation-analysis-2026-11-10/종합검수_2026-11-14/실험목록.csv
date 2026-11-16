@@ -1,0 +1,20 @@
+﻿id,experiment,scope,result,evidence,status
+E00,초기 OpenAIR T1~T6 보고,"공식test dev10×4,30초,wet","T5 +0.06dB/p≈.08, oracle mask+4.87은 제공 보고값. 원실행/원자료 미확인",[초기 계획](../postprocessing_plan.md),reported-not-reproduced
+E01,gpuRIR 실용21후보,"test dev10×4,30초,wet,HTD 대조",HTD+BSR 평균+1.157dB. dev Holm p≈.101이므로 다중검정 유의 승리 주장 불가. Wiener2 무효 관측,[21개 원시 목록](개발21후보.csv),complete
+E02,magnitude/phase oracle,"같은dev조건,정답을 사용하는 진단","정답에너지mask+혼합phase +5.078, 추정mag+정답phase +3.158, 정답mag+추정phase +4.332. 실사용 성능 아님",[방법 설명](../팀공유_프로젝트검수_2026-11-10/03_방법과_개념설명.md),complete
+E03,50:50 앙상블 eval40,"test eval40×4=160,30초,wet,HTD 대조","+1.652 [1.518,2.000]dB, bass31/160→12/160. 이미 오류 분석에 노출된 eval",[초기 진행 검수](../팀공유_프로젝트검수_2026-11-10/01_진행현황과_검수.md),complete
+E04,추가 잔향 영향/분리 순서,"test50,dry50 신규와wet200 재사용,30초",R4−dry bass−14.51dB; 같은wet정답의 분리순서 대조 bass−12.22dB. 원인 진단,[영향 보고](../잔향영향분석_2026-11-10/결과보고서.md),complete
+E05,지연·early·full RIR,"test dev10×11조건,30초,조건별 생성정답","bass delay−original +.020, earlyR4−delay−4.326, fullR4−early−6.399dB. 후처리 개선 아님",[성분 대조](../잔향성분대조_2026-11-10/결과보고서.md),complete
+E06,데이터/RIR/cache 및 소형 refiner 준비,"officialtrain100→80/10/10,24방96RIR묶음,400cache","325,024param; 준비 optimizer0·forward/backward 검사. 학습 완료 상태와 구분",[준비 보고](../학습실험_2026-11-11/준비완료보고서.md),preparation-complete
+E07,소형 복소잔차 보정망,"train80, fixed4초 val10×4,HTD 대조","3,000회 완료/best2,500. bestΔHTD+.0461; best−초기 대응+.0179. 충분한 효과 미확인","[학습 명세](../학습실험_2026-11-11/EXPERIMENT.md), runtime 완료 기록",complete
+E08,magnitude/all-pass/EQ 원인대조,"core=test dev10/commonRIR,apply=내부val10/source별RIR. **입력190.22초/중앙30초**","140추론 완료. bass E_M−7.557/E_A−7.159, M−A CI가0포함. 크기만의 원인 우세 미확인",[원인 결과](../학습실험_2026-11-11/원인대조결과_2026-11-12/결과보고서.md),complete
+E08a,known-RIR EQ / blind EQ,E08 내 개입/실용 적용 대조,"known 공통RIR bass+2.197 [0.071,9.746]; blind source별RIR−.668 [−2.161,4.700]. oracle를 실용 성공으로 전용 불가",같은 E08 보고,complete
+E09,입력 EQ/WPE·잔차 배분,"내부val10 dry/wet20,40초/중앙30초,wet,B=HTD","WPE 단독−.498, 주후보 WPE+weighted +1.185 [−.127,2.637]. dry−.139. 주 기준 실패",[전처리 결과](../입력전처리검증_2026-11-13/결과/결과보고서.md),complete
+E10,공식 SCNet clean/rev,"같은val20/40초,원래wet정답","rev−clean wet+4.397, dry−1.396. rev−앙상블+.862 CI에0포함",[공식 모델 비교](../공식SCNet검증_2026-11-13/결과/결과보고서.md),complete
+E11,전체 SCNet 미세조정,"train80,6초학습/중앙4초loss,500/1000 val각20","1,000회 완료. 초기rev 대비wet+.509,dry+.182. B 대비wet+1.531/dry−2.154",[미세조정 결과](../SCNet미세조정_2026-11-13/결과/결과보고서.md),complete
+E12,음원별 고정결합,"B의vocals/other+F의drums/bass,같은val20",B 대비wet+1.577/dry−1.253. dry보호 실패. VO는같고합잔차증가,[결합 결과](../음원별결합검증_2026-11-14/결과/결과보고서.md),complete
+E12a,조건라벨 분기·GT oracle,E12 예측을조건/정답으로선택한진단,선택 가능 상한. 실제 입력만의 선택 성능으로 기재 불가,같은 E12 보고,complete
+E13,실제 입력 선택기,"train80의320mixture,33특징·L2 logistic·threshold.8. val20","B 대비wet+1.460,dry중앙값0; dry2/10에서−.310/−2.202. 기존 중앙값기준 통과/최종채택 보류",[선택기 결과](../입력선택검증_2026-11-14/결과/결과보고서.md),complete
+E14,VO고정 DB 출력합 보정,"같은선택20,uniform/power, B 보정대조 포함",합최대오차2.98e−8/VO차이0. power의미보정대비wet−.285/bass−.924. 두배분 미채택,[합보정 결과](../출력합보정검증_2026-11-14/결과/결과보고서.md),complete
+A01,이번 전체 정량 검수,"최근CSV2,580행/68조건비교",원정의 재계산과차이0. 새추론/학습 아님,[정량 근거](정량검수근거.json),complete
+A02,이번 활동도 사후 민감도,"기존 CSV와 mixture RMS,4개활동도조건",near-silent bass가Matthew손실/CI에큰영향. 기존판정유지,[민감도 CSV](활동도_사후민감도.csv),complete

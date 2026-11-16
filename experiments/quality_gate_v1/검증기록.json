@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-11-15T00:01:26.411865+09:00",
+  "binding": "3c48bb5093a8bc01f2fc221c2ae1b359472ed4e12fdd2c5dc0c3a21925351f5a",
+  "unit_tests_passed": 4,
+  "prepared_inputs": 8,
+  "expected_inputs": 320,
+  "core_max_abs": 1.1920928955078125e-07,
+  "first_prepare_seconds": 15.117632233013865,
+  "resume_seconds": 0.09984030504710972,
+  "preflight": {
+    "binding": "3c48bb5093a8bc01f2fc221c2ae1b359472ed4e12fdd2c5dc0c3a21925351f5a",
+    "calibration_songs": 16,
+    "disk_free_bytes": 155562819584,
+    "disk_ok": true,
+    "fit_songs": 64,
+    "gpu": {
+      "free_bytes": 2591031296,
+      "temperature_C": 60
+    },
+    "gpu_smoke_ok": false,
+    "teacher_predictions_generated": 0,
+    "time_utc": "2026-11-14T14:59:16Z",
+    "train_records": 320
+  },
+  "gpu_stage": {
+    "gpu": {
+      "free_bytes": 2591031296,
+      "temperature_C": 65
+    },
+    "model": "msst_bsroformer_ep17",
+    "required_free_bytes": 4294967296,
+    "stage": "resource_blocked",
+    "teacher_outputs": 0
+  },
+  "teacher_outputs": 0,
+  "selector_fit": false,
+  "validation_evaluated": false,
+  "implementation_scope": "milestone1; GPU execution path present but not exercised; full label/calibration/evaluation CLI integration pending"
+}

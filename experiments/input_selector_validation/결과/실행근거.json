@@ -1,0 +1,24 @@
+{
+  "binding": "27889b82e2b414f4f9d27dc67c7900b09c2ed9b06ddcf676471509013475b197",
+  "source_sha256": {
+    "core.py": "680099a4040d1cc1328cc89f2b380e3ac2aaf12f08208fa47900b6e09bed77e4",
+    "evaluate.py": "c13bce1b1bfe27a5347bcb42b09863dd238b8ce33c395f2acfe590a068a1ed52",
+    "run.py": "f5448f702a07c0ca97f67e666565a9006fdb577cfd6d9429777d40170d1a5c73",
+    "tests.py": "8eacb5a0aef745d16587f42b9af2208d96169e5e26362ae461c6cd86ffc3065b"
+  },
+  "train_records": 320,
+  "training_songs": 80,
+  "train_fit": {
+    "iterations": 7,
+    "positive_selected": 144,
+    "training_accuracy": 0.7
+  },
+  "threshold": 0.8,
+  "validation_choices_verified": 20,
+  "new_gpu_inferences": 0,
+  "separator_updates": 0,
+  "scope": "actual input-only synthetic-condition classifier, not quality oracle",
+  "runtime_model_sha256": "fdba768b6839826c13dc3f2eec949ff4cbb4a11bc6a2889cb9e1517f1425c4ce",
+  "published_model_sha256": "ae5c50cc07fc8c1eef7cc51519e21b2cf19e3218f85e19e8e5d91c108bf80c85",
+  "unit_tests_passed": 3
+}

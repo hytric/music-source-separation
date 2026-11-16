@@ -1,0 +1,224 @@
+{
+  "verified_on": "2026-11-14",
+  "project_root": "/run/media/iiplab/SSD2TB/code/26-2 반엘프/seperation",
+  "publication_repo": "/home/iiplab/code/music-source-separation-wt/learned-refine-ready",
+  "baseline_library_repo": "/home/iiplab/code/music-source-separation",
+  "runtime_root": "/home/iiplab/code/music-source-separation/.agent_runtime",
+  "python": "/home/iiplab/code/music-source-separation/.agent_runtime/banelp-v1/env/bin/python",
+  "source_review_commit": "2674185c082107d85c6f108ee001c94ea03a90a5",
+  "new_runtime_pattern": "quality-gate-v1-<protocol_hash_prefix>",
+  "must_resolve_before_execution": true,
+  "models": {
+    "htdemucs": {
+      "bag_size": 1,
+      "candidate_eligible": false,
+      "clean_winner_eligible": false,
+      "config_file": null,
+      "declaration": null,
+      "family": "demucs",
+      "inference_overrides": null,
+      "introspected": true,
+      "members": [
+        {
+          "bytes": 84141911,
+          "clean_winner_eligible": false,
+          "declaration": null,
+          "model_id": "htdemucs",
+          "path": "/home/iiplab/code/music-source-separation/.agent_runtime/banelp-v1/cache/torch/hub/checkpoints/955717e8-8726e21a.th",
+          "revision": "demucs 4.0.1 remote/htdemucs.yaml (models: [955717e8])",
+          "sha256": "8726e21a993978c7ba086d3872e7608d7d5bfca646ca4aca459ffda844faa8b4",
+          "source_order": [
+            "vocals",
+            "drums",
+            "bass",
+            "other"
+          ],
+          "train_data_status": "unknown",
+          "training_data_evidence": [
+            "arXiv:2211.08553 sec.5.1: MUSDB18-HQ + 800 internal songs; no per-song audit against MUSDB18 test"
+          ],
+          "url": "https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/955717e8-8726e21a.th"
+        }
+      ],
+      "model_id": "htdemucs",
+      "model_type": null,
+      "msst_commit": null,
+      "native_source_order": [
+        "drums",
+        "bass",
+        "other",
+        "vocals"
+      ],
+      "reorder_index": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "revision": "demucs 4.0.1 remote/htdemucs.yaml (models: [955717e8])",
+      "samplerate": 44100,
+      "sha256": "8726e21a993978c7ba086d3872e7608d7d5bfca646ca4aca459ffda844faa8b4",
+      "source_order": [
+        "vocals",
+        "drums",
+        "bass",
+        "other"
+      ],
+      "train_data_status": "unknown",
+      "training_data_evidence": [
+        "arXiv:2211.08553 sec.5.1: MUSDB18-HQ + 800 internal songs; no per-song audit against MUSDB18 test"
+      ],
+      "url": "https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/955717e8-8726e21a.th"
+    },
+    "msst_bsroformer_ep17": {
+      "bag_size": 1,
+      "candidate_eligible": true,
+      "clean_winner_eligible": false,
+      "config_file": {
+        "path": "/home/iiplab/code/music-source-separation/.agent_runtime/banelp-v1/cache/msst/config_bs_roformer_384_8_2_485100.yaml",
+        "sha256": "d8afb980318d0c08b9c2e24a7adc00d4f3150320c127a7e4de861800d1321939",
+        "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.12/config_bs_roformer_384_8_2_485100.yaml"
+      },
+      "declaration": {
+        "quote": "Models in this list were trained only on MUSDB18HQ dataset (100 songs train data).",
+        "release": "v1.0.12",
+        "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/blob/f17924ddb1817cdbae6353706708c4518dd7cd14/docs/pretrained_models.md"
+      },
+      "family": "msst",
+      "inference_overrides": {
+        "batch_size": 2
+      },
+      "introspected": false,
+      "members": [
+        {
+          "bytes": 527385512,
+          "clean_winner_eligible": false,
+          "declaration": {
+            "quote": "Models in this list were trained only on MUSDB18HQ dataset (100 songs train data).",
+            "release": "v1.0.12",
+            "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/blob/f17924ddb1817cdbae6353706708c4518dd7cd14/docs/pretrained_models.md"
+          },
+          "model_id": "msst_bsroformer_ep17",
+          "path": "/home/iiplab/code/music-source-separation/.agent_runtime/banelp-v1/cache/msst/model_bs_roformer_ep_17_sdr_9.6568.ckpt",
+          "revision": null,
+          "sha256": "3e9daecd70aaed5b5a0d1f861cc4d77eaa45afb3fc6301b1cf32c1be0f5868fb",
+          "source_order": [
+            "vocals",
+            "drums",
+            "bass",
+            "other"
+          ],
+          "train_data_status": "documented-train-only",
+          "training_data_evidence": [],
+          "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.12/model_bs_roformer_ep_17_sdr_9.6568.ckpt"
+        }
+      ],
+      "model_id": "msst_bsroformer_ep17",
+      "model_type": "bs_roformer",
+      "msst_commit": "f17924ddb1817cdbae6353706708c4518dd7cd14",
+      "native_source_order": [
+        "drums",
+        "bass",
+        "other",
+        "vocals"
+      ],
+      "reorder_index": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "revision": null,
+      "samplerate": 44100,
+      "sha256": "3e9daecd70aaed5b5a0d1f861cc4d77eaa45afb3fc6301b1cf32c1be0f5868fb",
+      "source_order": [
+        "vocals",
+        "drums",
+        "bass",
+        "other"
+      ],
+      "train_data_status": "documented-train-only",
+      "training_data_evidence": [],
+      "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.12/model_bs_roformer_ep_17_sdr_9.6568.ckpt"
+    },
+    "F": {
+      "checkpoint": "/home/iiplab/code/music-source-separation/.agent_runtime/scnet-finetune-v1/step-1000.pt",
+      "sha256": "904e872166ba75fa0db68f1e0323453ff1fb63caab9f41746bbec6322c8d0114",
+      "load_state_key": "model",
+      "step": 1000,
+      "adapter": "/run/media/iiplab/SSD2TB/code/26-2 반엘프/seperation/공식SCNet검증_2026-11-13/adapter.py",
+      "official_assets": "/home/iiplab/code/music-source-separation/.agent_runtime/parirset-official-v1"
+    },
+    "G0": {
+      "model_path": "/home/iiplab/code/music-source-separation/.agent_runtime/input-selector-v1/model.json",
+      "model_sha256": "fdba768b6839826c13dc3f2eec949ff4cbb4a11bc6a2889cb9e1517f1425c4ce",
+      "binding_path": "/home/iiplab/code/music-source-separation/.agent_runtime/input-selector-v1/binding.json",
+      "binding_sha256": "701fd24b80c58ffadbebc82e504225e1f66b4abd2d5b9915fe2f053da4c45b86",
+      "threshold": 0.8
+    }
+  },
+  "manifests": {
+    "dataset.json": {
+      "path": "/home/iiplab/code/music-source-separation/.agent_runtime/banelp-refine-v1/manifests/dataset.json",
+      "sha256": "c0150f7eeef1bf601be6611900f0f68c269a4277bc5df866932d01147fa3d156"
+    },
+    "rirs.json": {
+      "path": "/home/iiplab/code/music-source-separation/.agent_runtime/banelp-refine-v1/manifests/rirs.json",
+      "sha256": "c0709b45403a5f642fb429a61ee787501cc873fec57613880fa3173c96ce8dab"
+    },
+    "cache.json": {
+      "path": "/home/iiplab/code/music-source-separation/.agent_runtime/banelp-refine-v1/manifests/cache.json",
+      "sha256": "1256cb90fb884d7652c0992f26c9451fc62ac0c2162f60b2e688cfc1fda90e66"
+    }
+  },
+  "coverage": {
+    "train30_HTD": 320,
+    "train40_HTD_verified": 0,
+    "train40_BSR_verified": 0,
+    "train40_F1000_verified": 0,
+    "existing_validation40_cases": 20,
+    "note": "No matching train40 teacher cache verified in current known runtimes; check any future candidate cache against the locked contract."
+  },
+  "existing_validation": {
+    "HTD": "/home/iiplab/code/music-source-separation/.agent_runtime/frontend-verify-v1/run-9441074cf871f26a",
+    "BSR": "/home/iiplab/code/music-source-separation/.agent_runtime/parirset-compare-v1",
+    "F1000": "/home/iiplab/code/music-source-separation/.agent_runtime/scnet-finetune-v1/evaluation/step-1000",
+    "hybrid": "/home/iiplab/code/music-source-separation/.agent_runtime/stem-hybrid-v1",
+    "G0": "/home/iiplab/code/music-source-separation/.agent_runtime/input-selector-v1"
+  },
+  "source_modules": {
+    "frontend": "/run/media/iiplab/SSD2TB/code/26-2 반엘프/seperation/입력전처리검증_2026-11-13/run.py",
+    "selector_features": "/run/media/iiplab/SSD2TB/code/26-2 반엘프/seperation/입력선택검증_2026-11-14/core.py",
+    "metric_suite": "/run/media/iiplab/SSD2TB/code/26-2 반엘프/seperation/학습실험_2026-11-11",
+    "separator_module": "experiments.banelp.separators"
+  },
+  "model_registry": {
+    "path": "/home/iiplab/code/music-source-separation/.agent_runtime/banelp-v1/manifests/models.json",
+    "sha256": "f0c714679a2da4913146513afc1ce073828a5572296e88ea415355c3c840fdd4",
+    "usage": "Read full records by model_id; verify_model_record before passing registered argument."
+  },
+  "baseline_RIR_manifest": {
+    "path": "/home/iiplab/code/music-source-separation/.agent_runtime/banelp-v1/manifests/rirs.json",
+    "sha256": "5b3fc2dbcad2199e2278eac72a7d6ff10a525a58af2c621251e7f3b2a1764149",
+    "usage": "validation wet_R4 only; train uses prepared train-pool rir_set"
+  },
+  "validation_input_records": {
+    "directory": "/home/iiplab/code/music-source-separation/.agent_runtime/parirset-compare-v1",
+    "pattern": "<track>/{dry,wet_R4}/input.json",
+    "input_npy_present": false,
+    "must_regenerate_and_match_input_target_sha": true
+  },
+  "legacy_metadata": {
+    "htdemucs": "frontend-verify-v1/run-9441074cf871f26a/<track>/<condition>/raw.json",
+    "bsr": "parirset-compare-v1/<track>/<condition>/bsr.json",
+    "F1000": "scnet-finetune-v1/evaluation/step-1000/<track>/<condition>/results.json",
+    "policy": "verify native metadata and parent binding chain; do not fabricate complete marker in old cache"
+  },
+  "source_file_checks": {
+    "/run/media/iiplab/SSD2TB/code/26-2 반엘프/seperation/입력선택검증_2026-11-14/core.py": "680099a4040d1cc1328cc89f2b380e3ac2aaf12f08208fa47900b6e09bed77e4",
+    "/run/media/iiplab/SSD2TB/code/26-2 반엘프/seperation/입력전처리검증_2026-11-13/run.py": "fffdb1ba64f2c5df3cc1daac4734fb1f0705b6916f1cf2b604bac9eeb94bb27d",
+    "/run/media/iiplab/SSD2TB/code/26-2 반엘프/seperation/공식SCNet검증_2026-11-13/adapter.py": "5e20a73ffc9c1d3f3a8cb9e69d52d3c423784979a53f91eb35e67bf2cc7f75d8",
+    "/run/media/iiplab/SSD2TB/code/26-2 반엘프/seperation/학습실험_2026-11-11/cause_eq/metrics.py": "3c5d82400ed515972d500135951fdba5fe9d9e4ef4c70dfe0a6959d498bb83a4",
+    "/home/iiplab/code/music-source-separation/experiments/banelp/separators.py": "c8b9b3ed815e86c68dd75d5669bcc8dcaaf7fdc6829b5268f601532bab790b59"
+  }
+}

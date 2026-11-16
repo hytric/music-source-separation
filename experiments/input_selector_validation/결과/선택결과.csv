@@ -1,0 +1,21 @@
+﻿track,condition,sigmoid_score,choice
+Clara Berry And Wooldog - Waltz For My Victims,dry,0.46527589335608627,baseline
+Clara Berry And Wooldog - Waltz For My Victims,wet_R4,0.9517171433435052,hybrid
+Cnoc An Tursa - Bannockburn,dry,0.09601220930494642,baseline
+Cnoc An Tursa - Bannockburn,wet_R4,0.693567995765042,baseline
+Johnny Lokke - Promises & Lies,dry,0.06422624948319515,baseline
+Johnny Lokke - Promises & Lies,wet_R4,0.9686752318169053,hybrid
+"Jokers, Jacks & Kings - Sea Of Leaves",dry,0.08743981919656292,baseline
+"Jokers, Jacks & Kings - Sea Of Leaves",wet_R4,0.9342014061408078,hybrid
+Matthew Entwistle - Dont You Ever,dry,0.0067545204494146305,baseline
+Matthew Entwistle - Dont You Ever,wet_R4,0.7884978232862074,baseline
+Music Delta - Hendrix,dry,0.1958328014578291,baseline
+Music Delta - Hendrix,wet_R4,0.9798835665462658,hybrid
+Skelpolu - Human Mistakes,dry,0.01942885963669607,baseline
+Skelpolu - Human Mistakes,wet_R4,0.9444125677591629,hybrid
+St Vitus - Word Gets Around,dry,0.940578597355436,hybrid
+St Vitus - Word Gets Around,wet_R4,0.9934689308669373,hybrid
+Titanium - Haunted Age,dry,0.9781305168700131,hybrid
+Titanium - Haunted Age,wet_R4,0.9990850387100663,hybrid
+Triviul - Dorothy,dry,0.39100291859983577,baseline
+Triviul - Dorothy,wet_R4,0.8262589273869333,hybrid

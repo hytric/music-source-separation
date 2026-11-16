@@ -1,0 +1,9 @@
+{
+  "scope": "observed research environment, not demo requirements",
+  "python": "3.12",
+  "torch": "2.6.0+cu126",
+  "exact_pip_pins": 76,
+  "excluded_nonportable_requirement_count": 1,
+  "RIR_policy": "use exported realized RIR arrays; gpuRIR regeneration is separate CUDA-build procedure",
+  "fresh_venv_install_tested": false
+}

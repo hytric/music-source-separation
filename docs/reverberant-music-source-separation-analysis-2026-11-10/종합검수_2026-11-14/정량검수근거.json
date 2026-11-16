@@ -1,0 +1,584 @@
+{
+  "source_files": [
+    {
+      "path": "입력전처리검증_2026-11-13/결과/곡별결과.csv",
+      "sha256": "08226ef6d897c3bfb22774e1ca93a74764bda3a3d3cdfa83117adc0e1c188624",
+      "rows": 560
+    },
+    {
+      "path": "공식SCNet검증_2026-11-13/결과/곡별결과.csv",
+      "sha256": "606846780a8549c3d6eb1df0e10446006332fc68ae654dd3e58a6ada724b033f",
+      "rows": 320
+    },
+    {
+      "path": "SCNet미세조정_2026-11-13/결과/곡별결과.csv",
+      "sha256": "c245e6648ced6a60313c50eb3e81b82ba5697448dfab80e45f847ff057c07137",
+      "rows": 800
+    },
+    {
+      "path": "음원별결합검증_2026-11-14/결과/곡별결과.csv",
+      "sha256": "5773ba5a05ab9cf00716753620e974e6a18698c4874bee683ef5c813cf7d7f1f",
+      "rows": 400
+    },
+    {
+      "path": "입력선택검증_2026-11-14/결과/선택결과.csv",
+      "sha256": "198c6b2295eafee19fef2ab862d273e7a0d05ff16a04f36fef24c50a34f3e8a4",
+      "rows": 20
+    },
+    {
+      "path": "출력합보정검증_2026-11-14/결과/곡별결과.csv",
+      "sha256": "f49bc89dd0b2fd87a95a2d1d8e7ffe3edccf5b0d239b170d50297ce054638686",
+      "rows": 480
+    }
+  ],
+  "source_rows": 2580,
+  "comparisons": 68,
+  "max_abs_difference": 0.0,
+  "checks": [
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "raw_weighted",
+      "reference": "raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "raw_weighted",
+      "reference": "raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "eq",
+      "reference": "raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "eq",
+      "reference": "raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "wpe",
+      "reference": "raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "wpe",
+      "reference": "raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "wpe_uniform",
+      "reference": "raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "wpe_uniform",
+      "reference": "raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "wpe_weighted",
+      "reference": "raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "wpe_weighted",
+      "reference": "raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "gain_weighted",
+      "reference": "raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력전처리검증_2026-11-13",
+      "method": "gain_weighted",
+      "reference": "raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "공식SCNet검증_2026-11-13",
+      "method": "clean",
+      "reference": "htdemucs",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "공식SCNet검증_2026-11-13",
+      "method": "clean",
+      "reference": "htdemucs",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "공식SCNet검증_2026-11-13",
+      "method": "rev",
+      "reference": "htdemucs",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "공식SCNet검증_2026-11-13",
+      "method": "rev",
+      "reference": "htdemucs",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "공식SCNet검증_2026-11-13",
+      "method": "rev",
+      "reference": "clean",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "공식SCNet검증_2026-11-13",
+      "method": "rev",
+      "reference": "clean",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "공식SCNet검증_2026-11-13",
+      "method": "rev",
+      "reference": "ensemble",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "공식SCNet검증_2026-11-13",
+      "method": "rev",
+      "reference": "ensemble",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "공식SCNet검증_2026-11-13",
+      "method": "ensemble",
+      "reference": "htdemucs",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "공식SCNet검증_2026-11-13",
+      "method": "ensemble",
+      "reference": "htdemucs",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "initial_rev",
+      "condition": "dry",
+      "step": "500",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "initial_rev",
+      "condition": "wet_R4",
+      "step": "500",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "clean",
+      "condition": "dry",
+      "step": "500",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "clean",
+      "condition": "wet_R4",
+      "step": "500",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "htdemucs",
+      "condition": "dry",
+      "step": "500",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "htdemucs",
+      "condition": "wet_R4",
+      "step": "500",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "ensemble",
+      "condition": "dry",
+      "step": "500",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "ensemble",
+      "condition": "wet_R4",
+      "step": "500",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "initial_rev",
+      "condition": "dry",
+      "step": "1000",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "initial_rev",
+      "condition": "wet_R4",
+      "step": "1000",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "clean",
+      "condition": "dry",
+      "step": "1000",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "clean",
+      "condition": "wet_R4",
+      "step": "1000",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "htdemucs",
+      "condition": "dry",
+      "step": "1000",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "htdemucs",
+      "condition": "wet_R4",
+      "step": "1000",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "ensemble",
+      "condition": "dry",
+      "step": "1000",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "SCNet미세조정_2026-11-13",
+      "method": "candidate",
+      "reference": "ensemble",
+      "condition": "wet_R4",
+      "step": "1000",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "음원별결합검증_2026-11-14",
+      "method": "finetuned",
+      "reference": "baseline",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "음원별결합검증_2026-11-14",
+      "method": "finetuned",
+      "reference": "baseline",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "음원별결합검증_2026-11-14",
+      "method": "hybrid",
+      "reference": "baseline",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "음원별결합검증_2026-11-14",
+      "method": "hybrid",
+      "reference": "baseline",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "음원별결합검증_2026-11-14",
+      "method": "condition_label_route",
+      "reference": "baseline",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "음원별결합검증_2026-11-14",
+      "method": "condition_label_route",
+      "reference": "baseline",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "음원별결합검증_2026-11-14",
+      "method": "gt_case_oracle",
+      "reference": "baseline",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "음원별결합검증_2026-11-14",
+      "method": "gt_case_oracle",
+      "reference": "baseline",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력선택검증_2026-11-14",
+      "method": "selector",
+      "reference": "baseline",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "입력선택검증_2026-11-14",
+      "method": "selector",
+      "reference": "baseline",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_raw",
+      "reference": "baseline",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_raw",
+      "reference": "baseline",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_raw",
+      "reference": "selected_raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_raw",
+      "reference": "selected_raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_uniform",
+      "reference": "baseline",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_uniform",
+      "reference": "baseline",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_uniform",
+      "reference": "selected_raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_uniform",
+      "reference": "selected_raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_power",
+      "reference": "baseline",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_power",
+      "reference": "baseline",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_power",
+      "reference": "selected_raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "selected_power",
+      "reference": "selected_raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "baseline_uniform",
+      "reference": "baseline",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "baseline_uniform",
+      "reference": "baseline",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "baseline_uniform",
+      "reference": "selected_raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "baseline_uniform",
+      "reference": "selected_raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "baseline_power",
+      "reference": "baseline",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "baseline_power",
+      "reference": "baseline",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "baseline_power",
+      "reference": "selected_raw",
+      "condition": "dry",
+      "step": "",
+      "max_abs_error": 0.0
+    },
+    {
+      "experiment": "출력합보정검증_2026-11-14",
+      "method": "baseline_power",
+      "reference": "selected_raw",
+      "condition": "wet_R4",
+      "step": "",
+      "max_abs_error": 0.0
+    }
+  ],
+  "scope": "Recomputed paired-song median/10000-bootstrap CI from existing CSV. No new inference/training. This is arithmetic consistency, not independent generalization or waveform re-audit."
+}
