@@ -1,0 +1,12 @@
+{
+  "archive_basename": "mss-assets-v1.tar",
+  "bytes": 36485713920,
+  "sha256": "4d7d215c5a4091c31725a1ce9fcbadba8e7bee614a293860c819595c2a85bb84",
+  "archive_file_count": 2063,
+  "bundle_manifest_file_count": 2062,
+  "unpacked_asset_bytes": 36483185634,
+  "in_git": false,
+  "public_download_url": null,
+  "distribution": "private owner transfer, requires rights to data and weights",
+  "checksum_method": "stream SHA256 during archive creation; tiny archive test independently compares computed file hash; receiver must sha256sum before extraction"
+}

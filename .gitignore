@@ -58,3 +58,8 @@ dist/
 # Archived local research plans (excluded from the deployment repository)
 docs/00-goals-and-timeline.md
 docs/01-design-spec.md
+
+# Private reproduction bundles (raw audio / model payloads)
+.reproduction-assets/
+mss-assets*.tar
+mss-assets*.tar.sha256
